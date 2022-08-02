@@ -1,0 +1,73 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "esModuleInterop": true,
+    "jsx": "preserve",
+    "moduleResolution": "node",
+    "lib": [
+      "dom",
+      "ESNext",
+      "DOM.Iterable",
+    ],
+    "module": "esnext",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "noEmitOnError": true,
+    //"removeComments": false,
+    "noImplicitAny": false,
+    "noImplicitThis": true,
+    "strictNullChecks": false,
+    "skipLibCheck": true,
+    "target": "esnext",
+    "noEmit": true,
+    "baseUrl": ".",
+    "isolatedModules": true,
+    "forceConsistentCasingInFileNames": true,
+    "paths": {
+      "portal/components/*": [
+        "components/*"
+      ],
+      "portal/pages/*": [
+        "pages/*"
+      ],
+      "portal/redux/*": [
+        "redux/*"
+      ],
+      "portal/styles/*": [
+        "styles/*"
+      ],
+      "portal/theme/*": [
+        "theme/*"
+      ],
+      "portal/utils/*": [
+        "utils/*"
+      ],
+      "portal/types/*": [
+        "type/*"
+      ],
+      "portal/*": [
+        "*"
+      ],
+      "portal/components": [
+        "components/index"
+      ],
+      "portal/utils": [
+        "utils/index"
+      ],
+      "portal/types": [
+        "type/index"
+      ]
+    },
+    "strict": false,
+    "incremental": true
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx"
+  ]
+}

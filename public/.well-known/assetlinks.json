@@ -1,0 +1,37 @@
+[
+    {
+        "relation":["delegate_permission/common.handle_all_urls"],
+        "target" : {
+            "namespace":"web",
+            "site":"https://portalnesia.com"
+        }
+    },{
+        "relation":["delegate_permission/common.handle_all_urls"],
+        "target" : {
+            "namespace": "android_app",
+            "package_name": "com.portalnesia.app",
+            "sha256_cert_fingerprints":
+            ["EC:D4:BC:4C:AB:22:0E:2A:A0:5D:79:01:0F:7A:7C:EC:40:6C:1C:67:0D:E5:A5:CE:C0:68:9F:A0:4A:89:DD:91"]
+        }
+    },{
+        "relation":["delegate_permission/common.get_login_creds"],
+        "target":{
+            "namespace":"web",
+            "site":"https://portalnesia.com"
+        }
+    },{
+        "relation":["delegate_permission/common.get_login_creds"],
+        "target":{
+            "namespace":"web",
+            "site":"https://accounts.portalnesia.com"
+        }
+    },{
+        "relation":["delegate_permission/common.get_login_creds"],
+        "target":{
+            "namespace": "android_app",
+            "package_name": "com.portalnesia.app",
+            "sha256_cert_fingerprints":
+            ["EC:D4:BC:4C:AB:22:0E:2A:A0:5D:79:01:0F:7A:7C:EC:40:6C:1C:67:0D:E5:A5:CE:C0:68:9F:A0:4A:89:DD:91"]
+        }
+    }
+]
