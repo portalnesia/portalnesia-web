@@ -7,7 +7,7 @@ import dayjs from 'dayjs'
 import Plyr from 'plyr';
 import Hls from 'hls.js'
 import 'plyr/dist/plyr.css'
-import { CSSObject } from 'tss-react/tools/types/CSSObject';
+import type { CSSObject } from 'tss-react/types';
 
 type CssClasses = {
     audioPlayer:CSSObject,

@@ -66,10 +66,10 @@ const Dialogs = styled(Dialog)(()=>({
     }
 }))
 
-const CardAction = styled(CardActionArea)<{selected?: boolean}>(({theme,selected})=>({
+const CardAction = styled(CardActionArea)(()=>({
     position:'relative'
 }))
-const SelectedArea = styled('div')<{selected?: boolean}>(({theme,selected})=>({
+const SelectedArea = styled('div',{shouldForwardProp:prop=>prop!=="selected"})<{selected?: boolean}>(({theme,selected})=>({
     ...(selected ? {
         position:'absolute',
         left:0,
@@ -100,7 +100,7 @@ const DivUpload = styled('div')(({theme})=>({
     paddingBottom:theme.spacing(3)
 }))
 
-const Input = styled('div')<{isHover: boolean}>(({theme,isHover})=>({
+const Input = styled('div',{shouldForwardProp:prop=>prop!=="isHover"})<{isHover: boolean}>(({theme,isHover})=>({
     textAlign:'center',
     border:`1px dashed ${theme.palette.divider}`,
     padding:0,
@@ -124,10 +124,10 @@ const Input = styled('div')<{isHover: boolean}>(({theme,isHover})=>({
     } : {})
 }))
 
-const Sticky=styled('div')<{notSticky?:boolean}>(({theme,notSticky})=>({
+const Sticky=styled('div',{shouldForwardProp:prop=>prop!=="nosticky"})<{notsticky?:boolean}>(({theme,notsticky})=>({
     paddingLeft:24,
     paddingRight:24,
-    ...(!notSticky ? {
+    ...(!notsticky ? {
         position:'sticky',
         top:0,
         zIndex:2,
@@ -186,7 +186,7 @@ function BrowserComp(props: BrowserProps) {
         setServerType(null)
         setSearch("");
         setSearchSubmit("")
-        if(onClose) onClose({},'backdropClick');
+        if(onClose) onClose({},'escapeKeyDown');
     },[onClose,disabled])
 
     const handleSelect=React.useCallback((dt: FilesWithIdx)=>()=>{
@@ -389,7 +389,7 @@ function BrowserComp(props: BrowserProps) {
                             </div>
                         </DialogTitle>
                         <Divider />
-                        <Sticky notSticky>
+                        <Sticky notsticky>
                             {withUnsplash && serverType==='unsplash' ? (
                                 <div style={{display:'flex'}}>
                                     <Button sx={{mr:1}} outlined disabled={disabled !== null} onClick={handleServerType(null)}>Portalnesia</Button>

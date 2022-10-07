@@ -581,7 +581,7 @@ const EditKuis=({meta,err,classes})=>{
                     <DialogActions>
                         <Button tooltip='Shift + Enter' disabled={loading||disable} outlined onClick={onAddChoise} icon='add'>Add choises</Button>
                         <Button tooltip='Esc' disabled={loading||disable} color='secondary' onClick={()=>setDialog(null)}>Cancel</Button>
-                        <Button tooltip='Enter' disabled={loading||disable} disabled={loading||disable} type='submit' icon='save'>Save</Button>
+                        <Button tooltip='Enter' disabled={loading||disable} type='submit' icon='save'>Save</Button>
                     </DialogActions>
                 </form>
             </Dialog>

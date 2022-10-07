@@ -20,7 +20,7 @@ const classes = {
     blueGrey: 'avaBlueGray'
 }
 
-const Ava = styled(Av)<{withTop?:boolean}>(({withTop,children})=>({
+const Ava = styled(Av,{shouldForwardProp:prop=>prop!=="withTop"})<{withTop?:boolean}>(({withTop,children})=>({
     ...(withTop && typeof children !== 'string' ? {
         '&.MuiAvatar-root':{
             paddingTop:3

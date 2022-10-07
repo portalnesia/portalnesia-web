@@ -41,7 +41,7 @@ const Title = styled(Typography)(()=>({
     WebkitBoxOrient:'vertical',
     WebkitLineClamp:1
 }))
-const Div = styled('div')<{fullscreen: boolean}>(({theme,fullscreen})=>({
+const Div = styled('div',{shouldForwardProp:prop=>prop!=="fullscreen"})<{fullscreen: boolean}>(({theme,fullscreen})=>({
     ...(fullscreen ? {
         position:'fixed',
         height:'100%',width:'100%',
@@ -66,7 +66,7 @@ let isOverflow = false;
 const UnlayerComp = React.forwardRef<EmailEditor,UnlayerProps>((props,ref)=>{
     const {signature,onReady,options,type='email',disabled,loading,onSave,...rest} = props;
     const {redux_theme:theme,user}=useSelector<State,Pick<State,'user'|'redux_theme'>>(state=>({redux_theme:state.redux_theme,user:state.user}));
-    const editorRef = React.useRef(ref) as React.RefObject<EmailEditor>
+    const editorRef = React.useRef(ref as unknown as EmailEditor) as React.RefObject<EmailEditor>
     const combinedRefs = useCombinedRefs<EmailEditor>(ref,editorRef);
 
     const {get} = useAPI();

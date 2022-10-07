@@ -5,7 +5,7 @@
   ],
   "plugins": [
     ["babel-plugin-direct-import",{
-      "modules": ["@mui/material","@mui/icons-material","@mui/lab","@mui/styles"]
+      "modules": ["@mui/material","@mui/icons-material","@mui/lab","@mui/styles","@mui/x-date-pickers"]
     }],
     "@emotion"
   ],

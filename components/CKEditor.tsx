@@ -8,6 +8,7 @@ import {styled} from '@mui/material/styles'
 import {useDispatch} from 'react-redux'
 import {Dispatch} from 'redux'
 import { ucwords } from '@portalnesia/utils'
+import type EditorClass from '@ckeditor/ckeditor5-core/src/editor/editor'
 
 const Browser=dynamic(()=>import('portal/components/Browser'))
 const CKEditor = dynamic(()=>import('@ckeditor/ckeditor5-react').then(m=>m.CKEditor)) as React.ComponentType<CKEditorReactProps>
@@ -16,7 +17,7 @@ export interface EditorProps extends Without<CKEditorReactProps,'editor'> {
     onSave?(): void;
 }
 
-const Div = styled("div")(()=>({
+const Div = styled("div")(({theme})=>({
     '.ck-content pre code':{
         background:'unset !important',
         padding:'0 !important',
@@ -42,6 +43,11 @@ const Div = styled("div")(()=>({
             color:'#000 !important',
         }
     },
+    [theme.breakpoints.up("lg")]: {
+        '.ck.ck-toolbar-dropdown>.ck-dropdown__panel': {
+            maxWidth: 400
+        },
+    }
 }))
 
 function EditorComp(props: EditorProps) {
@@ -54,14 +60,14 @@ function EditorComp(props: EditorProps) {
 
     const handleSelectedImage=React.useCallback((url: string)=>{
         if(editorRef.current) {
-            const editor = editorRef.current;
+            const editor = editorRef.current as unknown as EditorClass;
             editor.plugins.get<ImageManager>("ImageManager" as unknown as PluginInterface<ImageManager>).handleSelectedImage(url);
         }
     },[])
 
     const handleUnsplashSelectedImage=React.useCallback((dt: UnsplashTypes)=>{
         if(editorRef.current) {
-            const editor = editorRef.current;
+            const editor = editorRef.current as unknown as EditorClass;
             const url = dt?.url;
             const name = dt?.user?.name;
             const href = dt?.user?.links?.html;
@@ -71,7 +77,7 @@ function EditorComp(props: EditorProps) {
 
     const handlePixabaySelectedImage=React.useCallback((dt: PixabayTypes)=>{
         if(editorRef.current) {
-            const editor = editorRef.current;
+            const editor = editorRef.current as unknown as EditorClass;
             const url = dt?.url;
             const name = dt?.user;
             const href = `https://pixabay.com/users/${name}-${dt.user_id}`;
@@ -114,7 +120,7 @@ function EditorComp(props: EditorProps) {
                         portalnesia:{
                             onImageManager: openBrowser,
                             onSave: handleSave
-                        }
+                        },
                     }}
                     data={data}
                     onReady={handleReady}

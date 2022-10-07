@@ -39,7 +39,7 @@ export const getServerSideProps = wrapper(async({pn:data,resolvedUrl,res,params}
         title:"New Chord",
     }
     if(slug?.[0]==='edit') {
-        const chord = await db.kata(`SELECT id,userid,title,artist,text,original,publish,youtube,block,slug FROM klekle_chord WHERE slug='${slug[1]}' LIMIT 1`);
+        const chord = await db.kata(`SELECT id,userid,title,artist,text,original,publish,block,slug FROM klekle_chord WHERE slug='${slug[1]}' LIMIT 1`);
         if(!chord) {
             return {
                 notFound:true
@@ -99,7 +99,7 @@ const EditChord=({classes,meta,err})=>{
     }
     const captchaRef=React.useRef(null)
     const artistAwal=slug[0]==='edit' ? [meta?.chord?.artist] : [''];
-    const [value,setValue]=React.useState(meta?.chord||{title:'',artist:'',text:defaul.text,original:defaul.original,youtube:'',publish:false});
+    const [value,setValue]=React.useState(meta?.chord||{title:'',artist:'',text:defaul.text,original:defaul.original,publish:false});
     const [option,setOption]=React.useState(artistAwal);
     const [openArtist,setOpenArtist]=React.useState(false);
     const [loadingArtist,setLoadingArtist]=React.useState(true)
@@ -263,7 +263,7 @@ const EditChord=({classes,meta,err})=>{
                                 </Grid>
                                 </>
                             )}
-                            <Grid item xs={12}>
+                            <Grid item xs={12} lg={8}>
                                 <TextField
                                     value={value?.title || ''}
                                     variant='outlined'
@@ -274,7 +274,7 @@ const EditChord=({classes,meta,err})=>{
                                     disabled={loading||slug?.[0]==='edit'}
                                 />
                             </Grid>
-                            <Grid item xs={12} lg={6}>
+                            <Grid item xs={12} lg={4}>
                                 <Autocomplete
                                     open={openArtist}
                                     value={value?.artist || ""}
@@ -337,7 +337,7 @@ const EditChord=({classes,meta,err})=>{
                                     )}
                                 />
                             </Grid>
-                            <Grid item xs={12} lg={6}>
+                            {/*<Grid item xs={12} lg={6}>
                                 <TextField
                                     value={value?.youtube || ''}
                                     variant='outlined'
@@ -346,7 +346,7 @@ const EditChord=({classes,meta,err})=>{
                                     disabled={loading}
                                     onChange={event=>handleChange('youtube',event.target.value)}
                                 />
-                            </Grid>
+                            </Grid>*/}
                             <Grid item xs={12} lg={6}>
                                 <p>use "#" to add comments</p>
                                 <TextField
@@ -364,7 +364,7 @@ const EditChord=({classes,meta,err})=>{
                                     label="Chord Editor"
                                     fullWidth
                                     multiline
-                                    rows={40}
+                                    rows={36}
                                     onChange={event=>handleEditorChange(event.target.value)}
                                     required
                                     disabled={loading}
@@ -372,7 +372,7 @@ const EditChord=({classes,meta,err})=>{
                             </Grid>
                             <Grid item xs={12} lg={6}>
                             <Typography variant='h6' component='h6'>Result</Typography>
-                                <div style={{marginTop:15,padding:'18.5px 14px',height:'unset',overflowY:'unset'}}>
+                                <div style={{marginTop:25,padding:'18.5px 14px',height:'unset',overflowY:'unset'}}>
                                     <div id='resultRenderContainer' className={classes.render}>
                                         <Chord template={value?.text||''} transpose={0} style={{fontSize:13}} margin={false}/>
                                     </div>

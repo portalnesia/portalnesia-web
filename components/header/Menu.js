@@ -40,12 +40,12 @@ export const otherMenuArray=[
 ]
 
 export const menuArray=[
-    {
+    /*{
         key: 'corona',
         name: 'COVID-19',
         icon: <Info />,
         link:'/corona'
-    },
+    },*/
     {
       key: 'home',
       name: 'Home',

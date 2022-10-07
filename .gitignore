@@ -37,7 +37,7 @@ yarn-error.log*
 
 *-backup
 *.backup
-version.js
+*/version.ts
 *.crt
 /public/*.js
 #crypto.js

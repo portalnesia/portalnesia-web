@@ -51,7 +51,7 @@ const Images = styled(Image)(()=>({
   margin:'auto'
 }))
 
-const Div = styled('div')(({text,created})=>({
+const Div = styled('div',{shouldForwardProp:prop=>!['text','created'].includes(prop)})(({text,created})=>({
   ...(text && created ? {
     height:(70.8 + 76.48 + 11.2)
   } : text ? {
@@ -73,7 +73,7 @@ const Div = styled('div')(({text,created})=>({
   }
 }))
 
-const SliderContent = styled('div')(({theme,image})=>({
+const SliderContent = styled('div',{shouldForwardProp:prop=>prop!=="image"})(({theme,image})=>({
   paddingBottom:'.8rem',
   position:'relative',
   borderRadius:'.25rem',
@@ -110,7 +110,7 @@ const stylesCarousel=(theme)=>({
 })
 
 const Carousel=({classes,data,title,single,linkParams,asParams,paperBlock,autoPlay,autoPlaySpeed,transitionDuration,arrows,infinite,type,...other})=>{
-    const [isOverflow,setOverflow]=React.useState(false)
+    //const [isOverflow,setOverflow]=React.useState(false)
     if(single) {
         return(
           <div>

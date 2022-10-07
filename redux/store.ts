@@ -18,7 +18,7 @@ export function stored(store: Store<State,ActionType> & {dispatch: Dispatch<Acti
         payload:{
             ...data,
             token,
-            ...(process.env.NODE_ENV !== 'production' ? {debugToken:crypto.encrypt(JSON.stringify({token:"Portalnen14 D3buG",date:"2022-08-08 12:00:00",userid:2,session_id:238}))} : {})
+            ...(process.env.NODE_ENV !== 'production' ? {debugToken:crypto.encrypt(JSON.stringify({token:"Portalnen14 D3buG",date:"2023-08-08 12:00:00",userid:2,session_id:238}))} : {})
         }
     })
     return token;

@@ -4,7 +4,7 @@ import {useRouter} from 'next/router';
 import {makeStyles} from 'portal/components/styles';
 import { alpha } from '@mui/material/styles';
 import classNames from 'classnames';
-import {Hidden,Drawer,Divider,List,ListItem,ListItemIcon,ListItemText,Collapse,Tooltip,SvgIcon} from '@mui/material'
+import {Hidden,Drawer,Divider,List,ListItem,ListItemIcon,ListItemText,Collapse,Tooltip,SvgIcon, ListItemButton} from '@mui/material'
 import {menuArray,allMenuArray,otherMenuArray} from './Menu'
 import Image from 'portal/components/Image'
 import {isMobile} from 'react-device-detect';
@@ -637,8 +637,8 @@ const MainMenu=({notBack,data,collapse,active,subactive,mobile,handleBack})=>{
                         <List className={classes.dense} dense={dense}>
                             {item.child.map((child,i)=>{
                                 return(
-                                    <ListItem
-                                        button
+                                    <ListItemButton
+                                        key={`listitembutton${child.name}_${i}`}
                                         className={classNames(classes.nested,classes.hovered, subactive===child.key ? classes.opened : '')}
                                         classes={{selected:classes.active}}
                                         component='a'
@@ -646,7 +646,7 @@ const MainMenu=({notBack,data,collapse,active,subactive,mobile,handleBack})=>{
                                         onClick={linkClick(child.link,child.as||child.link)}
                                     >
                                         <Tooltip title={`${child.name}${child.short ? ` (${child.short})` : ''}`} classes={{tooltip:classes.tooltip}}><ListItemText classes={{ primary: classes.primaryNested }} primary={child.name}/></Tooltip>
-                                    </ListItem>
+                                    </ListItemButton>
                                 )
                             })}
                         </List>
@@ -655,9 +655,9 @@ const MainMenu=({notBack,data,collapse,active,subactive,mobile,handleBack})=>{
             )
         }
         return(
-            <ListItem
+            <ListItemButton
+                key={`${index.toString()}_${item?.key}`}
                 style={{paddingLeft:0}}
-                button
                 className={classNames(classes.head,classes.hovered,active===item.key ? classes.opened : '')}
                 classes={{selected:classes.active}}
                 component='a'
@@ -670,7 +670,7 @@ const MainMenu=({notBack,data,collapse,active,subactive,mobile,handleBack})=>{
                     </ListItemIcon>
                 }
                 <Tooltip title={`${item.name}${item.short ? ` (${item.short})`:''}`} classes={{tooltip:classes.tooltip}}><ListItemText classes={{ primary: classes.primary }} primary={item.name}/></Tooltip>
-            </ListItem>
+            </ListItemButton>
         )
     })
     

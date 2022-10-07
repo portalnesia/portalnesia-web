@@ -31,7 +31,7 @@ const RootDiv = styled('div')(()=>({
   flexGrow: 1
 }))
 
-const Paper = styled(Paperr)(({theme,loading})=>({
+const Paper = styled(Paperr,{shouldForwardProp:prop=>prop!=="loading"})(({theme,loading})=>({
   flexGrow: 1,
   justifyContent: 'space-between',
   alignItems: 'flex-start',
@@ -62,7 +62,7 @@ const Paper = styled(Paperr)(({theme,loading})=>({
   } : {})
 }))
 
-const CustomGrid = styled(Grid)(({theme})=>({
+/*const CustomGrid = styled(Grid)(({theme})=>({
   flexGrow: 1,
   justifyContent: 'space-between',
   alignItems: 'flex-start',
@@ -87,7 +87,7 @@ const CustomGrid = styled(Grid)(({theme})=>({
   /*'&:hover':{
     backgroundColor:theme.palette.action.hover
   }*/
-}))
+/*}))*/
 
 const stylesCounter = makeStyles()((theme)=>({
   counterIcon: {
@@ -298,13 +298,16 @@ const Home=()=>{
     },[baseData])
 
     React.useEffect(()=>{
-        const getLocation=(dt)=>{
+        const getWeather=(dt)=>{
           return new Promise((result)=>{
-            post(`/v1/internal/weather`,dt,{},{error_notif:false,success_notif:false,feedback:false}).then(([res])=>{
-              result(res)
-            }).catch(()=>{
-              setCuaca({temp:'0°C',title:'Error',text:"Error while getting weather",icon:null})
-            })
+            setTimeout(()=>{
+              post(`/v1/internal/weather`,dt,{},{error_notif:false,success_notif:false,feedback:false}).then(([res])=>{
+                result(res)
+              }).catch(()=>{
+                setCuaca({temp:'0°C',title:'Error',text:"Error while getting weather",icon:null})
+              })
+            },1000)
+            
           })
         }
   
@@ -314,7 +317,7 @@ const Home=()=>{
               navigator.permissions.query({name:'geolocation'}).then((result)=>{
                 if(result.state!='denied') {
                     navigator.geolocation.getCurrentPosition((pos)=>{
-                      getLocation({latitude:pos.coords.latitude,longitude:pos.coords.longitude}).then((loc)=>{
+                      getWeather({latitude:pos.coords.latitude,longitude:pos.coords.longitude}).then((loc)=>{
                         setCuaca({temp:loc.temperature,title:loc.title,text:loc.text,icon:loc.icon})
                         if(typeof loc.loc !== 'undefined') {
                           const datetanggal = new Date();
@@ -336,7 +339,7 @@ const Home=()=>{
               });
           }
       } else {
-          getLocation({latlng:cookie}).then((loc)=>{
+          getWeather({latlng:cookie}).then((loc)=>{
               setCuaca({temp:loc.temperature,title:loc.title,text:loc.text,icon:loc.icon})
           })
       }
