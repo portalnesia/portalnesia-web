@@ -336,7 +336,7 @@ const FileManager=({classes,err,username})=>{
         handleUpload(e)
     },[handleUpload])
     
-    const handleYoutube=React.useCallback((e)=>{
+    /*const handleYoutube=React.useCallback((e)=>{
         e.preventDefault();
         if(errorVal===null) {
             setLoadingVal(true);
@@ -350,7 +350,7 @@ const FileManager=({classes,err,username})=>{
                 setLoadingVal(false);
             })
         }
-    },[post,mutate,errorVal,value])
+    },[post,mutate,errorVal,value])*/
 
     const handleUpdate=React.useCallback((index)=>{
         if(errorEdit===null) {
@@ -442,7 +442,7 @@ const FileManager=({classes,err,username})=>{
                         </div>
                     </div>
                 </div>
-                <div key='youtube-upload' className={clx(classes.wrapper,classes.withBorder)}>
+                {/*<div key='youtube-upload' className={clx(classes.wrapper,classes.withBorder)}>
                     <form onSubmit={handleYoutube}>
                         <Typography variant="h6" gutterBottom>Youtube Video</Typography>
                         <div className='flex-header'>
@@ -461,7 +461,7 @@ const FileManager=({classes,err,username})=>{
                             </div>
                         </div>
                     </form>
-                </div>
+                </div>*/}
                 <div key='data-wrapper' {...(data && data?.data?.length > 0 ? {} : {className:clx(classes.wrapper),style:{textAlign:'center'}})}>
                     {!data && !errorLoading ? (
                         <Skeleton image type='list' number={8} />

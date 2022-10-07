@@ -20,7 +20,7 @@ export const getServerSideProps = wrapper(async({pn:data,params,resolvedUrl})=>{
     else return {props:{meta:{id:res?.[0]?.unik}}}
 })
 
-const ListItem = styled(RootListItem)(({theme,isError})=>({
+const ListItem = styled(RootListItem,{shouldForwardProp:prop=>prop!=="isError"})(({theme,isError})=>({
     ...(isError ? {
         '&.MuiListItem-root':{
             background: `${theme.palette.mode === 'dark' ? alpha(theme.palette.secondary.dark,0.2) : alpha(theme.palette.secondary.light,0.2)} !important`

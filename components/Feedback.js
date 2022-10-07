@@ -7,7 +7,7 @@ import homeStyle from 'portal/styles/Home.module.css'
 import {ArrowBack,Close} from '@mui/icons-material'
 import {IconButton} from '@mui/material'
 import {connect} from 'react-redux'
-import version from '../version'
+import {version} from 'portal/utils/version'
 
 const funcs = {
     support_canvas: () => {
@@ -379,6 +379,9 @@ class Feedback extends React.Component {
         window.removeEventListener('resize', this.windowResize, false);
     }
     componentDidMount() {
+        if(isMobile) {
+            document.body.classList.add("no-overflow")
+        }
         this.getSysInfo();
         this.initCanvas(true);
         this.addEventListener();
@@ -408,6 +411,9 @@ class Feedback extends React.Component {
     componentWillUnmount() {
         if(this.timer) {
             clearTimeout(this.timer);
+        }
+        if(isMobile) {
+            document.body.classList.remove("no-overflow")
         }
         this.removeEventListener();
     }
@@ -741,7 +747,7 @@ class Feedback extends React.Component {
             props = this.props;
         return(
             
-            <div id="googleFeedback" style={{height: `${state.docHeight}px`}} onMouseMove={this.handleMouseMove.bind(this)}
+            <div id={`googleFeedback`} style={{height: `${state.docHeight}px`}} onMouseMove={this.handleMouseMove.bind(this)} className={props.rating ? 'rating':''}
                     onMouseUp={this.handleMoveMouseUp.bind(this)}>
                 {
                     !isMobile ?
@@ -1093,7 +1099,7 @@ class Feedback extends React.Component {
                                         </div>
                                     : null}
                                     {this.props.rating && (
-                                        <div key={0} style={{display:'flex',alignItems: 'center',justifyContent:'center',margin:'20px 0'}}>
+                                        <div key={0} style={{display:'flex',alignItems: 'center',justifyContent:'center',marginBottom:20}}>
                                             <Rating
                                                 classes={{sizeLarge:homeStyle.fbLabel,iconEmpty:homeStyle.iconEmpty}}
                                                 name="hover-feedback"
@@ -1605,6 +1611,9 @@ class Feedback extends React.Component {
                             flex: 1;
                             display: flex;
                             flex-direction: column; }
+                        #googleFeedback.rating .mobile-feedBack-window textarea {
+                            height: calc(100% - 68px) !important;
+                        }
                         #googleFeedback .mobile-feedBack-window .feedback-area {
                             width: 100%;
                             min-height: 196px;
@@ -1641,7 +1650,7 @@ class Feedback extends React.Component {
                             width: 90%;
                             min-height: 64px;
                             margin: 0px auto;
-                            margin-bottom: 16px;
+                            margin-bottom: 8px;
                             background: #FAFAFA;
                             border-radius: 3px;
                             display: flex;

@@ -15,7 +15,7 @@ import {useSocket,CallContainer} from 'portal/utils/Socket'
 import {useHotKeys} from 'portal/utils/useKeys'
 import {getInstalledApps} from 'portal/utils/Main'
 import {useNotif} from './Notification'
-import {Hidden,IconButton,Typography,Grid,Divider,Paper,Card,CardActions,Collapse,SvgIcon,Fade} from '@mui/material'
+import {Hidden,IconButton,Typography,Grid,Divider,Paper,Card,CardActions,Collapse,SvgIcon,Fade,CircularProgress} from '@mui/material'
 import {Close,ExpandMore,LibraryMusic,Dashboard,Menu as MenuIcon,LibraryBooks} from '@mui/icons-material'
 import Link from 'next/link'
 import { Workbox } from 'workbox-window'
@@ -602,11 +602,10 @@ const Header=({navTitle,iklan,notBack,active,noSidebar,children,user,config,titl
               .then((registration)=>{
                 getInstalledApps().then(apps=>{
                   const cookie=Cookies.get('n_banner');
-
-                  if(!apps && isMobile && !cookie) {
+                  /*if(!apps && isMobile && !cookie) {
                     Cookies.set("n_banner",'1',{secure:true,sameSite:'strict',expires:1})
                     setDialogNative(true);
-                  }
+                  }*/
                   if(user!==null && messaging!==null) {
                     Notification.requestPermission()
                     .then((permission)=>{
@@ -694,6 +693,7 @@ const Header=({navTitle,iklan,notBack,active,noSidebar,children,user,config,titl
       if(!loadd) {
         loadd=true;
         getTheme().finally(()=>setLoaded(true))
+        document.body.style.overflow = null
       }
       
       const sudahUntukBack=()=>{
@@ -763,7 +763,9 @@ const Header=({navTitle,iklan,notBack,active,noSidebar,children,user,config,titl
           </Head>
         {loaded===false && (
           <div style={{position:'fixed',top:0,left:0,height:'100%',width:'100%',background:'#2f6f4e',zIndex:5000}}>
-            <img style={{position:'fixed',top:'50%',left:'50%',transform:'translate(-50%,-50%)'}} onContextMenu={(e)=>e.preventDefault()} className='load-child no-drag' alt='Portalnesia' src={loadingImage} />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img style={{position:'fixed',top:'35%',left:'50%',transform:'translate(-50%,-50%)'}} onContextMenu={(e)=>e.preventDefault()} className='load-child no-drag' alt='Portalnesia' src={loadingImage} />
+            <CircularProgress size={60} sx={{color:'white',position:'fixed',top:'60%',left:'calc(50% - 30px)'}} />
           </div>
         )}
         {adBlock!==true ? 

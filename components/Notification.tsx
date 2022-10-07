@@ -14,7 +14,7 @@ export type OptionSnack={
 }
 export type VariantOption= 'default' | 'error' | 'success' | 'warning' | 'info' | boolean
 
-const CustomIconBtn = styled(IconButton)<IconButtonProps & ({variant:VariantOption})>(({variant,theme})=>({
+const CustomIconBtn = styled(IconButton,{shouldForwardProp:prop=>prop!=="variant"})<IconButtonProps & ({variant:VariantOption})>(({variant,theme})=>({
     ...(typeof variant === 'boolean' ? {
         '& svg':{
             color:'#FFF'

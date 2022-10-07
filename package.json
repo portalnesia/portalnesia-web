@@ -1,11 +1,11 @@
 {
   "name": "portalnesia",
-  "version": "4.3.30",
+  "version": "4.4.0",
   "private": true,
   "scripts": {
     "dev": "node server.js",
-    "build": "npx genversion version.js && next build",
-    "buildprod": "rm -rf .next/static/ .next/cache/ && npx genversion version.js && next build",
+    "build": "npx genversion --es6 utils/version.ts && next build",
+    "buildprod": "rm -rf .next/static/ .next/cache/ && npx genversion --es6 utils/version.ts && next build",
     "start": "NODE_ENV=production node server.js",
     "finish": "pm2 reload portalnesia && pm2 reset portalnesia",
     "postinstall": "patch-package"
@@ -29,6 +29,7 @@
     "@mui/lab": "^5.0.0-alpha.57",
     "@mui/material": "^5.2.5",
     "@mui/styles": "^5.2.3",
+    "@mui/x-date-pickers": "^5.0.4",
     "@portalnesia/custom-ckeditor5": "^2.1.1",
     "@portalnesia/dayjs-plugins": "^1.0.1",
     "@portalnesia/utils": "^1.1.5",
@@ -145,7 +146,7 @@
     "css-minimizer-webpack-plugin": "^3.3.1",
     "file-loader": "^6.2.0",
     "genversion": "^3.0.1",
-    "next-pwa": "^5.4.4",
+    "next-pwa": "^5.5.4",
     "next-transpile-modules": "^9.0.0",
     "patch-package": "^6.4.7",
     "rollup": "^2.62.0",

@@ -19,11 +19,8 @@ import db from 'portal/utils/db'
 import {isMobile} from 'react-device-detect'
 import {ListItemIcon,Grid,Typography,Paper,IconButton,Menu,MenuItem,Tooltip,AppBar,Tabs,Tab,Divider,CircularProgress,Badge,Icon,
     Card,CardHeader,CardActionArea,CardContent, CardActions,TextField,Portal,SvgIcon} from '@mui/material'
-import {
-  LocalizationProvider,
-  DatePicker,
-} from '@mui/lab';
-import AdapterDayJS from '@mui/lab/AdapterDayjs'
+import {LocalizationProvider,DatePicker} from '@mui/x-date-pickers'
+import { AdapterDayjs as AdapterDayJS } from '@mui/x-date-pickers/AdapterDayjs';
 import Button from 'portal/components/Button'
 import {useNotif} from 'portal/components/Notification'
 import SimpleMDE from 'portal/components/SimpleMDE'
@@ -1159,7 +1156,7 @@ const TabHeaderStyle=withStyles(TabHeader,stylesTab);
 
 //let dat={name:'',about:'',birthday:''}
 const genderArr = ['Male','Female'];
-const EditProfile=({meta,dialog,setDialog})=>{
+const EditProfile=({meta})=>{
     const router=useRouter()
     const {put}=useAPI()
     const {data,isLoading,error}=useUser(meta.username);
@@ -1173,7 +1170,6 @@ const EditProfile=({meta,dialog,setDialog})=>{
         e.returnValue=false
         handleSubmit()
     },true)
-    const {setNotif}=useNotif();
 
     const handleDateChange = (date) => {
         setCanChange(false)
@@ -1204,6 +1200,7 @@ const EditProfile=({meta,dialog,setDialog})=>{
             })
         }
     },[data])
+    
     return(
         <LocalizationProvider dateAdapter={AdapterDayJS}>
             {isLoading ? (
@@ -1398,7 +1395,7 @@ const User=({meta,err,user})=>{
     
     React.useEffect(()=>{
         const {ref,refid} = router.query;
-        console.log(ref,refid);
+        //console.log(ref,refid);
         if(ref === 'notification') {
             get(`/v1/internal/refid/${refid}`,{error_notif:false,success_notif:false})
         }

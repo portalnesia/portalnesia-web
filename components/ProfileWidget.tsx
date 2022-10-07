@@ -5,7 +5,7 @@ import {styled} from '@mui/material/styles'
 import Avatar from 'portal/components/Avatar'
 import {ImageProps} from 'portal/components/Image'
 
-const Paper = styled(Paperr)<{linkColor?:boolean}>(({theme,linkColor})=>({
+const Paper = styled(Paperr,{shouldForwardProp:prop=>prop!=="linkColor"})<{linkColor?:boolean}>(({theme,linkColor})=>({
     position:'relative',
     marginTop: '4.125rem !important',
     zIndex: 1,

@@ -24,7 +24,7 @@ const Image=dynamic(()=>import('portal/components/Image'),{ssr:false})
 
 export const getServerSideProps = wrapper(()=>({props:{}}))
 
-const Typography = styled(Typo)(({theme,isTitle})=>({
+const Typography = styled(Typo,{shouldForwardProp:prop=>prop!=="isTitle"})(({theme,isTitle})=>({
     ...(isTitle ? {
         marginBottom:'1rem !important',
         fontWeight:'500 !important',

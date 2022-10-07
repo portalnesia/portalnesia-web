@@ -8,7 +8,7 @@ import ErrorPage from 'portal/pages/_error'
 import PaperBlock from 'portal/components/PaperBlock'
 import {withStyles} from 'portal/components/styles';
 import {wrapper} from 'portal/redux/store';
-import {slugFormat as setSlug,ucwords} from '@portalnesia/utils'
+import {parseURL, slugFormat as setSlug,ucwords} from '@portalnesia/utils'
 import {staticUrl} from 'portal/utils/Main'
 import useAPI from 'portal/utils/api'
 import db from 'portal/utils/db'
@@ -452,7 +452,7 @@ const EditBlog=({classes,meta,err})=>{
 
                                     <Divider key={7} />
                                     <div key={8} className={classes.wrapper}>
-                                        <Typography variant='body1'>Link: <a className="underline" href={`/blog/${value?.slug}`} target="_blank">{`${process.env.URL.substring(8)}/blog/${value?.slug}`}</a></Typography>
+                                        <Typography variant='body1'>Link: <a className="underline" href={`/blog/${value?.slug}`} target="_blank">{parseURL(`${process.env.URL}/blog/${value?.slug}`)}</a></Typography>
                                     </div>
                                     
                                     {slug?.[0]==='edit' && (

@@ -92,7 +92,7 @@ const PTitle = styled('p')(()=>({
     WebkitLineClamp:2,
 }))
 
-const DivAutoPlay = styled('div')(({muncul})=>({
+const DivAutoPlay = styled('div',{shouldForwardProp:prop=>prop!=="muncul"})(({muncul})=>({
     position:'absolute',
     zIndex:900,
     fontSize:15,

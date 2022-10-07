@@ -56,9 +56,9 @@ const styles=theme=>({
         position: 'fixed !important',
         bottom: `${theme.spacing(2)} !important`,
         right: `${theme.spacing(2)} !important`,
-        [theme.breakpoints.down('lg')]: {
+        /*[theme.breakpoints.down('lg')]: {
             bottom: `${16+56}px !important`,
-        },
+        },*/
     }
 })
 

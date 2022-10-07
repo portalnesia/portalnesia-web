@@ -52,13 +52,13 @@ export const getServerSideProps = wrapper(async({pn:data,token,req,res,params})=
         const utc = require('dayjs/plugin/utc')
         dayjs.extend(utc)
 
-        const chord= await db.kata(`SELECT c.id,c.userid,c.slug,c.slug_artist,c.artist,c.title,c.original,c.text,c.publish,c.block,c.youtube,c.datetime,c.datetime_edit,u.user_login,u.user_nama FROM klekle_chord c LEFT JOIN klekle_users u ON u.id=c.userid WHERE c.slug=? LIMIT 1`,[slug[0]]);
+        const chord= await db.kata(`SELECT c.id,c.userid,c.slug,c.slug_artist,c.artist,c.title,c.original,c.text,c.publish,c.block,c.datetime,c.datetime_edit,u.user_login,u.user_nama FROM klekle_chord c LEFT JOIN klekle_users u ON u.id=c.userid WHERE c.slug=? LIMIT 1`,[slug[0]]);
         if(!chord) {
             return {
                 notFound:true
             }
         }
-        const {id,title,artist,original,publish,block,userid,youtube,slug:slugg,user_login,user_nama,datetime,datetime_edit,slug_artist,text}=chord[0];
+        const {id,title,artist,original,publish,block,userid,slug:slugg,user_login,user_nama,datetime,datetime_edit,slug_artist,text}=chord[0];
         if(publish==0 && data?.user?.id != userid || block==1 && data?.user?.id != userid) {
             return {
                 notFound:true
@@ -72,7 +72,6 @@ export const getServerSideProps = wrapper(async({pn:data,token,req,res,params})=
         meta.id=id;
         meta.slug=slugg;
         meta.image=`${process.env.CONTENT_URL}/ogimage/chord/${slugg}`
-        meta.youtube=youtube
         meta.author=user_login;
         meta.authorName=user_nama;
         meta.published=dayjs(datetime).utcOffset(7).format("YYYY-MM-DDTHH:mm:ssZ");
@@ -841,7 +840,7 @@ const ChordPageStyle=({classes,meta,err})=>{
                             </div>
                         ) : data ? (
                             <div>
-                                {meta?.youtube!==null && meta?.youtube?.length > 0 && data?.seen?.number !== undefined && (
+                                {/*meta?.youtube!==null && meta?.youtube?.length > 0 && data?.seen?.number !== undefined && (
                                     <div key='player' style={{marginBottom:30}}>
                                         <Player
                                             url={meta?.youtube}
@@ -850,7 +849,7 @@ const ChordPageStyle=({classes,meta,err})=>{
                                             provider='youtube'
                                         />
                                     </div>
-                                )}
+                                )*/}
                                 <div key='ads' style={{marginBottom:30}}><AdsBanner1 /></div>
                                 <div key='chord-container' id='renderContainer'>
                                     <Chord template={data?.text} transpose={transpose} style={{fontSize:(fontsize+9)}} />

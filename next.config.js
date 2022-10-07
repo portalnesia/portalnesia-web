@@ -1,5 +1,5 @@
 const withPWA = require('next-pwa');
-const withTM=require('next-transpile-modules')(['@mui/material','@mui/lab','@mui/styles','@mui/base','@mui/system','@mui/icons-material'])
+const withTM=require('next-transpile-modules')(['@mui/material','@mui/lab','@mui/styles','@mui/base','@mui/system','@mui/icons-material',"@mui/x-date-pickers"])
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
@@ -16,7 +16,7 @@ const nextConfig = {
     env: {
       API_LOCAL_URL: process.env.NODE_ENV !== 'production' ? 'https://api.portalnesia.com' : 'http://localhost:3007',
       DOMAIN:'https://portalnesia.com',
-      URL: process.env.NODE_ENV !== 'production' ? 'http://localhost:3000' : 'https://portalnesia.com',
+      URL: process.env.NODE_ENV !== 'production' ? 'http://localhost:3503' : 'https://portalnesia.com',
       APP_URL: 'https://datas.portalnesia.com',
       SHORT_URL: 'http://kakek.c1.biz',
       CONTENT_URL:'https://content.portalnesia.com',
