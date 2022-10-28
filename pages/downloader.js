@@ -24,7 +24,7 @@ const Downloader=({err})=>{
     if(err) return <ErrorPage statusCode={err} />
     const router=useRouter();
     const socket = useSocket();
-    const {url:urlParams}=router.query;
+    const urlParams=router?.query?.url;
     const [loading,setLoading]=React.useState(false);
     const [value,setValue]=React.useState(urlParams ? decodeURIComponent(urlParams) : "");
     const [error,setError]=React.useState(null)
@@ -67,7 +67,7 @@ const Downloader=({err})=>{
         window?.open(urls);
     },[])
 
-    const handlePrepareDownloadYoutube=React.useCallback((data)=>{
+    const handlePrepareDownloadYoutube=React.useCallback((data)=>()=>{
         if(socket) {
             setBdMsg("Preparing...");
             setBackdrop(true);
@@ -84,7 +84,7 @@ const Downloader=({err})=>{
         })
     },[])
 
-    const handleDownloadYoutube = React.useCallback((link)=>{
+    const handleDownloadYoutube = React.useCallback((link)=>()=>{
         window?.open(link);
         setBackdrop(false)
         setBdMsg("");
@@ -93,7 +93,7 @@ const Downloader=({err})=>{
     },[])
 
     React.useEffect(async()=>{
-        if(router.query.url) {
+        if(typeof urlParams === "string") {
             setLoading(true);
             const input=decodeURIComponent(router.query.url)
             try {
@@ -126,7 +126,7 @@ const Downloader=({err})=>{
                 setLoading(false);
             }
         }
-    },[router.query])
+    },[urlParams])
 
     React.useEffect(()=>{
         function onYoutubeDownloader(dt) {
