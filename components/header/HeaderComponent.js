@@ -457,7 +457,7 @@ const Menuu=({notBack,data,errorInitial,handleBack,optionClickMobile,optionMobil
                 <MenuItem component='a' href={`/messages`} onClick={linkClick(`/messages/[[...slug]]`,'/messages')}><ListItemIcon><MessageIcon /></ListItemIcon> Messages</MenuItem>
                 <MenuItem component='a' href={`/file-manager`} onClick={linkClick(`/file-manager`)}><ListItemIcon><InsertDriveFile /></ListItemIcon> File Manager</MenuItem>
                 <MenuItem component='a' href="/likes" onClick={linkClick(`/likes/[[...slug]]`,"/likes")}><ListItemIcon><FavoriteIcon /></ListItemIcon> Likes</MenuItem>
-                <MenuItem component='a' href={`/setting`} onClick={linkClick(`/setting/[[...slug]]`,`/setting`)}><ListItemIcon><SettingIcon /></ListItemIcon> Setting</MenuItem>
+                <MenuItem component='a' href={`/setting`}><ListItemIcon><SettingIcon /></ListItemIcon> Setting</MenuItem>
                 <Divider />
                 <MenuItem onClick={()=>{handleBack('keyboard',true),handleClose()}}><ListItemIcon><KeyboardIcon /></ListItemIcon> Keyboard Shortcut</MenuItem>
                 <MenuItem onClick={()=>setOpenMenu('theme')}><ListItemIcon><DarkIcon /></ListItemIcon> Themes</MenuItem>
