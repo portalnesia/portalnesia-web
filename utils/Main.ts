@@ -1,3 +1,4 @@
+import crypto from './crypto';
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import utc from 'dayjs/plugin/utc';
@@ -82,4 +83,23 @@ export function base64ToBlob(base64: string) {
         ia[i] = byteString.charCodeAt(i)
 
     return new Blob([ia], { type: mimeString })
+}
+
+type BaseVerifyToken = {token?: string,date: string}
+
+export function verifyToken<D = Record<string,any>>(data_token: string,time: [number,dayjs.ManipulateType]=[1,"h"]) {
+    try {
+        let token_decrypt = crypto.decrypt(data_token);
+        if(token_decrypt.length == 0) return undefined;
+        const token = JSON.parse(token_decrypt) as D & BaseVerifyToken & ({datetime?: string});
+        if(token?.datetime) {
+            token.date = token.datetime
+            delete token.datetime;
+        }
+        const date = getDayJs(token?.date).add(time[0],time[1]);
+        if(date.isBefore(dayjs())) return undefined;
+        return token as D & BaseVerifyToken
+    } catch {
+        return undefined;
+    }
 }

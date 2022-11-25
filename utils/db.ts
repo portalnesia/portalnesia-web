@@ -4,6 +4,7 @@ import crypto from './crypto'
 import dayjs from 'dayjs'
 import {dataUserType} from 'portal/types/user'
 import {GetServerSidePropsResult} from 'next'
+import { verifyToken } from './Main';
 
 export type DBValue = string|number|boolean|null|Date|object|Array<any>
 export type RecordDB = {
@@ -166,19 +167,10 @@ class DB {
         });
         return config;
     }
-    private async getUser(cookie: string) {
-        const decrypted=crypto.decrypt(cookie);
-        const data=JSON.parse(decrypted);
-        if(data?.datetime && data?.key?.length) {
-            if(dayjs().isAfter(dayjs(data.datetime).add(30,"day"))) return false;
-            return[data.key.toString().substring(60),data.key.toString().substring(0,60)];
-        }
-        return undefined;
-    }
     private async checkLogin(cookie: string) {
-        const info = await this.getUser(cookie);
-        if(info) {
-            const user = await this.kata<dataUserType[]>(`SELECT p1.id,p1.user_login,p1.user_nama,p1.user_email,p1.gambar,p1.private,p1.remove,p1.admin,p1.suspend,p1.active,p1.block,p1.paid,p1.paid_expired,p1.verify,p2.id as 'session_id' FROM ${this.prefix}users p1 INNER JOIN (SELECT * FROM ${this.prefix}session  WHERE auth_key = ? AND userid = ? LIMIT 1) p2 ON p1.id = p2.userid WHERE remove = '0' AND block='0' AND active='1' AND suspend='0' LIMIT 1`,[info[1],info[0]])
+        const info = verifyToken<{id?:number,userid?:number}>(cookie.replace("%3A",":"),[30,'day']);
+        if(info && info.id && info.userid) {
+            const user = await this.kata<dataUserType[]>(`SELECT p1.id,p1.user_login,p1.user_nama,p1.user_email,p1.gambar,p1.private,p1.remove,p1.admin,p1.suspend,p1.active,p1.block,p1.paid,p1.paid_expired,p1.verify,p2.id as 'session_id' FROM ${this.prefix}users p1 INNER JOIN (SELECT * FROM ${this.prefix}session  WHERE id = ? AND userid = ? LIMIT 1) p2 ON p1.id = p2.userid WHERE remove = '0' AND block='0' AND active='1' AND suspend='0' LIMIT 1`,[info.id,info.userid])
             if(!user || !user[0]) return undefined;
             const us=user[0];
             us.private=Boolean(us.private)

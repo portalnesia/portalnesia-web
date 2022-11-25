@@ -37,7 +37,8 @@ const useApiProxy=(req,res,next)=>{
     },
     onProxyReq:function(proxy) {
       proxy.setHeader('X-Local-Ip',req.headers["cf-connecting-ip"]);
-    }
+    },
+    followRedirects:true
   });
   return apiProxy(req,res,next);
 }
@@ -104,6 +105,13 @@ app.prepare().then(() => {
     server.get('/ig',(req,res)=>{
       res.writeHead(302,{Location: "https://instagram.com/portalnesia.id"});
       res.end();
+    })
+
+    server.get("/setting/:slug?",(req,res)=>{
+      const slug = req.params.slug;
+      let url = 'https://accounts.portalnesia.com';
+      if(slug) url += '/'+slug;
+      res.redirect(301,url);
     })
 
     server.use(express.json());
