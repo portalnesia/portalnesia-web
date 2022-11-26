@@ -1,37 +1,42 @@
 const withPWA = require('next-pwa');
-const withTM=require('next-transpile-modules')(['@mui/material','@mui/lab','@mui/styles','@mui/base','@mui/system','@mui/icons-material',"@mui/x-date-pickers"])
-const webpack = require('webpack');
-const TerserPlugin = require('terser-webpack-plugin');
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
-//const path = require('path');
-//const  CopyWebpackPlugin = require("copy-webpack-plugin");
-//const  HtmlPlugin = require("html-webpack-plugin");
-//const HtmlTagsPlugin = require("html-webpack-tags-plugin");
-//require("dotenv").config();
-//const prod = args.mode === "production";
+
 const nextConfig = {
-    typescript:{
-      ignoreBuildErrors:true
+    output:'standalone',
+    reactStrictMode: true,
+    poweredByHeader: false,
+    swcMinify: process.env.NODE_ENV === "production",
+    experimental:{
+      modularizeImports:{
+        '@mui/material/styles': {
+          transform: '@mui/material/styles/{{member}}',
+        },
+        '@mui/material/colors': {
+          transform: '@mui/material/colors/{{member}}',
+        },
+        '@mui/icons-material/?(((\\w*)?/?)*)': {
+          transform: '@mui/icons-material/{{ matches.[1] }}/{{member}}',
+        },
+        '@mui/lab/?(((\\w*)?/?)*)': {
+          transform: '@mui/lab/{{ matches.[1] }}/{{member}}',
+        },
+        '@mui/styles/?(((\\w*)?/?)*)': {
+          transform: '@mui/styles/{{ matches.[1] }}/{{member}}',
+        },
+      },
+      transpilePackages:['@mui/material','@mui/x-date-pickers','@mui/lab','@mui/styles','@mui/base','@mui/system','@mui/icons-material','@fancyapps/ui']
     },
-    env: {
-      API_LOCAL_URL: process.env.NODE_ENV !== 'production' ? 'https://api.portalnesia.com' : 'http://localhost:3007',
-      DOMAIN:'https://portalnesia.com',
-      URL: process.env.NODE_ENV !== 'production' ? 'http://localhost:3503' : 'https://portalnesia.com',
-      APP_URL: 'https://datas.portalnesia.com',
-      SHORT_URL: 'http://kakek.c1.biz',
-      CONTENT_URL:'https://content.portalnesia.com',
-      API_URL:'https://api.portalnesia.com',
-      ACCOUNT_URL:'https://accounts.portalnesia.com',
-      LINK_URL:'https://link.portalnesia.com'
+    compiler: {
+      reactRemoveProperties: process.env.NODE_ENV === "production",
+      ...(process.env.NODE_ENV === "production" ? {
+        removeConsole:{
+          exclude:['error']
+        }
+      } : {}),
+      emotion: true
     },
-    images: {
-      domains: ['portalnesia.com','content.portalnesia.com','datas.portalnesia.com'],
-    },
-    poweredByHeader:false,
     pwa: {
       dest: 'public',
       disable:process.env.NODE_ENV !== 'production',
-      register:false,
       maximumFileSizeToCacheInBytes: 20 * 1024 * 1024,
       runtimeCaching: [
         {
@@ -241,25 +246,15 @@ const nextConfig = {
           net:false,
           tls:false
         }
-        config.resolve.alias = {
-          ...config.resolve.alias,
-          crypto:"crypto-browserify",
-          timers:"timers-browserify",
-          stream:"stream-browserify",
-          process:"process/browser"
-        }
+        config.externals['node-fetch'] = 'fetch';
+        config.externals['fetch'] = 'fetch';
+        config.externals.push('pg-hstore')
       }
-      config.plugins.push(
-        new webpack.ProvidePlugin({
-          '$':'jquery',
-          'jQuery':'jquery',
-          //'Peer':['peerjs','default']
-        })
-      )
-      if (!dev && !isServer) {
-        config.optimization.minimizer.push(new TerserPlugin(),new CssMinimizerPlugin())
+      if (dev) {
+        config.devtool = 'cheap-module-source-map';
       }
       config.output.sourcePrefix="";
+      config.module.exprContextCritical = false;
       config.module.unknownContextCritical=false;
       config.module.rules.push(
         {
@@ -277,4 +272,4 @@ const nextConfig = {
     }
 }
 
-module.exports = withTM(withPWA(nextConfig));
+module.exports = withPWA(withSuperjson()(nextConfig));

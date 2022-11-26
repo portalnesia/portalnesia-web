@@ -1,18 +1,17 @@
 diff --git a/node_modules/nprogress/nprogress.css b/node_modules/nprogress/nprogress.css
-index 6752d7f..6c325ac 100644
+index 6752d7f..fc13f17 100644
 --- a/node_modules/nprogress/nprogress.css
 +++ b/node_modules/nprogress/nprogress.css
-@@ -4,15 +4,15 @@
+@@ -4,7 +4,7 @@
  }
  
  #nprogress .bar {
 -  background: #29d;
-+  background: #87312d;
++  background: #00AB55;
  
    position: fixed;
--  z-index: 1031;
-+  z-index: 2001;
-   top: 0;
+   z-index: 1031;
+@@ -12,7 +12,7 @@
    left: 0;
  
    width: 100%;
@@ -21,23 +20,3 @@ index 6752d7f..6c325ac 100644
  }
  
  /* Fancy blur effect */
-@@ -22,7 +22,7 @@
-   right: 0px;
-   width: 100px;
-   height: 100%;
--  box-shadow: 0 0 10px #29d, 0 0 5px #29d;
-+  box-shadow: 0 0 10px #87312d, 0 0 5px #87312d;
-   opacity: 1.0;
- 
-   -webkit-transform: rotate(3deg) translate(0px, -4px);
-@@ -45,8 +45,8 @@
-   box-sizing: border-box;
- 
-   border: solid 2px transparent;
--  border-top-color: #29d;
--  border-left-color: #29d;
-+  border-top-color: #87312d;
-+  border-left-color: #87312d;
-   border-radius: 50%;
- 
-   -webkit-animation: nprogress-spinner 400ms linear infinite;
