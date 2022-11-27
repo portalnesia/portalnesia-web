@@ -27,17 +27,16 @@ const ArrowStyle = styled('span')(({ theme }) => ({
 
 export interface MenuPopoverProps extends PopoverProps {
   paperSx?: SxProps<Theme>
+  arrow?:boolean
 }
 
 /**
  * 
  * Custom MenuPopover Components
  * 
- * Source Code: [Github](https://github.com/portalnesia/portalnesia-design/blob/main/src/components/MenuPopover.tsx)
- * 
  * Homepage: [Portalnesia](https://portalnesia.com)
  */
-export default function MenuPopover({ children, paperSx, ...other }: MenuPopoverProps) {
+export default function MenuPopover({ children, paperSx,arrow=true, ...other }: MenuPopoverProps) {
   return (
     <Popover
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -55,7 +54,7 @@ export default function MenuPopover({ children, paperSx, ...other }: MenuPopover
       }}
       {...other}
     >
-      <ArrowStyle className="arrow" />
+      {arrow && <ArrowStyle className="arrow" />}
 
       {children}
     </Popover>

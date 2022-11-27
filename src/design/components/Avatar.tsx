@@ -21,8 +21,8 @@ const classes = {
     blueGrey: 'avaBlueGray'
 }
 
-const Ava = styled(Av,{shouldForwardProp:prop=>prop!=="withTop"})<{withtop?:boolean}>(({withtop,children})=>({
-    ...(withtop && typeof children !== 'string' ? {
+const Ava = styled(Av,{shouldForwardProp:prop=>prop!=="withTop"})<{withtop?:boolean}>(({children})=>({
+    ...(typeof children !== 'string' ? {
         '&.MuiAvatar-root':{
             paddingTop:3
         }
@@ -86,8 +86,6 @@ export interface AvatarProps extends AvaProps {
 /**
  * 
  * Custom Avatar Components
- * 
- * Source Code: [Github](https://github.com/portalnesia/portalnesia-design/blob/main/src/components/Avatar.tsx)
  * 
  * Homepage: [Portalnesia](https://portalnesia.com)
  */

@@ -16,8 +16,6 @@ function InternalExpandMore(props: ExpandMoreProps) {
  * 
  * Custom ExpandMore Components
  * 
- * Source Code: [Github](https://github.com/portalnesia/portalnesia-design/blob/main/src/components/ExpandMore.tsx)
- * 
  * Homepage: [Portalnesia](https://portalnesia.com)
  */
 const ExpandMore = styled(InternalExpandMore,{shouldForwardProp:prop=>prop!=="expand"})(({theme,expand})=>({

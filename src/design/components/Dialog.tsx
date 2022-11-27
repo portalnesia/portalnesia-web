@@ -22,8 +22,6 @@ export interface DialogProps extends Props {
  * 
  * Custom Dialog Components
  * 
- * Source Code: [Github](https://github.com/portalnesia/portalnesia-design/blob/main/src/components/Dialog.tsx)
- * 
  * Homepage: [Portalnesia](https://portalnesia.com)
  */
 export default function Dialog({handleClose,loading,onClose:_,fullScreen,maxWidth="sm",children,title,titleWithClose=true,...other}: DialogProps) {

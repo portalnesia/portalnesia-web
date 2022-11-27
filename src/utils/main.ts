@@ -41,8 +41,12 @@ export function linkUrl(path?: string) {
 export function accountUrl(path?: string) {
     return config.url.account + parsePath(path);
 }
+export function href(path?: string) {
+    const url = !path ? '/' : /^https?\:\/\/portalnesia\.com/.test(path) ? path.replace(/^https?\:\/\/portalnesia\.com/,'') : path;
+    return url;
+}
 export function portalUrl(path?: string) {
-    return process.env.NEXT_PUBLIC_PORTAL_URL + parsePath(path);
+    return process.env.NEXT_PUBLIC_URL + parsePath(path);
 }
 export function profileUrl<D=string|null>(path: string|null) {
     return ((path === 'images/avatar.png' || path === null) ? null : analyzeStaticUrl(path)) as unknown as D;

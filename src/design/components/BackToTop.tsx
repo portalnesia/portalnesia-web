@@ -21,8 +21,6 @@ export interface BackToTopProps {
  * 
  * Custom Back To Top Components
  * 
- * Source Code: [Github](https://github.com/portalnesia/portalnesia-design/blob/main/src/components/BackToTop.tsx)
- * 
  * Homepage: [Portalnesia](https://portalnesia.com)
  */
 export default function BackToTop({sx,enabled=true,color='secondary'}: BackToTopProps) {

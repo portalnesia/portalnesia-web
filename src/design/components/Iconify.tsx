@@ -14,8 +14,6 @@ export interface IconifyProps extends BoxProps {
  * 
  * Custom Iconify Components
  * 
- * Source Code: [Github](https://github.com/portalnesia/portalnesia-design/blob/main/src/components/Iconify.tsx)
- * 
  * Homepage: [Portalnesia](https://portalnesia.com)
  */
 export default function Iconify({ icon, sx, ...other }: IconifyProps) {

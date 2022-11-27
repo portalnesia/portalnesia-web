@@ -76,7 +76,7 @@ export default function GlobalStyles({styles}: GlobalStylesProps) {
         },
         'code:not(.hljs), blockquote, code.code:not(.hljs)':{
           background:theme.palette.action.hover,
-          color: theme.palette.mode === 'dark' ? theme.palette.primary.light : theme.palette.primary.dark,
+          //color: theme.palette.mode === 'dark' ? theme.palette.primary.light : theme.palette.primary.dark,
           borderRadius:'.5rem',
           padding:'.15rem .5rem',
         },

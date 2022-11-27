@@ -75,8 +75,6 @@ export interface LabelProps extends React.DetailedHTMLProps<React.HTMLAttributes
  * 
  * Custom Label Components
  * 
- * Source Code: [Github](https://github.com/portalnesia/portalnesia-design/blob/main/src/components/Label.tsx)
- * 
  * Homepage: [Portalnesia](https://portalnesia.com)
  */
 export default function Label({ color = 'default', variant = 'ghost', children, ...other }: LabelProps) {

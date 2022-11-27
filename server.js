@@ -3,14 +3,12 @@ const express = require('express')
 const next = require('next')
 const cors = require('cors')
 const dev = process.env.NODE_ENV !== 'production'
-const port = process.env.NODE_ENV === 'production' ? 3000 : 3503;
 const hostn = "localhost";
 const app = next({ dev })
 const handle = app.getRequestHandler()
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const helmet=require('helmet')
 const canvasProxy = require('html2canvas-proxy');
-const path = require('path');
 
 const corsOrigin = [/\.portalnesia\.com$/,"https://portalnesia.com"];
 
@@ -44,6 +42,7 @@ const useApiProxy=(req,res,next)=>{
 }
 
 app.prepare().then(() => {
+    const port = process.env.PORT;
     const server = express()
 
     server.use('/canvas-proxy', canvasProxy());
@@ -64,8 +63,6 @@ app.prepare().then(() => {
     }));
     server.use(helmet.xssFilter());
 
-    //server.use('/design/*/edit/*',exampleProxy);
-    //server.use('/user/*/resume',exampleProxy)
     server.use('/user/*/photo_profile',useExampleProxy)
     server.use('/email/preview/*',useExampleProxy);
     server.get('/sitemap.xml', useApiProxy);

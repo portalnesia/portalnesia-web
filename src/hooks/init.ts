@@ -12,6 +12,9 @@ import useDarkTheme from '@design/hooks/useDarkTheme'
  * GET FIREBASE APP CHECK TOKEN
  */
 async function getAppToken(callback: (token: string)=>void) {
+    if(process.env.NODE_ENV !== "production") {
+      (self as any).FIREBASE_APPCHECK_DEBUG_TOKEN = process.env.NEXT_PUBLIC_APP_CHECK_DEBUG;
+    }
     const provider = new ReCaptchaV3Provider(config.recaptcha);
     const appCheck = initializeAppCheck(firebase,{provider,isTokenAutoRefreshEnabled:true});
   
@@ -31,7 +34,7 @@ export default function useInit() {
     const router = useRouter();
     const dispatch = useDispatch();
     const [adBlock,setAdBlock] = useState(false);
-    const {checkTheme} = useDarkTheme();
+    const {checkTheme,setHighlightJs} = useDarkTheme();
     const isReady = router.isReady
 
     useEffect(()=>{
@@ -51,7 +54,7 @@ export default function useInit() {
       async function init() {
         try {
           const theme = checkTheme();
-          //setTheme(theme.theme);
+          setHighlightJs(theme.redux_theme);
           const token = await getAppToken(onTokenIsChanged);
           unsubcribe = token.unsubcribe;
           dispatch({type:"CUSTOM",payload:{appToken:token.token,theme:theme.theme,redux_theme:theme.redux_theme}});
@@ -77,16 +80,16 @@ export default function useInit() {
         if(unsubcribe) unsubcribe();
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[])
+    },[checkTheme])
 
     useEffect(()=>{
-        if(isReady) {
-            const locale = getCookie('NEXT_LOCALE');
-            if(typeof locale === "string" && (router.locale||'en')!==(locale||'en')) {
-                const {pathname,query,asPath} = router;
-                router.replace({pathname,query},asPath,{locale:(locale||'en')})
-            }
-        }
+      if(isReady) {
+        /*const locale = getCookie('NEXT_LOCALE');
+        if(typeof locale === "string" && (router.locale||'en')!==(locale||'en')) {
+          const {pathname,query,asPath} = router;
+          router.replace({pathname,query},asPath,{locale:(locale||'en')})
+        }*/
+      }
     /* eslint-disable-next-line react-hooks/exhaustive-deps */
     },[isReady])
 

@@ -1,7 +1,9 @@
 import { Session, SubscribeEmail } from "./session"
 import User, { Follow } from "./user"
-import type { Sequelize } from "sequelize";
+import './news'
 import dbOri,{DB} from './db'
+import Chord from "./chord";
+import Pages from "./pages";
 
 let db: DB|undefined;
 
@@ -21,4 +23,9 @@ function initRelation() {
     Session.belongsTo(User.scope("active"),{targetKey:'id',foreignKey:'userid',onDelete:"CASCADE"})
     SubscribeEmail.belongsTo(User.scope("active"),{targetKey:'id',foreignKey:'userid',onDelete:"CASCADE"})
     User.hasMany(SubscribeEmail,{sourceKey:'id',foreignKey:'userid',onDelete:"CASCADE",as:{singular:"emailSubcription",plural:"emailSubcriptions"},scope:{subcribe:true}})
+
+    Chord.belongsTo(User.scope("active"),{foreignKey:"userid",targetKey:'id',onDelete: "CASCADE"})
+
+    Pages.belongsTo(User.scope("active"),{foreignKey:'userid',targetKey:'id',onDelete:"CASCADE"})
+    Pages.belongsTo(User.scope("active"),{foreignKey:'userid_edit',targetKey:'id',onDelete:"CASCADE",as:"editUser"})
 }

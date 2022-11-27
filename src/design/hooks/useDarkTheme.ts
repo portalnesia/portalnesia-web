@@ -18,25 +18,29 @@ export default function useDarkTheme() {
         dispatch({type:"REDUX_THEME",payload:val2})
     },[])
 
+    const setHighlightJs = useCallback((value: State['redux_theme'])=>{
+      const lightStyle = document.querySelector('link.higtlightjs-light');
+      const darkStyle = document.querySelector('link.higtlightjs-dark');
+
+      if(value === 'light') {
+          darkStyle?.setAttribute('disabled','disabled');
+          lightStyle?.removeAttribute('disabled');
+      } else {
+          lightStyle?.setAttribute('disabled','disabled');
+          darkStyle?.removeAttribute('disabled');
+      }
+    },[])
+
     const setTheme = useCallback((value: State['theme'],force?:boolean)=>{
       const winDark = window?.matchMedia && window?.matchMedia('(prefers-color-scheme: dark)').matches;
       const prefersDark = prefersDarkMode || winDark;
       const newVal:State['redux_theme'] = (prefersDark && value=='auto')||value=='dark' ? 'dark' : 'light';
       const kuki:State['theme'] = ['light','dark','auto'].indexOf(value) !== -1 ? value : 'auto';
       if(force!==true) setCookie('theme',kuki,{expires:getDayJs().add(1,"year").toDate(),domain:domainCookie});
-      /*const lightStyle = document.querySelector('link.higtlightjs-light');
-      const darkStyle = document.querySelector('link.higtlightjs-dark');
-
-      if(newVal === 'light') {
-          darkStyle?.setAttribute('disabled','disabled');
-          lightStyle?.removeAttribute('disabled');
-      } else {
-          lightStyle?.setAttribute('disabled','disabled');
-          darkStyle?.removeAttribute('disabled');
-      }*/
+      setHighlightJs(newVal)
       // @ts-ignore
       dispatch(sendTheme(kuki,newVal));
-  },[prefersDarkMode,dispatch,sendTheme])
+  },[prefersDarkMode,dispatch,sendTheme,setHighlightJs])
 
     const checkTheme = useCallback(()=>{
       const theme = getCookie('theme') as State['theme']|undefined;
@@ -60,5 +64,5 @@ export default function useDarkTheme() {
       return result;
     },[prefersDarkMode])
 
-    return {theme,isDark,setTheme,prefersDarkMode,checkTheme}
+    return {theme,isDark,setTheme,prefersDarkMode,checkTheme,setHighlightJs}
 }

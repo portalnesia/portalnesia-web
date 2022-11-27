@@ -1,9 +1,10 @@
 import {useCallback,useState,useMemo} from 'react'
 import type {PaginationProps} from '@mui/material'
 import Paging from '@mui/material/Pagination';
+import Box,{BoxProps} from '@mui/material/Box';
 import { useRouter } from 'next/router';
 
-export function usePagination(initialPage: number|true=1): [number,(e: any,page: number)=>void] {
+export function usePagination(initialPage: number|true=true): [number,(e: any,page: number)=>void] {
   const router = useRouter();
   const rPage = router.query?.page;
   const [sPage,setPage] = useState(typeof initialPage === 'number' ? initialPage : Number(rPage||1));
@@ -24,11 +25,11 @@ export function usePagination(initialPage: number|true=1): [number,(e: any,page:
     } else {
       const {pathname,query,asPath}=router;
       const q = {...query,page:next_page};
-      const url = new URL(`${process.env.NEXT_PUBLIC_URL}/${asPath}`);
+      const url = new URL(`${process.env.NEXT_PUBLIC_URL}${asPath}`);
       const quer = url.searchParams;
       quer.set('page',`${next_page}`)
       const path = `${url.pathname}?${quer.toString()}`
-      router.replace({pathname,query:q},path,{shallow:true})
+      router.push({pathname,query:q},path,{shallow:true})
     }
   },[initialPage,router])
 
@@ -37,4 +38,12 @@ export function usePagination(initialPage: number|true=1): [number,(e: any,page:
 
 export default function Pagination({page,count,...other}: PaginationProps) {
     return <Paging color='primary' count={Number(count)} page={Number(page)} boundaryCount={2} siblingCount={2} hidePrevButton hideNextButton showFirstButton showLastButton {...other} />
+}
+
+export function BoxPagination({children,...props}: BoxProps) {
+  return (
+    <Box width="100%" minHeight={200} display='flex' flexDirection="column" justifyContent="center" alignItems='center' textAlign='center' {...props}>
+      {children}
+    </Box>
+  )
 }

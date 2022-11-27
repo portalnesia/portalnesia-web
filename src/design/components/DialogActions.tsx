@@ -13,8 +13,6 @@ export interface DialogActionsProps extends Props {
  * 
  * Custom Dialog Action Components
  * 
- * Source Code: [Github](https://github.com/portalnesia/portalnesia-design/blob/main/src/components/Dialog.tsx)
- * 
  * Homepage: [Portalnesia](https://portalnesia.com)
  */
 export default function DialogActions({fixed,children,...rest}: DialogActionsProps) {
