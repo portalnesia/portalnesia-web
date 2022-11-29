@@ -36,7 +36,7 @@ class MyDocument extends Document {
           {process.env.NODE_ENV==='production' ? <script key='arcio' src="https://arc.io/widget.min.js#3kw38brn" /> : null}
           {process.env.NODE_ENV==='production' ? <script key="instatus" src="https://portalnesia.instatus.com/widget/script.js" /> : null}
         </Head>
-        <body style={{overflow:'hidden'}}>
+        <body>
           <Main />
           <NextScript />
           <div id="wrapfabtest"><div className="adBanner" style={{backgroundColor: 'transparent',height: 1,width: 1}}></div></div>
