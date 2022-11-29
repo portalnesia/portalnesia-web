@@ -31,7 +31,7 @@ const GREY = {
 export const PRIMARY = {
   lighter: '#C8FACD',
   light: '#5BE584',
-  main: '#00AB55',
+  main: '#2f6f4e', //"#00AB55"
   dark: '#007B55',
   darker: '#005249',
   contrastText: '#fff'
@@ -118,6 +118,10 @@ const palette: PaletteOptions = {
     hoverOpacity: 0.08,
     disabledOpacity: 0.48,
     selectedOpacity: 0.16
+  },
+  customColor:{
+    link: "#00AB55",
+    linkIcon: PRIMARY.main
   }
 };
 

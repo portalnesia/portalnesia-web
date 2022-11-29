@@ -1,6 +1,6 @@
 import Container from "@comp/Container";
 import Pages from "@comp/Pages";
-import { Parser } from "@comp/Parser";
+import { Parser, usePageContent } from "@design/components/Parser";
 import SWRPages from "@comp/SWRPages";
 import View from "@comp/View";
 import useSWR from "@design/hooks/swr";
@@ -14,6 +14,10 @@ import wrapper, { BackendError } from "@redux/store";
 import { IPages } from "@type/general";
 import { useRouter } from "next/router";
 import React from "react";
+import Hidden from "@mui/material/Hidden";
+import Sidebar from "@design/components/Sidebar";
+import PaperBlock from "@design/components/PaperBlock";
+import { HtmlMdUp } from "@design/components/TableContent";
 
 export const getServerSideProps = wrapper<NewsDetail>(async({params,redirect,fetchAPI})=>{
     const slug = params?.slug;
@@ -42,25 +46,35 @@ export const getServerSideProps = wrapper<NewsDetail>(async({params,redirect,fet
 })
 
 export default function NewsPages({data:news,meta}: IPages<NewsDetail>) {
+    usePageContent(news);
     const router = useRouter();
     const slug = router.query?.slug;
     const {data,error} = useSWR<NewsDetail>(`/v2/news/${slug?.[0]}/${slug?.[1]}`,{fallbackData:news});
 
     return (
         <Pages title={meta?.title} desc={meta?.desc}>
-            <DefaultLayout>
-                <View>
-                    <SWRPages loading={!data&&!error} error={error}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12} lg={8}>
-                                <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
-                                    <Typography variant='h3' component='h1'>{data?.title||news.title}</Typography>
-                                </Box>
+            <DefaultLayout navbar={{tableContent:data}}>
+                <SWRPages loading={!data&&!error} error={error}>
+                    <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={5}>
+                        <Typography variant='h3' component='h1'>{data?.title||news.title}</Typography>
+                    </Box>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} md={8}>
+                            <Box id='blog-content'>
                                 {data && <Parser html={data?.text} />}
-                            </Grid>
+                            </Box>
                         </Grid>
-                    </SWRPages>
-                </View>
+                        <Grid item xs={12} md={4}>
+                            <Hidden mdDown>
+                                <Sidebar id='blog-content'>
+                                    <PaperBlock title="Table of Content">
+                                        <HtmlMdUp data={data} />
+                                    </PaperBlock>
+                                </Sidebar>
+                            </Hidden>
+                        </Grid>
+                    </Grid>
+                </SWRPages>
             </DefaultLayout>
         </Pages>
     )

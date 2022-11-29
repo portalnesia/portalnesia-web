@@ -10,7 +10,11 @@ declare module '@mui/material' {
   }
   export interface Palette {
     gradients: typeof GRADIENTS,
-    chart: typeof CHART_COLORS
+    chart: typeof CHART_COLORS,
+    customColor: {
+      link: string
+      linkIcon: string
+    }
   }
   export interface PaletteColor {
     lighter: string,
@@ -32,7 +36,11 @@ declare module '@mui/material' {
 
   export interface PaletteOptions {
     gradients: typeof GRADIENTS,
-    chart: typeof CHART_COLORS
+    chart: typeof CHART_COLORS,
+    customColor: {
+      link: string,
+      linkIcon: string
+    }
   }
 
   export type LoadingButtonProps<

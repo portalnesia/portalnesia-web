@@ -55,7 +55,7 @@ export type ChordAttribute = {
     ifttt?: boolean
 }
 
-export class Chord extends Model<ChordAttribute> {
+/*export class Chord extends Model<ChordAttribute> {
     content_type?: 'chord' | 'pages' | 'news' | 'url' | 'blog' | 'thread' | 'files' | undefined = 'chord'
     declare id: number
     declare userid: number
@@ -150,4 +150,4 @@ Chord.init({
     underscored:true
 })
 
-export default Chord
+export default Chord*/

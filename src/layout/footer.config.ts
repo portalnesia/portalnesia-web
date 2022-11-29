@@ -29,9 +29,55 @@ export const generalFooter: IFooter[] = [
   }
 ]
 
+export const featuresFooter: IFooter[] = [{
+  name:"News",
+  link:"/news"
+},{
+  name:"Chord",
+  link:"/chord"
+},{
+  name:"Twibbon",
+  link:"/twibbon"
+},{
+  name:"Blog",
+  link:"/blog"
+},{
+  name:"Quiz",
+  link:"/quiz"
+},{
+  name:"URL Shortener",
+  link:'/url'
+}]
+
+export const toolsFooter: IFooter[] = [{
+  name:"Transform Coordinate",
+  link:'/geodata/transform-coordinate'
+},{
+  name:"QR Code Generator",
+  link:'/qr-code'
+},{
+  name:"Parse HTML",
+  link:"/parse-html"
+},{
+  name:"Random Number Generator",
+  link:"/random-number"
+},{
+  name:"Downloader",
+  link:"/downloader"
+},{
+  name:"Images Checker",
+  link:"/images-checker"
+}]
+
 export const footerMenu: {header:string,child:IFooter[]}[] = ([
   {
-    header:"Company",
-    child:[...generalFooter]
-  },
+    header:"Features",
+    child:featuresFooter
+  },{
+    header:"Tools",
+    child:toolsFooter
+  },{
+    header:"Help",
+    child:generalFooter
+  }
 ])

@@ -19,7 +19,7 @@ function SvgLogo({size}: SvgProps) {
     <SvgIcon {...(size ? {sx:{fontSize:size}} : {})} width="655.000000pt" height="665.000000pt" viewBox="0 0 655.000000 665.000000"
     preserveAspectRatio="xMidYMid meet">
       <g transform="translate(0.000000,665.000000) scale(0.100000,-0.100000)"
-      fill={theme.palette.mode === "dark" ? theme.palette.primary.lighter : "#2f6f4e"} stroke="none">
+      fill={theme.palette.customColor.linkIcon} stroke="none">
       <path d="M1167 6594 c-172 -37 -313 -112 -432 -229 -93 -90 -150 -180 -192
       -300 l-28 -80 -3 -2968 -2 -2967 495 0 495 0 0 2780 0 2780 533 0 532 0 130
       -158 c107 -129 900 -1084 1258 -1514 49 -60 95 -108 103 -108 12 0 14 138 14

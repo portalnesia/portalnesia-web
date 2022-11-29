@@ -18,13 +18,16 @@ import Tooltip from "@mui/material/Tooltip";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
 import { useRouter } from "next/router";
 import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {NavbarPopover} from "@layout/NavbarPopover";
+import {CustomListItemText, NavbarPopover} from "@layout/NavbarPopover";
 import Fade from "@mui/material/Fade";
 import IconButtonActive from "@comp/IconButtonActive";
 import { alpha } from '@mui/system/colorManipulator';
 import Typography from "@mui/material/Typography";
-import ListItemText from "@mui/material/ListItemText";
 import MenuPopover from "@design/components/MenuPopover";
+import useResponsive from "@design/hooks/useResponsive";
+import dynamic from "next/dynamic";
+
+const HtmlMdDown = dynamic(()=>import('@design/components/TableContent').then(m=>m.HtmlMdDown),{ssr:false})
 
 const RootStyle = styled(AppBar,{shouldForwardProp:prop=>prop!=="scrolled"})<{scrolled?: boolean}>(({ theme,scrolled }) => ({
     top:0,
@@ -52,7 +55,7 @@ const MenuDesktop = styled(ButtonBase,{
     },
     ...(active ? {
         '& svg':{
-            color:theme.palette.primary.main
+            color:theme.palette.customColor.linkIcon
         }
     } : {}),
     ...(childActive && {
@@ -63,7 +66,7 @@ const MenuDesktop = styled(ButtonBase,{
             height: '100%',
             borderRadius:5,
             position: 'absolute',
-            backgroundColor: alpha(theme.palette.primary.main, 0.22)
+            backgroundColor: alpha(theme.palette.customColor.linkIcon, 0.22)
         }
     })
 }))
@@ -76,8 +79,8 @@ function MenuChild({data}: {data: INavbarChild}) {
     const {name,link,desc} = data;
     return (
         <Link key={name} href={link} legacyBehavior passHref>
-            <MenuDesktop component='a' sx={{p:2,width:'100%',borderRadius:2}} className='no-underline'>
-                <ListItemText primary={name} secondary={desc} />
+            <MenuDesktop title={desc||name} component='a' sx={{p:2,width:'100%',height:'100%',borderRadius:2}} className='no-underline'>
+                <CustomListItemText primary={name} secondary={desc} />
             </MenuDesktop>
         </Link>
     )
@@ -108,19 +111,18 @@ function NavbarMenuDesktop({data}: NavbarMenuDesktopProps) {
         }
     },[router])
 
-    // TODO - Add child
     if(child) {
         return (
             <>
                 <Tooltip title={tooltip||name}>
                     <MenuDesktop ref={anchorRef} className='no-underline' sx={{px:2}} childActive={open} onClick={handleOpen}>
-                        <Iconify icon={open && iconActive ? iconActive : icon} sx={{width:35,height:35,...(open ? {color:'primary.main'} : {})}} />
+                        <Iconify icon={open && iconActive ? iconActive : icon} sx={{width:35,height:35,...(open ? {color:'customColor.linkIcon'} : {})}} />
                     </MenuDesktop>
                 </Tooltip>
                 <MenuPopover arrow={false} transformOrigin={undefined} open={open} onClose={handleOpen} anchorEl={anchorRef.current} paperSx={{py:1,px:2,pb:2,width:'60%',minWidth:800}}>
                     <Typography variant='h5' sx={{mb:2}}>{name}</Typography>
                         
-                    <Grid container spacing={1}>
+                    <Grid container spacing={1} alignItems='center'>
                         <Grid item xs={6}>
                             <Box bgcolor='background.default' p={2} borderRadius={2}>
                                 {child.filter((_,i)=>i%2 === 0).map(c=>(
@@ -152,7 +154,7 @@ function NavbarMenuDesktop({data}: NavbarMenuDesktopProps) {
                     </MenuDesktop>
                 </Tooltip>
             </Link>
-            <Box {...(isActive ? {} : {display:'none'})} width='100%' height={4} position='absolute' sx={{backgroundColor:'primary.main'}} bottom={0} left={0} />
+            <Box {...(isActive ? {} : {display:'none'})} width='100%' height={4} position='absolute' sx={{backgroundColor:'customColor.linkIcon'}} bottom={0} left={0} />
         </Div>
             
     )
@@ -198,7 +200,7 @@ function Search() {
                 </IconButtonActive></Tooltip>
                 
                 <Fade in={open}>
-                    <Box position='absolute' bgcolor='background.paper' px={2} py={1} width='100%' left={0} top={64}>
+                    <Box position='absolute' bgcolor='background.paper' px={2} py={1} width='100%' left={0} top={64} zIndex={1}>
                         <SearchComp spacing={1} alignItems='center' sx={{px:2,py:1}}>
                         <InputBase
                             sx={{width:'100%'}}
@@ -216,13 +218,20 @@ function Search() {
 
 export interface NavbarProps {
     logo?: LogoProps
+    tableContent?: any
 }
 
-export default function DefaultNavbar({logo}: NavbarProps) {
+export default function DefaultNavbar({logo,tableContent}: NavbarProps) {
     const [scrolled,setScrolled] = useState(false);
     const trigger = useScrollTrigger({
         target: typeof window !== 'undefined' ? window : undefined,
     });
+    const smDown = useResponsive('down','md');
+
+    const dataTableContent = useMemo(()=>{
+        if(smDown && tableContent) return tableContent
+        return undefined;
+    },[smDown,tableContent]);
 
     useEffect(()=>{
         function onScroll() {
@@ -282,6 +291,9 @@ export default function DefaultNavbar({logo}: NavbarProps) {
                     </Grid>
                 </Grid>
             </ToolbarStyle>
+            {dataTableContent && (
+                <HtmlMdDown data={dataTableContent} />
+            )}
         </RootStyle>
     )
 }

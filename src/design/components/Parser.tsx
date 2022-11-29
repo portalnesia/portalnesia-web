@@ -19,6 +19,8 @@ import TableCell from '@mui/material/TableCell'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import { portalUrl, staticUrl } from '@utils/main'
+import Scrollbar from './Scrollbar'
+import { handlePageContent } from './TableContent'
 
 export const editorStyles=(theme: Theme)=>({
   '& pre code':{
@@ -55,7 +57,7 @@ export const editorStyles=(theme: Theme)=>({
   },
   '& a':{
     '&[href]:not(.no-format)':{
-      color: theme.palette.mode === 'dark' ? theme.palette.primary.light : theme.palette.primary.dark,
+      color: theme.palette.customColor.link,
     },
     '&[href]:not(.no-format):hover':{
       textDecoration:'underline'
@@ -76,17 +78,6 @@ const Img = styled(Image)(({theme})=>({
     },
     height:'auto'
 }))
-
-export const handlePageContent=(id: string)=>(e?: React.MouseEvent<HTMLAnchorElement>)=>{
-  if(e && e.preventDefault) e.preventDefault()
-  const conta=document.getElementById(id);
-  //const x = window.matchMedia("(min-width: 1200px)")
-  if(conta){
-    const a=conta.offsetTop,b=a-10;
-    console.log(conta)
-    window.scrollTo({top:b,left:0,behavior:'smooth'});
-  }
-}
 
 export function usePageContent(data?:any) {
   let hashRef=React.useRef<number>();
@@ -222,11 +213,11 @@ const parseOption = (opt : {preview?:boolean}): HTMLReactParserOptions =>({
     // TABLE
     if(node?.type==='tag'&&node?.name==='table'){
       return(
-        <div className='table-responsive'>
+        <Scrollbar>
             <Table>
                 {domToReact(node?.children,parseOption(opt))}
             </Table>
-        </div>
+        </Scrollbar>
       )
     }
     // THEAD

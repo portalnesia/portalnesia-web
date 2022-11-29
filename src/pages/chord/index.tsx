@@ -48,44 +48,42 @@ export default function News() {
     return (
         <Pages title="Chord">
             <DefaultLayout>
-                <View>
-                    <SWRPages loading={!data&&!error} error={error}>
-                        <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
-                            <Container sx={{display:"flex",flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
-                                <Typography variant='h4'>Recent Chord</Typography>
-                                <Button disabled={!data&&!error} ref={orderRef} color='inherit' text onClick={()=>setDOrder(true)} endIcon={<Iconify icon='fe:list-order' />}>{order}</Button>
+                <SWRPages loading={!data&&!error} error={error}>
+                    <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
+                        <Box sx={{display:"flex",flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
+                            <Typography variant='h4'>Recent Chord</Typography>
+                            <Button disabled={!data&&!error} ref={orderRef} color='inherit' text onClick={()=>setDOrder(true)} endIcon={<Iconify icon='fe:list-order' />}>{order}</Button>
 
-                                <MenuPopover open={dOrder} onClose={()=>setDOrder(false)} anchorEl={orderRef.current} paperSx={{py:1,width:150}}>
-                                    {selectArr.map(s=>(
-                                        <MenuItem key={s} sx={{ color: 'text.secondary',py:1 }} onClick={handleOrder(s)} selected={order === s}>
-                                            <ListItemText primary={ucwords(s)} />
-                                        </MenuItem>
-                                    ))}
-                                </MenuPopover>
-                            </Container>
+                            <MenuPopover open={dOrder} onClose={()=>setDOrder(false)} anchorEl={orderRef.current} paperSx={{py:1,width:150}}>
+                                {selectArr.map(s=>(
+                                    <MenuItem key={s} sx={{ color: 'text.secondary',py:1 }} onClick={handleOrder(s)} selected={order === s}>
+                                        <ListItemText primary={ucwords(s)} />
+                                    </MenuItem>
+                                ))}
+                            </MenuPopover>
                         </Box>
-                        <Container>
-                            <Grid container spacing={2}>
-                                {data && data?.data?.length > 0 ? ( data.data.map(d=>(
-                                    <Grid key={d.title} item xs={12} sm={6} md={4} lg={3}>
-                                        <CustomCard link={href(d.link)} title={`${d.artist} - ${d.title}`} />
-                                    </Grid>
-                                ))) : (
-                                    <Grid key={'no-data'} item xs={12}>
-                                        <BoxPagination>
-                                            <Typography>No data</Typography>
-                                        </BoxPagination>
-                                    </Grid>
-                                )}
-                                {data && (
-                                    <Grid sx={{mt:2}} key={'pagination'} item xs={12}>
-                                        <Pagination page={page} onChange={setPage} count={data?.total_page} />
-                                    </Grid>
-                                )}
-                            </Grid>
-                        </Container>
-                    </SWRPages> 
-                </View>
+                    </Box>
+                    <Container>
+                        <Grid container spacing={2}>
+                            {data && data?.data?.length > 0 ? ( data.data.map(d=>(
+                                <Grid key={d.title} item xs={12} sm={6} md={4} lg={3}>
+                                    <CustomCard link={href(d.link)} title={`${d.artist} - ${d.title}`} />
+                                </Grid>
+                            ))) : (
+                                <Grid key={'no-data'} item xs={12}>
+                                    <BoxPagination>
+                                        <Typography>No data</Typography>
+                                    </BoxPagination>
+                                </Grid>
+                            )}
+                            {data && (
+                                <Grid sx={{mt:2}} key={'pagination'} item xs={12}>
+                                    <Pagination page={page} onChange={setPage} count={data?.total_page} />
+                                </Grid>
+                            )}
+                        </Grid>
+                    </Container>
+                </SWRPages>
             </DefaultLayout>
         </Pages>
     )

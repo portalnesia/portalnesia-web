@@ -9,10 +9,10 @@ let popShallow=false,backShallow=false
 
 export default function Loader(){
     const router = useRouter()
+    const events = router.events;
 
     useEffect(()=>{
         const startLoading=()=>{
-            //setOpen(true)
             NProgress.start()
         }
 
@@ -21,7 +21,6 @@ export default function Loader(){
                 backShallow = !popShallow;
             } else {
                 startLoading()
-
                 backShallow = false;
             }
             popShallow = false;
@@ -36,9 +35,9 @@ export default function Loader(){
             stopLoading()
         }
         
-        router.events.on('routeChangeStart',routeChangeStart);
-        router.events.on('routeChangeComplete',completeLoading);
-        router.events.on('routeChangeError',stopLoading);
+        events.on('routeChangeStart',routeChangeStart);
+        events.on('routeChangeComplete',completeLoading);
+        events.on('routeChangeError',stopLoading);
 
         router.beforePopState(({url,as,options})=>{
             if(backShallow && !options.shallow) {
@@ -51,12 +50,11 @@ export default function Loader(){
         })
 
         return()=>{
-            router.events.off('routeChangeStart',routeChangeStart);
-            router.events.off('routeChangeComplete',completeLoading);
-            router.events.off('routeChangeError',stopLoading);
+            events.off('routeChangeStart',routeChangeStart);
+            events.off('routeChangeComplete',completeLoading);
+            events.off('routeChangeError',stopLoading);
         }
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    },[])
+    },[events])
 
     return null;
 }

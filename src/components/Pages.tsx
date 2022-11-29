@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import config from '@src/config';
 import { NextSeo, LogoJsonLd } from 'next-seo';
@@ -11,6 +11,9 @@ import Typography from '@mui/material/Typography';
 import Button from './Button';
 import dynamic from 'next/dynamic';
 import useScrollTrigger from '@mui/material/useScrollTrigger';
+import { KeyboardArrowUp } from '@mui/icons-material';
+import Fab from '@mui/material/Fab';
+import Zoom from '@mui/material/Zoom';
 
 const Dialog = dynamic(()=>import('@design/components/Dialog'))
 const DialogContent = dynamic(()=>import('@design/components/DialogContent'))
@@ -27,6 +30,7 @@ export default function Pages({children,title,desc,keyword}: PageProps) {
     const { adBlock } = useInit();
     const appToken = useSelector(s=>s.appToken);
     const theme = useTheme();
+    const [showToTop,setShowToTop] = useState(false);
 
     const trigger = useScrollTrigger({
         target: typeof window !== 'undefined' ? window : undefined,
@@ -40,6 +44,10 @@ export default function Pages({children,title,desc,keyword}: PageProps) {
         }
     },[title,desc,keyword])
 
+    const handleToTop = useCallback(()=>{
+        window.scrollTo({top:0,left:0,behavior:'smooth'});
+    },[])
+
     useEffect(() => {
         if (!appToken) {
             document.body.classList.add("scroll-disabled")
@@ -47,6 +55,20 @@ export default function Pages({children,title,desc,keyword}: PageProps) {
             document.body.classList.remove("scroll-disabled")
         }
     }, [appToken]);
+
+    useEffect(()=>{
+        function onScroll() {
+          const scroll = document?.documentElement?.scrollTop || document.body.scrollTop;
+          if(scroll > 200) {
+            setShowToTop(true)
+          } else {
+            setShowToTop(false)
+          }
+        }
+        window.addEventListener('scroll',onScroll);
+    
+        return ()=>window.removeEventListener('scroll',onScroll);
+    },[])
 
     return (
         <div>
@@ -99,6 +121,11 @@ export default function Pages({children,title,desc,keyword}: PageProps) {
                     <Button onClick={()=>window.location.reload()}>Refresh</Button>
                 </DialogActions>
             </Dialog>
+            <Zoom in={showToTop}>
+                <Fab size='medium' color='primary' sx={{position:'fixed',bottom:16,right:16}} onClick={handleToTop}>
+                    <KeyboardArrowUp fontSize='large' />
+                </Fab>
+            </Zoom>
         </div>
     )
 }

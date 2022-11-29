@@ -31,6 +31,24 @@ const Theme = [
   }
 ];
 
+export const CustomListItemText = styled(ListItemText)(({theme})=>({
+    '& .MuiListItemText-secondary':{
+        textOverflow:'ellipsis',
+        display:'-webkit-box!important',
+        overflow:'hidden',
+        WebkitBoxOrient:'vertical',
+        WebkitLineClamp:1,
+        color: theme.palette.text.disabled,
+        fontSize:13
+    }
+}))
+export const CustomListItemTextMobile = styled(ListItemText)(({theme})=>({
+    '& .MuiListItemText-secondary':{
+        color: theme.palette.text.disabled,
+        fontSize:13
+    }
+}))
+
 export function NavbarPopover() {
     const router = useRouter()
     const [open,setOpen] = useState(false);
@@ -68,7 +86,7 @@ export function NavbarPopover() {
                 </IconButtonActive>
             </Tooltip>
             <Fade in={open}>
-                <Box position='fixed' bgcolor='background.paper' m={0} ml={'0 !important'} px={2} py={1} pb={2} width='100%' left={0} top={63} height="calc(100vh - 63px)" overflow='auto'>
+                <Box position='fixed' bgcolor='background.paper' m={0} ml={'0 !important'} px={2} py={1} pb={2} width='100%' left={0} top={63} height="calc(100vh - 63px)" overflow='auto' zIndex={1}>
                     <Typography variant='h5' sx={{mb:2}}>Portalnesia Menu</Typography>
 
                     <Box bgcolor='background.default' p={2} borderRadius={2}>
@@ -79,7 +97,7 @@ export function NavbarPopover() {
                                         <Grid key={`${m.name}-${c.name}`} item xs={12} sm={6}>
                                             <Link href={c.link} legacyBehavior passHref>
                                                 <MenuButton component='a' sx={{p:2}} className='no-underline'>
-                                                    <ListItemText primary={c.name} secondary={c.desc} />
+                                                    <CustomListItemTextMobile primary={c.name} secondary={c.desc} />
                                                 </MenuButton>
                                             </Link>
                                         </Grid>
@@ -89,7 +107,7 @@ export function NavbarPopover() {
                                     <Grid key={m.name} item xs={12} sm={6}>
                                         <Link href={m.link} legacyBehavior passHref>
                                             <MenuButton component='a' sx={{p:2}} className='no-underline'>
-                                                <ListItemText primary={m.name} secondary={m.desc} />
+                                                <CustomListItemTextMobile primary={m.name} secondary={m.desc} />
                                             </MenuButton>
                                         </Link>
                                     </Grid>

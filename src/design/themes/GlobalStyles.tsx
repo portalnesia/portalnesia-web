@@ -123,6 +123,17 @@ export default function GlobalStyles({styles}: GlobalStylesProps) {
         'a:not(.no-underline) p,a:not(.no-underline) span':{
           '&:hover':{textDecoration:'underline'}
         },
+        'a.a-blank[target="blank"]:after, a.a-blank[target="_blank"]:after, a[target="_blank"]:not(.no-blank):after, a[target="blank"]:not(.no-blank):after':{
+          backgroundImage:`url(/svg/new_tab_${theme.palette.mode}.svg)`,
+          backgroundRepeat:'no-repeat',
+          content:'""',
+          display:'inline-block',
+          height: '.8125rem',
+          position:'relative',
+          top:'.125rem',
+          left:1,
+          width: '.8125rem'
+        },
         img: { display: 'block', maxWidth: '100%' },
         // Lazy Load Img
         '.blur-up': {

@@ -21,33 +21,31 @@ export default function News() {
     return (
         <Pages title="Blog">
             <DefaultLayout>
-                <View>
-                    <SWRPages loading={!data&&!error} error={error}>
-                        <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
-                            <Container><Typography variant='h4'>Recent Blog</Typography></Container>
-                        </Box>
-                        <Container>
-                            <Grid container spacing={2}>
-                                {data && data?.data?.length > 0 ? ( data.data.map(d=>(
-                                    <Grid key={d.title} item xs={12} sm={6} md={4} lg={3}>
-                                        <CustomCard link={href(d.link)} title={d.title} image={`${d.image}&export=banner&size=300`} />
-                                    </Grid>
-                                ))) : (
-                                    <Grid key={'no-data'} item xs={12}>
-                                        <BoxPagination>
-                                            <Typography>No data</Typography>
-                                        </BoxPagination>
-                                    </Grid>
-                                )}
-                                {data && (
-                                    <Grid sx={{mt:2}} key={'pagination'} item xs={12}>
-                                        <Pagination page={page} onChange={setPage} count={data?.total_page} />
-                                    </Grid>
-                                )}
-                            </Grid>
-                        </Container>
-                    </SWRPages> 
-                </View>
+                <SWRPages loading={!data&&!error} error={error}>
+                    <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
+                        <Typography variant='h4'>Recent Blog</Typography>
+                    </Box>
+                    <Container>
+                        <Grid container spacing={2}>
+                            {data && data?.data?.length > 0 ? ( data.data.map(d=>(
+                                <Grid key={d.title} item xs={12} sm={6} md={4} lg={3}>
+                                    <CustomCard link={href(d.link)} title={d.title} image={`${d.image}&export=banner&size=300`} />
+                                </Grid>
+                            ))) : (
+                                <Grid key={'no-data'} item xs={12}>
+                                    <BoxPagination>
+                                        <Typography>No data</Typography>
+                                    </BoxPagination>
+                                </Grid>
+                            )}
+                            {data && (
+                                <Grid sx={{mt:2}} key={'pagination'} item xs={12}>
+                                    <Pagination page={page} onChange={setPage} count={data?.total_page} />
+                                </Grid>
+                            )}
+                        </Grid>
+                    </Container>
+                </SWRPages>
             </DefaultLayout>
         </Pages>
     )

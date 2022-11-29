@@ -1,6 +1,5 @@
-import { useRef, useState, memo } from 'react';
+import { useRef, useState, useEffect } from 'react';
 // material
-import { alpha } from '@mui/system/colorManipulator';
 // components
 import Avatar from '@design/components/Avatar';
 import MenuPopover from '@design/components/MenuPopover';
@@ -8,17 +7,26 @@ import {useSelector} from '@redux/store'
 import { State } from '@type/redux';
 import Image from '@comp/Image'
 import { accountUrl } from '@utils/main';
-import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import IconButtonActive from '@comp/IconButtonActive';
+import { Circular } from '@design/components/Loading';
+import { UserPagination } from '@model/user';
+import useSWR from '@design/hooks/swr';
 
 export default function AccountPopover() {
-  const user = useSelector<State['user']>(s=>s.user);
+  const userRedux = useSelector<State['user']>(s=>s.user);
+  const [user,setUser] = useState<State['user']>(userRedux);
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
+  const {data,mutate} = useSWR<UserPagination>(userRedux === undefined ? `/v2/user` : null,{
+    revalidateOnFocus:false,
+    revalidateOnMount:false,
+    revalidateIfStale:false,
+    revalidateOnReconnect:false
+  });
 
   const handleOpen = () => {
     setOpen(true);
@@ -27,18 +35,30 @@ export default function AccountPopover() {
     setOpen(false);
   };
 
+  useEffect(()=>{
+    if(userRedux === undefined) {
+      if(data) setUser(data);
+      else mutate();
+    }
+  },[data])
+
   return (
     <>
       <IconButtonActive
+        disabled={user===undefined}
         ref={anchorRef}
         open={open}
         onClick={handleOpen}
       >
-        <Avatar alt="Profiles">
-          {user && user?.picture ? (
-            <Image src={`${user?.picture}&size=40&watermark=no`} webp alt={user?.name} />
-          ) : undefined}
-        </Avatar>
+        {user === undefined ? (
+          <Circular size={25} />
+        ) : (
+          <Avatar alt="Profiles">
+            {user && user?.picture ? (
+              <Image src={`${user?.picture}&size=40&watermark=no`} webp alt={user?.name} />
+            ) : undefined}
+          </Avatar>
+        )}
       </IconButtonActive>
 
       <MenuPopover

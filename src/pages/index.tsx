@@ -11,7 +11,7 @@ export default function Index() {
 
     return (
         <Pages>
-            <DefaultLayout maxWidth={false}>
+            <DefaultLayout maxWidth={false} withoutContainer>
                 <FirstSection />
 
             </DefaultLayout>

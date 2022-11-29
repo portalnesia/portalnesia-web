@@ -132,8 +132,9 @@ export default function wrapper<P extends {}>(callback: Callback<P>) {
             const portalid = getCookie("portalid",{req:ctx.req,res:ctx.res});
             if(typeof portalid === "string") {
                 session = await checkUserCookie(portalid)
-                if(session && session.user) stored(store,{user:session.user.toPagination()})
-            }
+                if(session && session.user) stored(store,{user:session.user.toPagination()});
+                else stored(store,{user:null});
+            } else stored(store,{user:null});
             
             const fetchAPI = async<D=any>(url: string)=>{
                 const resp = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${url}`,{

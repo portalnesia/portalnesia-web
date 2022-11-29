@@ -63,7 +63,7 @@ export interface BlogDashboard extends BlogDetail {
 
 export type PagesDetail = Without<BlogDetail,'tags'|'category'|'block'|'liked'|'comment_count'>
 
-export class Pages extends Model<PagesAttribute,BlogPagination> {
+/*export class Pages extends Model<PagesAttribute,BlogPagination> {
     content_type?: 'blog' | 'pages' | 'news' | 'chord' | 'url' | 'thread' | 'files' | undefined = 'blog';
     declare slug: string
     declare type: 'blog'|'pages'|'developer'
@@ -200,4 +200,4 @@ Pages.init({
     updatedAt:'datetime_edit',
     underscored:true
 })
-export default Pages
+export default Pages*/

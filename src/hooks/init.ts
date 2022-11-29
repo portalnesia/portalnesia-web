@@ -63,16 +63,17 @@ export default function useInit() {
         }
       }
 
-      setTimeout(()=>{
-        const ads=document.getElementById('wrapfabtest')
-        if(ads) {
-          const height=ads.clientHeight||ads.offsetHeight;
-          if(height <= 0) setAdBlock(true)
-        } else {
-          setAdBlock(true)
-        }
-      },500)
-  
+      if(process.env.NODE_ENV === "production") {
+        setTimeout(()=>{
+          const ads=document.getElementById('wrapfabtest')
+          if(ads) {
+            const height=ads.clientHeight||ads.offsetHeight;
+            if(height <= 0) setAdBlock(true)
+          } else {
+            setAdBlock(true)
+          }
+        },500)
+      }
       
       init();
   

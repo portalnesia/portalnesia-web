@@ -117,6 +117,10 @@ const palette: PaletteOptions = {
     focus: GREY[500_24],
     hoverOpacity: 0.08,
     disabledOpacity: 0.48
+  },
+  customColor:{
+    link: PRIMARY.light,
+    linkIcon: PRIMARY.light
   }
 };
 

@@ -35,7 +35,7 @@ export type NewsAttribute = {
     dilihat?: number
 }
 
-export class News extends Model<NewsAttribute> {
+/*export class News extends Model<NewsAttribute> {
 
     declare id: number
     declare source: string
@@ -100,4 +100,4 @@ News.init({
     underscored:true
 })
 
-export default News
+export default News*/

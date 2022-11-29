@@ -13,9 +13,10 @@ export type DefaultLayoutProps = {
     children: React.ReactNode
     maxWidth?: ContainerProps['maxWidth']
     navbar?: NavbarProps
+    withoutContainer?:boolean
 }
 
-export default function DefaultLayout({children,maxWidth,navbar}: DefaultLayoutProps) {
+export default function DefaultLayout({children,maxWidth,navbar,withoutContainer}: DefaultLayoutProps) {
     const [cookieMsg, setCookieMsg] = React.useState<({ severity: AlertProps['severity'], msg: string }) | undefined>(undefined);
     const [showCookieMsg, setShowCookieMsg] = React.useState(false);
 
@@ -35,19 +36,17 @@ export default function DefaultLayout({children,maxWidth,navbar}: DefaultLayoutP
     return (
         <>
             <DefaultNavbar {...navbar} />
-            <Container maxWidth={maxWidth} sx={{p:'0 !important'}}>
-                <Box position='relative' minHeight={`calc(99vh - ${NAVBAR_HEIGHT}px)`}>
-                    <Fade in={showCookieMsg && typeof cookieMsg !== "undefined"} unmountOnExit>
-                        <Box mb={2} width="100%">
-                            <Alert onClose={handleCloseCookieNotification} variant='filled' severity={cookieMsg?.severity || "error"}>{cookieMsg?.msg || ""}</Alert>
-                        </Box>
-                    </Fade>
-                    <Box width="100%" flexGrow={1} pb={16}>
-                        {children}
+            <Container maxWidth={maxWidth} sx={{...(withoutContainer ? {p:'0 !important'} : {py:{xs:3,md:4,lg:5}}),position:'relative',minHeight:`calc(99vh - ${NAVBAR_HEIGHT}px)`}}>
+                <Fade in={showCookieMsg && typeof cookieMsg !== "undefined"} unmountOnExit>
+                    <Box mb={2} width="100%">
+                        <Alert onClose={handleCloseCookieNotification} variant='filled' severity={cookieMsg?.severity || "error"}>{cookieMsg?.msg || ""}</Alert>
                     </Box>
-                    <Footer />
+                </Fade>
+                <Box width="100%" flexGrow={1}>
+                    {children}
                 </Box>
             </Container>
+            <Footer />
         </>
     )
 }
