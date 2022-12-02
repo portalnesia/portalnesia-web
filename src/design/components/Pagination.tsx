@@ -1,8 +1,8 @@
-import {useCallback,useState,useMemo} from 'react'
+import {useCallback,useState,useMemo, useEffect} from 'react'
 import type {PaginationProps} from '@mui/material'
 import Paging from '@mui/material/Pagination';
 import Box,{BoxProps} from '@mui/material/Box';
-import { useRouter } from 'next/router';
+import Router,{useRouter} from 'next/router';
 
 export function usePagination(initialPage: number|true=true): [number,(e: any,page: number)=>void] {
   const router = useRouter();
@@ -23,15 +23,15 @@ export function usePagination(initialPage: number|true=true): [number,(e: any,pa
     if(typeof initialPage === 'number') {
       setPage(next_page);
     } else {
-      const {pathname,query,asPath}=router;
+      const {pathname,query,asPath}=Router;
       const q = {...query,page:next_page};
       const url = new URL(`${process.env.NEXT_PUBLIC_URL}${asPath}`);
       const quer = url.searchParams;
       quer.set('page',`${next_page}`)
       const path = `${url.pathname}?${quer.toString()}`
-      router.push({pathname,query:q},path,{shallow:true})
+      Router.push({pathname,query:q},path,{shallow:true,scroll:true})
     }
-  },[initialPage,router])
+  },[initialPage])
 
   return [page,handlePage]
 }

@@ -51,7 +51,7 @@ export const featuresFooter: IFooter[] = [{
 
 export const toolsFooter: IFooter[] = [{
   name:"Transform Coordinate",
-  link:'/geodata/transform-coordinate'
+  link:'/geodata/transform'
 },{
   name:"QR Code Generator",
   link:'/qr-code'

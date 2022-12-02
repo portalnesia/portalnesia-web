@@ -160,18 +160,22 @@ function NavbarMenuDesktop({data}: NavbarMenuDesktopProps) {
     )
 }
 
-const SearchComp = styled(Stack)(({theme})=>({
+const SearchComp = styled(Stack,{shouldForwardProp:prop=>prop!=='active'})<{active?:boolean}>(({theme,active})=>({
     borderRadius:16,
     backgroundColor:theme.palette.action.hover,
     '&:hover':{
         backgroundColor:theme.palette.divider,
     },
+    ...active ? {
+        backgroundColor:theme.palette.divider,
+    } : {}
 }))
 function Search() {
     const router = useRouter();
     const query = router.query?.q
     const [q,setQ] = useState("");
     const [open,setOpen] = useState(false);
+    const [focus,setFocus] = useState(false);
 
     useEffect(()=>{
         if(typeof query === "string") setQ(decodeURIComponent(query))
@@ -186,9 +190,12 @@ function Search() {
     return (
         <form onSubmit={handleSearch}>
             <Hidden only={['md','xs']}>
-                <SearchComp direction='row' spacing={1} alignItems='center' sx={{px:2,py:1}}>
+                <SearchComp active={focus} direction='row' spacing={1} alignItems='center' sx={{px:2,py:1}}>
                     <InputBase
+                        id='search-input-home'
                         value={q}
+                        onFocus={()=>setFocus(true)}
+                        onBlur={()=>setFocus(false)}
                         onChange={(e)=>setQ(e.target.value)}
                         placeholder="Search..."
                         inputProps={{ 'aria-label': 'Search'}} />
@@ -201,10 +208,13 @@ function Search() {
                 
                 <Fade in={open}>
                     <Box position='absolute' bgcolor='background.paper' px={2} py={1} width='100%' left={0} top={64} zIndex={1}>
-                        <SearchComp spacing={1} alignItems='center' sx={{px:2,py:1}}>
+                        <SearchComp active={focus} spacing={1} alignItems='center' sx={{px:2,py:1}}>
                         <InputBase
+                            id='search-input-home'
                             sx={{width:'100%'}}
                             value={q}
+                            onFocus={()=>setFocus(true)}
+                            onBlur={()=>setFocus(false)}
                             onChange={(e)=>setQ(e.target.value)}
                             placeholder="Search..."
                             inputProps={{ 'aria-label': 'Search'}} />

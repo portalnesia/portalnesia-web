@@ -61,7 +61,7 @@ export const navbarMenu: INavbar[] = [{
     icon:"fe:app-menu",
     child:[{
         name:"Transform Coordinate",
-        link:"/geodata/tranasform-coordinate",
+        link:"/geodata/transform",
         desc:"Insert value pairs of geographic coordinates and transform them to different coordinate system or cartographic projection"
     },{
         name:"QR Code Generator",

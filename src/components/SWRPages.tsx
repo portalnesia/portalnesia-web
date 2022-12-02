@@ -14,7 +14,7 @@ export default function SWRPages({children,error,loading=true,minHeight=200}: SW
     return(
         <>
             {loading ? (
-                <Box display='flex' minHeight={minHeight} width="100%"><Circular /></Box>
+                <Box display='flex' justifyContent="center" alignItems='center' textAlign='center' minHeight={minHeight} width="100%"><Circular /></Box>
             ) : error ? (
                 <Box minHeight={minHeight} display='flex' flexDirection="column" justifyContent="center" alignItems='center' textAlign='center'>
                     <Typography>{error?.message||"Something went wrong"}</Typography>

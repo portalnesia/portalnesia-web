@@ -6,6 +6,10 @@ export type State = {
     redux_theme:'light'|'dark',
     user?: UserPagination | null,
     appToken?: string
+    hotkeys:{
+        disabled:boolean
+        dialog: 'keyboard'|'feedback'|undefined
+    }
 }
 
 export type ActionType = {

@@ -6,7 +6,11 @@ const initialState: State={
     theme:'auto',
     redux_theme:'light',
     user:undefined,
-    appToken:undefined
+    appToken:undefined,
+    hotkeys:{
+      disabled:false,
+      dialog:undefined
+    }
 }
 
 const rootReducer: Reducer<State,ActionType> = (state = initialState, action) => {

@@ -131,7 +131,7 @@ export default function GlobalStyles({styles}: GlobalStylesProps) {
           height: '.8125rem',
           position:'relative',
           top:'.125rem',
-          left:1,
+          left:5,
           width: '.8125rem'
         },
         img: { display: 'block', maxWidth: '100%' },

@@ -3,7 +3,7 @@ import { useRef, useState, useEffect } from 'react';
 // components
 import Avatar from '@design/components/Avatar';
 import MenuPopover from '@design/components/MenuPopover';
-import {useSelector} from '@redux/store'
+import {useDispatch, useSelector} from '@redux/store'
 import { State } from '@type/redux';
 import Image from '@comp/Image'
 import { accountUrl } from '@utils/main';
@@ -17,15 +17,14 @@ import { UserPagination } from '@model/user';
 import useSWR from '@design/hooks/swr';
 
 export default function AccountPopover() {
-  const userRedux = useSelector<State['user']>(s=>s.user);
+  const {user:userRedux,appToken} = useSelector<Pick<State,'user'|'appToken'>>(s=>({user:s.user,appToken:s.appToken}));
   const [user,setUser] = useState<State['user']>(userRedux);
+  const dispatch = useDispatch();
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
   const {data,mutate} = useSWR<UserPagination>(userRedux === undefined ? `/v2/user` : null,{
     revalidateOnFocus:false,
     revalidateOnMount:false,
-    revalidateIfStale:false,
-    revalidateOnReconnect:false
   });
 
   const handleOpen = () => {
@@ -37,10 +36,13 @@ export default function AccountPopover() {
 
   useEffect(()=>{
     if(userRedux === undefined) {
-      if(data) setUser(data);
+      if(data) {
+        setUser(data);
+        dispatch({type:"CUSTOM",payload:{user:data}});
+      }
       else mutate();
     }
-  },[data])
+  },[data,appToken]);
 
   return (
     <>

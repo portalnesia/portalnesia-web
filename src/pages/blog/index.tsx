@@ -23,7 +23,7 @@ export default function News() {
             <DefaultLayout>
                 <SWRPages loading={!data&&!error} error={error}>
                     <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
-                        <Typography variant='h4'>Recent Blog</Typography>
+                        <Typography variant='h4' component='h1'>Recent Blog</Typography>
                     </Box>
                     <Container>
                         <Grid container spacing={2}>

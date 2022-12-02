@@ -41,7 +41,7 @@
     "@mui/x-date-pickers": "^5.0.8",
     "@portalnesia/custom-ckeditor5": "^2.1.1",
     "@portalnesia/dayjs-plugins": "^1.0.1",
-    "@portalnesia/utils": "^1.1.9",
+    "@portalnesia/utils": "^1.1.10",
     "@reduxjs/toolkit": "^1.9.0",
     "@types/ckeditor__ckeditor5-core": "^28.0.10",
     "@types/ckeditor__ckeditor5-editor-classic": "^27.1.2",

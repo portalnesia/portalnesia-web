@@ -10,12 +10,27 @@ import Tooltip from '@mui/material/Tooltip'
 import {useTheme} from '@mui/material/styles'
 import { Close } from '@mui/icons-material'
 import { Div } from './Dom'
+import type { DialogContentProps } from './DialogContent'
+import { Without } from '@type/general'
+import type { DialogActionsProps } from './DialogActions'
+import dynamic from 'next/dynamic'
+
+const DialogActions = dynamic(()=>import('./DialogActions'))
+const DialogContent = dynamic(()=>import('./DialogContent'))
 
 export interface DialogProps extends Props {
   handleClose?(): void
   loading?: boolean
   title?: string
   titleWithClose?:boolean
+  /**
+   * DialogContent props without children
+   */
+  content?: Partial<DialogContentProps>
+  /**
+   * DialogActions children
+   */
+  actions?: DialogActionsProps['children']
 }
 
 /**
@@ -24,7 +39,7 @@ export interface DialogProps extends Props {
  * 
  * Homepage: [Portalnesia](https://portalnesia.com)
  */
-export default function Dialog({handleClose,loading,onClose:_,fullScreen,maxWidth="sm",children,title,titleWithClose=true,...other}: DialogProps) {
+export default function Dialog({handleClose,loading,onClose:_,fullScreen,maxWidth="sm",children,title,titleWithClose=true,content,actions,...other}: DialogProps) {
     const theme = useTheme();
     const isDark = theme.palette.mode === "dark"
     const sm = useMediaQuery((t: Theme)=>t.breakpoints.down('sm'));
@@ -51,7 +66,14 @@ export default function Dialog({handleClose,loading,onClose:_,fullScreen,maxWidt
             </DialogTitle>
           </Div>
         )}
-        {children}
+        <DialogContent fixed={fullScreen} sx={{mb:actions ? 6 : 0}} {...content}>
+          {children}
+        </DialogContent>
+        {actions && (
+          <DialogActions fixed={fullScreen}>
+            {actions}
+          </DialogActions>
+        )}
       </Dialogg>
     )
 }

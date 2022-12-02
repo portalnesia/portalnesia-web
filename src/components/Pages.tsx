@@ -113,13 +113,10 @@ export default function Pages({children,title,desc,keyword}: PageProps) {
                 url={portalUrl()}
             />
             {!adBlock && children}
-            <Dialog open={adBlock} title="WARNING!" titleWithClose={false}>
-                <DialogContent>
-                    <Typography>Please support us by disable your adblock!</Typography>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={()=>window.location.reload()}>Refresh</Button>
-                </DialogActions>
+            <Dialog open={adBlock} title="WARNING!" titleWithClose={false} actions={
+                <Button onClick={()=>window.location.reload()}>Refresh</Button>
+            }>
+                <Typography>Please support us by disable your adblock!</Typography>
             </Dialog>
             <Zoom in={showToTop}>
                 <Fab size='medium' color='primary' sx={{position:'fixed',bottom:16,right:16}} onClick={handleToTop}>

@@ -9,6 +9,7 @@ import Backdrop from './Backdrop';
 import Typography from './Typography';
 import IconButton from './IconButton';
 import Autocomplete from './Autocomplete';
+import TableCell from './TableCell';
 import { Theme } from '@mui/material';
 
 export default function ComponentsOverrides(theme: Theme) {
@@ -22,6 +23,7 @@ export default function ComponentsOverrides(theme: Theme) {
     Backdrop(theme),
     Typography(theme),
     IconButton(theme),
-    Autocomplete(theme)
+    Autocomplete(theme),
+    TableCell(theme)
   );
 }

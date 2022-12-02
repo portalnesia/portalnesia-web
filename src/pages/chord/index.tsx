@@ -19,8 +19,6 @@ import MenuPopover from "@design/components/MenuPopover";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemText from "@mui/material/ListItemText";
 import Iconify from "@design/components/Iconify";
-import View from "@comp/View";
-
 
 const selectArr: ('recent'|'popular')[] = ['recent','popular']
 
@@ -35,7 +33,7 @@ export default function News() {
 
     const handleOrder=React.useCallback((order:'recent'|'popular')=>()=>{
         setDOrder(false);
-        router.push({pathname:'/chord',query:{order}},`/chord?order=${order}`,{shallow:true});
+        router.push({pathname:'/chord',query:{order}},`/chord?order=${order}`,{shallow:true,scroll:true});
     /* eslint-disable-next-line react-hooks/exhaustive-deps */
     },[])
 
@@ -51,7 +49,7 @@ export default function News() {
                 <SWRPages loading={!data&&!error} error={error}>
                     <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
                         <Box sx={{display:"flex",flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
-                            <Typography variant='h4'>Recent Chord</Typography>
+                            <Typography variant='h4' component='h1'>Recent Chord</Typography>
                             <Button disabled={!data&&!error} ref={orderRef} color='inherit' text onClick={()=>setDOrder(true)} endIcon={<Iconify icon='fe:list-order' />}>{order}</Button>
 
                             <MenuPopover open={dOrder} onClose={()=>setDOrder(false)} anchorEl={orderRef.current} paperSx={{py:1,width:150}}>
