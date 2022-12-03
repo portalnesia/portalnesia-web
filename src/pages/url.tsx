@@ -3,7 +3,7 @@ import useSWR from "@design/hooks/swr";
 import Typography from "@mui/material/Typography";
 import DefaultLayout from "@layout/default";
 import Box from "@mui/material/Box";
-import React, { useEffect } from "react";
+import React from "react";
 import Grid from "@mui/material/Grid";
 import { ApiError, PaginationResponse } from "@design/hooks/api";
 import { getDayJs, staticUrl } from "@utils/main";
@@ -202,7 +202,7 @@ function UrlLibrary({getMutate}: UrlLibraryProps) {
         }
     },[setNotif,del,mutate])
 
-    useEffect(()=>{
+    React.useEffect(()=>{
         if(getMutate) getMutate(mutate);
     },[getMutate,mutate])
 
