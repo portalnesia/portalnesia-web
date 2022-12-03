@@ -15,6 +15,7 @@ import ExpandMore from '@design/components/ExpandMore';
 import ListItemText from '@mui/material/ListItemText';
 import Link from '@design/components/Link';
 import { useRouter } from 'next/router';
+import Portal from '@mui/material/Portal';
 
 const Theme = [
   {
@@ -85,38 +86,40 @@ export function NavbarPopover() {
                 <Iconify icon={'fe:app-menu'} height={25} width={30} />
                 </IconButtonActive>
             </Tooltip>
-            <Fade in={open}>
-                <Box position='fixed' bgcolor='background.paper' m={0} ml={'0 !important'} px={2} py={1} pb={2} width='100%' left={0} top={63} height="calc(100vh - 63px)" overflow='auto' zIndex={1}>
-                    <Typography variant='h5' sx={{mb:2}}>Portalnesia Menu</Typography>
+            <Portal>
+                <Fade in={open}>
+                    <Box position='fixed' bgcolor='background.paper' m={0} ml={'0 !important'} px={2} py={1} pb={2} width='100%' left={0} top={63} height="calc(100vh - 63px)" overflow='auto' zIndex={1102}>
+                        <Typography variant='h5' sx={{mb:2}}>Portalnesia Menu</Typography>
 
-                    <Box bgcolor='background.default' p={2} borderRadius={2}>
-                        <Grid container spacing={1}>
-                            {navbarMenu.sort((a,b)=>a.child ? 1 : -1).map((m)=>{
-                                if(m.child) {
-                                    return m.child.map(c=>(
-                                        <Grid key={`${m.name}-${c.name}`} item xs={12} sm={6}>
-                                            <Link href={c.link} legacyBehavior passHref>
+                        <Box bgcolor='background.default' p={2} borderRadius={2}>
+                            <Grid container spacing={1}>
+                                {navbarMenu.sort((a,b)=>a.child ? 1 : -1).map((m)=>{
+                                    if(m.child) {
+                                        return m.child.map(c=>(
+                                            <Grid key={`${m.name}-${c.name}`} item xs={12} sm={6}>
+                                                <Link href={c.link} legacyBehavior passHref>
+                                                    <MenuButton component='a' sx={{p:2}} className='no-underline'>
+                                                        <CustomListItemTextMobile primary={c.name} secondary={c.desc} />
+                                                    </MenuButton>
+                                                </Link>
+                                            </Grid>
+                                        ))
+                                    }
+                                    return (
+                                        <Grid key={m.name} item xs={12} sm={6}>
+                                            <Link href={m.link} legacyBehavior passHref>
                                                 <MenuButton component='a' sx={{p:2}} className='no-underline'>
-                                                    <CustomListItemTextMobile primary={c.name} secondary={c.desc} />
+                                                    <CustomListItemTextMobile primary={m.name} secondary={m.desc} />
                                                 </MenuButton>
                                             </Link>
                                         </Grid>
-                                    ))
-                                }
-                                return (
-                                    <Grid key={m.name} item xs={12} sm={6}>
-                                        <Link href={m.link} legacyBehavior passHref>
-                                            <MenuButton component='a' sx={{p:2}} className='no-underline'>
-                                                <CustomListItemTextMobile primary={m.name} secondary={m.desc} />
-                                            </MenuButton>
-                                        </Link>
-                                    </Grid>
-                                )
-                            })}
-                        </Grid>
+                                    )
+                                })}
+                            </Grid>
+                        </Box>
                     </Box>
-                </Box>
-            </Fade>
+                </Fade>
+            </Portal>
         </>
     )
 }

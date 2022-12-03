@@ -16,10 +16,12 @@ import Image from "@comp/Image";
 import DragableFiles, { HandleChangeEvent } from "@design/components/DragableFiles";
 import Divider from "@mui/material/Divider";
 import { AxiosRequestConfig } from "axios";
-import Backdrop from "@design/components/Backdrop";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
+import dynamic from "next/dynamic";
+
+const Backdrop = dynamic(()=>import("@design/components/Backdrop"));
+const List = dynamic(()=>import("@mui/material/List"));
+const ListItem = dynamic(()=>import("@mui/material/ListItem"));
+const ListItemText = dynamic(()=>import("@mui/material/ListItemText"));
 
 export default function ImagesCheckerPages() {
     const [dataFile,setDataFile]=React.useState<string|null>(null);

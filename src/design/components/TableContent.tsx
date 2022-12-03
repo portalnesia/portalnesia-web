@@ -1,6 +1,4 @@
 import React, { useCallback, useEffect, useState,MouseEvent } from 'react'
-import {ucwords} from '@portalnesia/utils'
-import Typography from '@mui/material/Typography'
 import { styled } from '@mui/material/styles'
 import List from '@mui/material/List'
 import Accordion from '@mui/material/Accordion';
@@ -47,7 +45,7 @@ export const ContentSpan = styled('a')(({theme})=>({
   },
 }))
 
-const CustomLi = styled('li')(({theme})=>({
+export const CustomLi = styled('li')(({theme})=>({
   '&.active':{
     color:`${theme.palette.customColor.link} !important`,
   }
@@ -181,7 +179,7 @@ export function HtmlMdUp(props: Args) {
   )
 }
 
-const ASummary = styled(AccordionSummary)(()=>({
+export const ASummary = styled(AccordionSummary)(()=>({
   '& .MuiAccordionSummary-content':{
     margin:'12px 0 !important'
   },

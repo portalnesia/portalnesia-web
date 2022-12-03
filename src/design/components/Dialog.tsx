@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import type {DialogProps as Props,Theme } from '@mui/material'
 import Dialogg from '@mui/material/Dialog'
 import Typography from '@mui/material/Typography'
@@ -48,8 +48,12 @@ export default function Dialog({handleClose,loading,onClose:_,fullScreen,maxWidt
         if(reason === 'escapeKeyDown' && handleClose && !loading) handleClose();
     },[handleClose,loading])
 
+    const isFullscreen = useMemo(()=>{
+      return typeof fullScreen === "boolean" ? fullScreen : sm
+    },[fullScreen,sm])
+
     return (
-      <Dialogg {...(isDark  ? {PaperProps:{elevation:0}} : {})} fullScreen={typeof fullScreen === "boolean" ? fullScreen : sm} onClose={onClose} fullWidth maxWidth={maxWidth} scroll='body' {...other}>
+      <Dialogg {...(isDark  ? {PaperProps:{elevation:0}} : {})} fullScreen={isFullscreen} onClose={onClose} fullWidth maxWidth={maxWidth} scroll='body' {...other}>
         {title && (
           <Div {...(!fullScreen ? {sx:{position:'sticky',top:0,left:0,width:'100%',backgroundColor:'background.paper',zIndex:1}} : {})}>
             <DialogTitle>
@@ -66,11 +70,11 @@ export default function Dialog({handleClose,loading,onClose:_,fullScreen,maxWidt
             </DialogTitle>
           </Div>
         )}
-        <DialogContent fixed={fullScreen} sx={{mb:actions ? 6 : 0}} {...content}>
+        <DialogContent fixed={isFullscreen} sx={{mb:isFullscreen && actions ? 6 : 0}} {...content}>
           {children}
         </DialogContent>
         {actions && (
-          <DialogActions fixed={fullScreen}>
+          <DialogActions fixed={isFullscreen}>
             {actions}
           </DialogActions>
         )}
