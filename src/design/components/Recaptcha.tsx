@@ -24,14 +24,14 @@ class Recaptcha extends React.PureComponent<RecaptchaProps>{
                 res(token)
             })
             .catch((e: any)=>{
-                rej(new ApiError(e?.message||"Failed to get recaptcha token. Please try again"))
+                rej(new ApiError("Failed to get recaptcha token. Please try again"))
             });
         })
     }
     onLoad() {
-        if((window as any).grecaptcha?.ready==='function') {
+        if(typeof (window as any).grecaptcha?.ready==='function') {
             (window as any).grecaptcha?.ready(()=>{
-                this.props.onReady && this.props.onReady()
+                setTimeout(()=>this.props.onReady && this.props.onReady(),500);
             });
         }
     }

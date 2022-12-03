@@ -209,7 +209,7 @@ export default function QrCodePages() {
 
     return (
         <Pages title={fullTitle}>
-            <DefaultLayout>
+            <DefaultLayout maxWidth={false}>
                 <Box pt={isMdDown ? 6 : 0}>
                     <Grid container spacing={4}>
                         <Hidden mdDown>
@@ -222,7 +222,7 @@ export default function QrCodePages() {
                             </Grid>
                         </Hidden>
                         <Grid item xs={12} md={10}>
-                            <Box id='page-content'>
+                            <Box id='page-content' px={{xs:0,md:3,lg:4}}>
                                 <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={3}>
                                     <Typography variant='h4' component='h1'><Span>QR Code Generator</Span>&nbsp;&nbsp;&nbsp;<Span>—</Span>&nbsp;&nbsp;&nbsp;<Span>{title}</Span></Typography>
                                 </Box>
@@ -264,7 +264,7 @@ export default function QrCodePages() {
                     </Grid>
                 </Box>
             </DefaultLayout>
-            <Hidden lgUp>
+            <Hidden mdUp>
                 <SubnavMobile title="Navigation" items={navItems} linkProps={{shallow:true,scroll:true}} active={match} rootSx={{pl:3}} />
             </Hidden>
             <Recaptcha ref={captchaRef} />
@@ -329,7 +329,7 @@ function QrVcard({onChange,input,disabled}: SubCompProps) {
             <Grid key='grid-0' item xs={12}>
                 <Typography variant='h6' component='h4'>Your Profile Data</Typography>
             </Grid>
-            <Grid key='grid-1' item xs={12} md={6}>
+            <Grid key='grid-1' item xs={12} sm={6}>
                 <TextField
                     value={input?.first_name||''}
                     onChange={(e)=>onChange('first_name',e.target.value)}
@@ -339,7 +339,7 @@ function QrVcard({onChange,input,disabled}: SubCompProps) {
                     disabled={disabled}
                 />
             </Grid>
-            <Grid key='grid-2' item xs={12} md={6}>
+            <Grid key='grid-2' item xs={12} sm={6}>
                 <TextField
                     value={input?.last_name||''}
                     onChange={(e)=>onChange('last_name',e.target.value)}
@@ -348,7 +348,7 @@ function QrVcard({onChange,input,disabled}: SubCompProps) {
                     disabled={disabled}
                 />
             </Grid>
-            <Grid key='grid-3' item xs={12} md={6}>
+            <Grid key='grid-3' item xs={12} sm={6}>
                 <TextField
                     value={input?.telephone||''}
                     onChange={(e)=>onChange('telephone',e.target.value)}
@@ -359,7 +359,7 @@ function QrVcard({onChange,input,disabled}: SubCompProps) {
                     disabled={disabled}
                 />
             </Grid>
-            <Grid key='grid-4' item xs={12} md={6}>
+            <Grid key='grid-4' item xs={12} sm={6}>
                 <TextField
                     value={input?.website||''}
                     onChange={(e)=>onChange('website',e.target.value)}
@@ -371,7 +371,7 @@ function QrVcard({onChange,input,disabled}: SubCompProps) {
             <Grid key='grid-5' item xs={12}>
                 <Typography variant='h6' component='h4'>Company Data</Typography>
             </Grid>
-            <Grid key='grid-6' item xs={12} md={6}>
+            <Grid key='grid-6' item xs={12} sm={6}>
                 <TextField
                     value={input?.company||''}
                     onChange={(e)=>onChange('company',e.target.value)}
@@ -380,7 +380,7 @@ function QrVcard({onChange,input,disabled}: SubCompProps) {
                     disabled={disabled}
                 />
             </Grid>
-            <Grid key='grid-7' item xs={12} md={6}>
+            <Grid key='grid-7' item xs={12} sm={6}>
                 <TextField
                     value={input?.position||''}
                     onChange={(e)=>onChange('position',e.target.value)}
@@ -401,7 +401,7 @@ function QrVcard({onChange,input,disabled}: SubCompProps) {
                     disabled={disabled}
                 />
             </Grid>
-            <Grid key='grid-10' item xs={12} md={8} lg={5}>
+            <Grid key='grid-10' item xs={12} sm={7} md={8} lg={5}>
                 <TextField
                     value={input?.city||''}
                     onChange={(e)=>onChange('city',e.target.value)}
@@ -410,7 +410,7 @@ function QrVcard({onChange,input,disabled}: SubCompProps) {
                     disabled={disabled}
                 />
             </Grid>
-            <Grid key='grid-11' item xs={12} md={4} lg={2}>
+            <Grid key='grid-11' item xs={12} sm={5} md={4} lg={2}>
                 <TextField
                     value={input?.post_code||''}
                     onChange={(e)=>onChange('post_code',e.target.value)}
@@ -547,7 +547,7 @@ function QrWifi({onChange,input,disabled}: SubCompProps) {
                     </RadioGroup>
                 </FormControl>
             </Grid>
-            <Grid key='grid-2' item xs={12} md={6}>
+            <Grid key='grid-2' item xs={12} sm={6}>
                 <TextField
                     value={input?.ssid||''}
                     onChange={(e)=>onChange('ssid',e.target.value)}
@@ -557,7 +557,7 @@ function QrWifi({onChange,input,disabled}: SubCompProps) {
                     disabled={disabled}
                 />
             </Grid>
-            <Grid key='grid-3' item xs={12} md={6}>
+            <Grid key='grid-3' item xs={12} sm={6}>
                 <PasswordForm
                     label="Password"
                     value={input?.password||''}
@@ -572,7 +572,7 @@ function QrWifi({onChange,input,disabled}: SubCompProps) {
 function QrGeographic({onChange,input,disabled}: SubCompProps) {
     return(
         <Grid container spacing={2}>
-            <Grid key='grid-0' item xs={12} md={6}>
+            <Grid key='grid-0' item xs={12} sm={6}>
                 <TextField
                     value={input?.latitude||''}
                     onChange={(e)=>onChange('latitude',e.target.value)}
@@ -583,7 +583,7 @@ function QrGeographic({onChange,input,disabled}: SubCompProps) {
                     disabled={disabled}
                 />
             </Grid>
-            <Grid key='grid-1' item xs={12} md={6}>
+            <Grid key='grid-1' item xs={12} sm={6}>
                 <TextField
                     value={input?.longitude||''}
                     onChange={(e)=>onChange('longitude',e.target.value)}

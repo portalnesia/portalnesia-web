@@ -14,6 +14,7 @@ import useScrollTrigger from '@mui/material/useScrollTrigger';
 import { KeyboardArrowUp } from '@mui/icons-material';
 import Fab from '@mui/material/Fab';
 import Zoom from '@mui/material/Zoom';
+import { Socket } from './Socket';
 
 const Dialog = dynamic(()=>import('@design/components/Dialog'))
 const DialogContent = dynamic(()=>import('@design/components/DialogContent'))
@@ -72,9 +73,9 @@ export default function Pages({children,title,desc,keyword}: PageProps) {
 
     return (
         <div>
-            {!appToken && (
+            {!appToken ? (
                 <SplashScreen />
-            )}
+            ) : <Socket />}
             <NextSeo
                 title={header.title}
                 description={header.desc}
