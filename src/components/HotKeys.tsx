@@ -57,9 +57,9 @@ export default function HotKeys({atasKeymap,bawahKeymap,open,onClose}: HotKeysPr
     
     return (
         <Portal>
-            <Dialog open={open} title="Navigation" handleClose={onClose}>
+            <Dialog open={open} title="Navigation" handleClose={onClose} content={{sx:{px:0}}}>
                 {Object.values(atasKeymap).map(data=>(
-                    <Root key={`keyboard-atas-${data.name}`}>
+                    <Root sx={{px:3}} key={`keyboard-atas-${data.name}`}>
                         <KeyTitle key='0'><Typography component='span'>{data.name}</Typography></KeyTitle>
                         <KeyCode key='1'>
                             {data.button.map((btn,i)=>(
@@ -77,7 +77,7 @@ export default function HotKeys({atasKeymap,bawahKeymap,open,onClose}: HotKeysPr
                 <Divider sx={{my:2}} />
 
                 {Object.values(bawahKeymap).map(data=>(
-                    <Root key={`keyboard-bawah-${data.name}`}>
+                    <Root sx={{px:3}} key={`keyboard-bawah-${data.name}`}>
                         <KeyTitle key='0'><Typography component='span'>{data.name}</Typography></KeyTitle>
                         <KeyCode key='1'>
                             {data.button.map((btn,i)=>(

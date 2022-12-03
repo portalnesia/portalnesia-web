@@ -65,7 +65,7 @@ export default function ParseHTMLPages() {
                         />
                     </Box>
                     <Stack sx={{mt:3}} direction='row' justifyContent='space-between' alignItems='center'>
-                        <Button disabled={loading} loading={loading} type='submit'>Generate</Button>
+                        <Button disabled={loading} loading={loading} type='submit' icon='submit'>Generate</Button>
                         <Button color='error' disabled={loading} onClick={()=>setValue("")}>Reset</Button>
                     </Stack>
                 </form>

@@ -190,7 +190,7 @@ export default function RandomNumberPages() {
                 <Divider sx={{my:3}} />
 
                 <Stack direction='row' justifyContent='space-between' alignItems='center'>
-                    <Button disabled={loading} loading={loading} onClick={handleGenerate}>Generate</Button>
+                    <Button disabled={loading} loading={loading} onClick={handleGenerate} icon='submit'>Generate</Button>
                     <Button color='error' disabled={loading} onClick={handleReset}>Reset</Button>
                 </Stack>
             </DefaultLayout>

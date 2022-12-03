@@ -192,9 +192,9 @@ export function useHotKeys(register?: boolean) {
             },
             QRCODE_GENERATOR:{
                 name:'QR Code Generator',
-                sequence:'g q g',
-                custom:'gqg',
-                button:['G','Q','G']
+                sequence:'g q c',
+                custom:'gqc',
+                button:['G','Q','C']
             },
             PARSE_HTML:{
                 name:'Parse HTML',
@@ -204,9 +204,9 @@ export function useHotKeys(register?: boolean) {
             },
             URL_SHORTENER:{
                 name:'URL Shortener',
-                sequence:'g u',
-                custom:'gu',
-                button:['G','U']
+                sequence:'g u s',
+                custom:'gus',
+                button:['G','U','S']
             },
             DOWNLOADER:{
                 name:'Downloader',
