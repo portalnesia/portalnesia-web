@@ -19,10 +19,7 @@ export type UserPagination={
 }
 
 export type IMe = UserPagination & ({
-    admin?:boolean,
-    access?: string[],
-    email?: string,
-    session_id?: string
+    email: string
 })
 
 export interface UserDetail extends UserPagination {
@@ -224,7 +221,8 @@ export class User extends Model<UserAttribute> {
             name: this.user_nama||"",
             username: this.user_login,
             picture: profileUrl(this.gambar),
-            verify: this.verify
+            verify: this.verify,
+            email: this.user_email
         }
     }
 }

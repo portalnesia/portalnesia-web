@@ -11,6 +11,7 @@ import IconButton from './IconButton';
 import Autocomplete from './Autocomplete';
 import TableCell from './TableCell';
 import { Theme } from '@mui/material';
+import Stack from './Stack';
 
 export default function ComponentsOverrides(theme: Theme) {
   return merge(
@@ -24,6 +25,7 @@ export default function ComponentsOverrides(theme: Theme) {
     Typography(theme),
     IconButton(theme),
     Autocomplete(theme),
-    TableCell(theme)
+    TableCell(theme),
+    Stack(theme)
   );
 }
