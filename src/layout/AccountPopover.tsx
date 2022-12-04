@@ -15,6 +15,28 @@ import IconButtonActive from '@comp/IconButtonActive';
 import { Circular } from '@design/components/Loading';
 import { IMe } from '@model/user';
 import useSWR from '@design/hooks/swr';
+import Link from '@design/components/Link';
+import MenuItem from '@mui/material/MenuItem';
+import Iconify from '@design/components/Iconify';
+
+type IMenu = {
+  label: string
+  icon: string
+  target?: string
+  /**
+   * Link or function arguments
+   */
+  href?: string
+}
+
+const MENU_OPTIONS = (user?: IMe|null): IMenu[] => ([
+  {
+    label: "Contact",
+    icon: 'mdi:customer-service',
+    target: undefined,
+    href: `/contact?utm_source=portalnesia+web&utm_medium=header`
+  }
+]);
 
 export default function AccountPopover() {
   const {user:userRedux,appToken} = useSelector<Pick<State,'user'|'appToken'>>(s=>({user:s.user,appToken:s.appToken}));
@@ -79,15 +101,30 @@ export default function AccountPopover() {
         </Box>
 
         <Divider sx={{ my: 1 }} />
+        
+        {MENU_OPTIONS(user).map(m=>{
+          if(m.href) {
+            return (
+              <Link key={m.label} href={m.href} passHref legacyBehavior>
+                <MenuItem component='a' onClick={handleClose} sx={{typography:'body2',py:1,px:2.5}}>
+                  <Iconify icon={m.icon} sx={{mr:2,width:24,height:24}} />
+                  {m.label}
+                </MenuItem>
+              </Link>
+            )
+          }
+          return null;
+        })}
+        
 
         <Box sx={{ p: 2, pt: 1.5 }}>
           {user ? (
-            <Button href={accountUrl("logout")} fullWidth color="inherit" variant="outlined">
+            <Button href={accountUrl("logout?utm_source=portalnesia+web&utm_medium=header")} fullWidth color="inherit" variant="outlined">
               Logout
             </Button>
           ) : (
             <>
-              <Button href={accountUrl("login/?utm_source=portalnesia+web&utm_medium=header")} fullWidth color="inherit" variant="outlined">
+              <Button href={accountUrl("login?utm_source=portalnesia+web&utm_medium=header")} fullWidth color="inherit" variant="outlined">
                 Login / Register
               </Button>
             </>

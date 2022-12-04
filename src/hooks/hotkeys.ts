@@ -52,8 +52,8 @@ export function useHotKeys(register?: boolean) {
 
     const contactAction=useCallback((e?: KeyboardEvent)=>{
         if(e?.preventDefault) e.preventDefault();
-        if(Router.pathname==='/contact') Router.replace('/contact')
-        else Router.push('/contact')
+        if(Router.pathname==='/contact') Router.replace('/contact?utm_source=portalnesia+web&utm_medium=navigation+keyboard')
+        else Router.push('/contact?utm_source=portalnesia+web&utm_medium=navigation+keyboard')
     },[]);
 
     const atasKeyMap = useMemo(()=>{
@@ -88,80 +88,80 @@ export function useHotKeys(register?: boolean) {
 
     const homeAction=useCallback((e?: KeyboardEvent)=>{
         if(e?.preventDefault) e.preventDefault();
-        if(Router.pathname==='/') Router.replace('/')
-        else Router.push('/')
+        if(Router.pathname==='/') Router.replace('/?utm_source=portalnesia+web&utm_medium=navigation+keyboard')
+        else Router.push('/?utm_source=portalnesia+web&utm_medium=navigation+keyboard')
     },[])
 
     const transformCoodrinateAction=useCallback((e?: KeyboardEvent)=>{
         if(e?.preventDefault) e.preventDefault();
-        if(Router.pathname==='/geodata/transform') Router.replace('/geodata/transform')
-        else Router.push('/geodata/transform')
+        if(Router.pathname==='/geodata/transform') Router.replace('/geodata/transform?utm_source=portalnesia+web&utm_medium=navigation+keyboard')
+        else Router.push('/geodata/transform?utm_source=portalnesia+web&utm_medium=navigation+keyboard')
     },[])
 
     const newsAction=useCallback((e?: KeyboardEvent)=>{
         if(e?.preventDefault) e.preventDefault();
-        if(Router.pathname==='/news') Router.replace('/news')
-        else Router.push('/news')
+        if(Router.pathname==='/news') Router.replace('/news?utm_source=portalnesia+web&utm_medium=navigation+keyboard')
+        else Router.push('/news?utm_source=portalnesia+web&utm_medium=navigation+keyboard')
     },[])
 
     const chordAction=useCallback((e?: KeyboardEvent)=>{
         if(e?.preventDefault) e.preventDefault();
-        if(Router.pathname==='/chord') Router.replace('/chord')
-        else Router.push('/chord')
+        if(Router.pathname==='/chord') Router.replace('/chord?utm_source=portalnesia+web&utm_medium=navigation+keyboard')
+        else Router.push('/chord?utm_source=portalnesia+web&utm_medium=navigation+keyboard')
     },[])
 
     const parseHtmlAction=useCallback((e?: KeyboardEvent)=>{
         if(e?.preventDefault) e.preventDefault();
-        if(Router.pathname==='/parse-html') Router.replace('/parse-html')
-        else Router.push('/parse-html')
+        if(Router.pathname==='/parse-html') Router.replace('/parse-html?utm_source=portalnesia+web&utm_medium=navigation+keyboard')
+        else Router.push('/parse-html?utm_source=portalnesia+web&utm_medium=navigation+keyboard')
     },[])
 
     const qrCodeAction=useCallback((e?: KeyboardEvent)=>{
         if(e?.preventDefault) e.preventDefault();
-        if(Router.pathname==='/qr-code') Router.replace('/qr-code')
-        else Router.push('/qr-code')
+        if(Router.pathname==='/qr-code') Router.replace('/qr-code?utm_source=portalnesia+web&utm_medium=navigation+keyboard')
+        else Router.push('/qr-code?utm_source=portalnesia+web&utm_medium=navigation+keyboard')
     },[])
 
     const urlAction=useCallback((e?: KeyboardEvent)=>{
         if(e?.preventDefault) e.preventDefault();
-        if(Router.pathname==='/url') Router.replace('/url')
-        else Router.push('/url')
+        if(Router.pathname==='/url') Router.replace('/url?utm_source=portalnesia+web&utm_medium=navigation+keyboard')
+        else Router.push('/url?utm_source=portalnesia+web&utm_medium=navigation+keyboard')
     },[])
 
     const downloaderAction=useCallback((e?: KeyboardEvent)=>{
         if(e?.preventDefault) e.preventDefault();
-        if(Router.pathname==='/downloader') Router.replace('/downloader')
-        else Router.push('/downloader')
+        if(Router.pathname==='/downloader') Router.replace('/downloader?utm_source=portalnesia+web&utm_medium=navigation+keyboard')
+        else Router.push('/downloader?utm_source=portalnesia+web&utm_medium=navigation+keyboard')
     },[])
 
     const blogAction=useCallback((e?: KeyboardEvent)=>{
         if(e?.preventDefault) e.preventDefault();
-        if(Router.pathname==='/blog') Router.replace('/blog')
-        else Router.push('/blog')
+        if(Router.pathname==='/blog') Router.replace('/blog?utm_source=portalnesia+web&utm_medium=navigation+keyboard')
+        else Router.push('/blog?utm_source=portalnesia+web&utm_medium=navigation+keyboard')
     },[])
 
     const twibbonAction=useCallback((e?: KeyboardEvent)=>{
         if(e?.preventDefault) e.preventDefault();
-        if(Router.pathname==='/twibbon') Router.replace('/twibbon')
-        else Router.push('/twibbon')
+        if(Router.pathname==='/twibbon') Router.replace('/twibbon?utm_source=portalnesia+web&utm_medium=navigation+keyboard')
+        else Router.push('/twibbon?utm_source=portalnesia+web&utm_medium=navigation+keyboard')
     },[])
 
     const randomNumberAction=useCallback((e?: KeyboardEvent)=>{
         if(e?.preventDefault) e.preventDefault();
-        if(Router.pathname==='/random-number') Router.replace('/random-number')
-        else Router.push('/random-number')
+        if(Router.pathname==='/random-number') Router.replace('/random-number?utm_source=portalnesia+web&utm_medium=navigation+keyboard')
+        else Router.push('/random-number?utm_source=portalnesia+web&utm_medium=navigation+keyboard')
     },[])
 
     const imagesCheckerAction=useCallback((e?: KeyboardEvent)=>{
         if(e?.preventDefault) e.preventDefault();
-        if(Router.pathname==='/images-checker') Router.replace('/images-checker')
-        else Router.push('/images-checker')
+        if(Router.pathname==='/images-checker') Router.replace('/images-checker?utm_source=portalnesia+web&utm_medium=navigation+keyboard')
+        else Router.push('/images-checker?utm_source=portalnesia+web&utm_medium=navigation+keyboard')
     },[])
 
     const quizAction=useCallback((e?: KeyboardEvent)=>{
         if(e?.preventDefault) e.preventDefault();
-        if(Router.pathname==='/quiz') Router.replace('/quiz')
-        else Router.push('/quiz')
+        if(Router.pathname==='/quiz') Router.replace('/quiz?utm_source=portalnesia+web&utm_medium=navigation+keyboard')
+        else Router.push('/quiz?utm_source=portalnesia+web&utm_medium=navigation+keyboard')
     },[])
 
     const bawahKeyMap = useMemo(()=>{

@@ -16,6 +16,6 @@ export interface IconifyProps extends BoxProps {
  * 
  * Homepage: [Portalnesia](https://portalnesia.com)
  */
-export default function Iconify({ icon, sx, ...other }: IconifyProps) {
-  return <Box component={Icon} icon={icon} sx={{ ...sx }} {...other} />;
+export default function Iconify({ icon, sx,width=24,height=24,...other }: IconifyProps) {
+  return <Box component={Icon} icon={icon} sx={{ ...sx }} width={width} height={height} {...other} />;
 }

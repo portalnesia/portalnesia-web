@@ -32,7 +32,7 @@ type IContact = {
 
 const dataContact: IContact[] = [
     {
-        icon:"ic:outline-email",
+        icon:"ic:baseline-email",
         link:"mailto:support@portalnesia.com",
         label:'support@portalnesia.com',
         notarget:true
