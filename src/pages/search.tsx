@@ -5,12 +5,11 @@ import DefaultLayout from "@layout/default";
 import Box from "@mui/material/Box";
 import React from "react";
 import Grid from "@mui/material/Grid";
-import { PaginationResponse } from "@design/hooks/api";
 import Pagination, { BoxPagination, usePagination } from "@design/components/Pagination";
 import SWRPages from "@comp/SWRPages";
 import { TwibbonPagination } from "@model/twibbon";
 import CustomCard from "@design/components/Card";
-import { getDayJs, href, staticUrl } from "@utils/main";
+import { href, staticUrl } from "@utils/main";
 import Router, { useRouter } from "next/router";
 import { NewsPagination } from "@model/news";
 import { UserPagination } from "@model/user";
@@ -53,10 +52,6 @@ export default function SearchPages() {
     const filter = router.query?.filter
     const title = React.useMemo(()=>typeof q === 'string' ? `Search result for ${decodeURIComponent(q)}` : "Search",[q]);
     const {data,error} = useSWR<IResponse>(typeof q === 'string' ? `/v2/search${typeof filter === 'string' ? `/${filter}` : ''}?q=${q}&page=${page}&per_page=${24}` : null)
-
-    const handleViewMore = React.useCallback((type: string)=>()=>{
-        Router.push(`/search?q=${q}&filter=${type}`,undefined,{shallow:true,scroll:true})
-    },[q])
 
     return (
         <Pages title="Search">

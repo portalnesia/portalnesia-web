@@ -50,7 +50,7 @@ const redirect=<P>({req,res}: {req:GetServerSidePropsContext['req'],res:GetServe
         if(message) {
             setCookie("msg",message,{req,res,domain:domainCookie})
         }
-        if(!/localhost/.test(destination) && process.env.NODE_ENV!=='production') {
+        if(!(/localhost/.test(destination)) && process.env.NODE_ENV!=='production') {
             return {
                 notFound:true
             } as GetServerSidePropsResult<P>

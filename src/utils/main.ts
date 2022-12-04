@@ -41,6 +41,9 @@ export function linkUrl(path?: string) {
 export function accountUrl(path?: string) {
     return config.url.account + parsePath(path);
 }
+export function apiUrl(path?: string) {
+    return process.env.NEXT_PUBLIC_API_URL + parsePath(path);
+}
 export function href(path?: string) {
     const url = !path ? '/' : /^https?\:\/\/portalnesia\.com/.test(path) ? path.replace(/^https?\:\/\/portalnesia\.com/,'') : path;
     return url;
