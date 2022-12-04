@@ -88,7 +88,7 @@ export function NavbarPopover() {
             </Tooltip>
             <Portal>
                 <Fade in={open}>
-                    <Box position='fixed' bgcolor='background.paper' m={0} ml={'0 !important'} px={2} py={1} pb={2} width='100%' left={0} top={63} height="calc(100vh - 63px)" overflow='auto' zIndex={1102}>
+                    <Box position='fixed' bgcolor='background.paper' m={0} ml={'0 !important'} px={2} py={1} pb={2} width='100%' left={0} top={63} height="calc(100vh - 63px)" overflow='auto' zIndex={1103}>
                         <Typography variant='h5' sx={{mb:2}}>Portalnesia Menu</Typography>
 
                         <Box bgcolor='background.default' p={2} borderRadius={2}>

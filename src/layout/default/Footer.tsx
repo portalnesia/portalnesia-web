@@ -129,17 +129,17 @@ function FooterLogo({xs}: {xs?:boolean}) {
   )
 }
 
-function FooterCopyright({xs}: {xs?:boolean}) {
+function FooterCopyright() {
   return (
-    <Box display='flex' flexDirection='column' {...(xs ? {} : {justifyContent:'center',alignItems:'center'})}>
+    <Box display='flex' flexDirection='column' justifyContent='center' alignItems='center' textAlign='center'>
       <FooterRoot sx={{mb:0}}>
         <FooterMenu sx={{p:0,px:0}}>
-          <FooterChild {...(xs ? {} : {sx:{textAlign:'center'}})}>
+          <FooterChild sx={{textAlign:'center'}}>
             <span {...({"xmlns:cc":"http://creativecommons.org/ns#","xmlns:dct":"http://purl.org/dc/terms/"})}>
               <Link href='/?utm_source=portalnesia+web&utm_medium=footer+copyright'  property="dct:title" rel="cc:attributionURL">{config.title}</Link> © {(new Date().getFullYear())}
             </span>
           </FooterChild>
-          <FooterChild {...(xs ? {} : {sx:{textAlign:'center'}})}><span>{`v${version}`}</span></FooterChild>
+          <FooterChild sx={{textAlign:'center'}}><span>{`v${version}`}</span></FooterChild>
         </FooterMenu>
       </FooterRoot>
     </Box>
@@ -168,7 +168,7 @@ function XsFooter() {
           </Grid>
         </Box>
       </Box>
-      <FooterCopyright xs />
+      <FooterCopyright />
     </Box>
   )
 }

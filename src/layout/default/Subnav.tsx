@@ -12,6 +12,9 @@ import ListItemText from '@mui/material/ListItemText';
 import { alpha } from '@mui/system/colorManipulator';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Router from 'next/router';
 
 export interface SubnavProps {
     items: INavItems[]
@@ -28,7 +31,64 @@ const Accordion=styled(NativeAccordion)(()=>({
     }
 }))
 
-export function SubnavMobile({title,items:content,onExpand,linkProps,rootSx,active}: SubnavProps) {
+const CustomTabs = styled(Tabs)(()=>({
+    '& .MuiTabs-indicator':{
+        height:4
+    }
+}))
+const CustomBox = styled(Box,{shouldForwardProp:prop=>prop!=='scrolled'})<{scrolled?:boolean}>(({scrolled,theme})=>({
+    backgroundColor:theme.palette.background.paper,
+    height:48,
+    position:'fixed',
+    top:64,
+    left:0,
+    zIndex:1101,
+    width:'100%',
+    borderBottom:`1px solid ${theme.palette.divider}`
+}))
+
+export function SubnavMobile({items:content,linkProps,active}: SubnavProps) {
+    const [scrolled,setScrolled] = useState(false);
+    const value = useMemo(()=>{
+        const index = content.findIndex(c=>active(c.path));
+        return index;
+    },[active,content])
+
+    const onChange = useCallback((_: any,value: number)=>{
+        const selected = content?.[value];
+        if(selected) {
+            Router.push(selected.path,undefined,{shallow:linkProps?.shallow,scroll:linkProps?.scroll});
+        }
+    },[content])
+
+    useEffect(()=>{
+        function onScroll() {
+          const scroll = document?.documentElement?.scrollTop || document.body.scrollTop;
+          if(scroll > 30) {
+            setScrolled(true)
+          } else {
+            setScrolled(false)
+          }
+        }
+        window.addEventListener('scroll',onScroll);
+    
+        return ()=>window.removeEventListener('scroll',onScroll);
+    },[])
+
+    return (
+        <Portal>
+            <CustomBox scrolled={scrolled}>
+                <CustomTabs variant='scrollable' value={value} onChange={onChange}>
+                    {content.map(c=>(
+                        <Tab key={c.title} label={c.title} />
+                    ))}
+                </CustomTabs>
+            </CustomBox>
+        </Portal>
+    )
+}
+
+export function BackupSubnavMobile({title,items:content,onExpand,linkProps,rootSx,active}: SubnavProps) {
     const theme = useTheme();
     const [expand,setExpand] = useState(false);
 

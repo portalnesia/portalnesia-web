@@ -26,6 +26,7 @@ import Typography from "@mui/material/Typography";
 import MenuPopover from "@design/components/MenuPopover";
 import useResponsive from "@design/hooks/useResponsive";
 import dynamic from "next/dynamic";
+import Portal from "@mui/material/Portal";
 
 const HtmlMdDown = dynamic(()=>import('@design/components/TableContent').then(m=>m.HtmlMdDown),{ssr:false})
 
@@ -33,7 +34,7 @@ const RootStyle = styled(AppBar,{shouldForwardProp:prop=>prop!=="scrolled"})<{sc
     top:0,
     backgroundColor: theme.palette.background.paper,
     ...(scrolled ? {} : {boxShadow:"none"}),
-    transition: theme.transitions.create('top')
+    transition: theme.transitions.create(['top','box-shadow'])
 }));
 
 const ToolbarStyle = styled(Toolbar)(({ theme }) => ({
@@ -213,21 +214,23 @@ function Search() {
                     <Iconify icon='material-symbols:search' sx={{width:25,height:25}} />
                 </IconButtonActive></Tooltip>
                 
-                <Fade in={open}>
-                    <Box position='absolute' bgcolor='background.paper' px={2} py={1} width='100%' left={0} top={64} zIndex={1}>
-                        <SearchComp active={focus} spacing={1} alignItems='center' sx={{px:2,py:1}}>
-                        <InputBase
-                            id='search-input-home'
-                            sx={{width:'100%'}}
-                            value={q}
-                            onFocus={()=>setFocus(true)}
-                            onBlur={()=>setFocus(false)}
-                            onChange={(e)=>setQ(e.target.value)}
-                            placeholder="Search..."
-                            inputProps={{ 'aria-label': 'Search'}} />
-                        </SearchComp>
-                    </Box>
-                </Fade>
+                <Portal>
+                    <Fade in={open}>
+                        <Box position='fixed' bgcolor='background.paper' px={2} py={1} width='100%' left={0} top={64} zIndex={1102}>
+                            <SearchComp active={focus} spacing={1} alignItems='center' sx={{px:2,py:1}}>
+                            <InputBase
+                                id='search-input-home'
+                                sx={{width:'100%'}}
+                                value={q}
+                                onFocus={()=>setFocus(true)}
+                                onBlur={()=>setFocus(false)}
+                                onChange={(e)=>setQ(e.target.value)}
+                                placeholder="Search..."
+                                inputProps={{ 'aria-label': 'Search'}} />
+                            </SearchComp>
+                        </Box>
+                    </Fade>
+                </Portal>
             </Hidden>
         </form>
     )
