@@ -120,7 +120,8 @@ const palette: PaletteOptions = {
   },
   customColor:{
     link: PRIMARY.light,
-    linkIcon: PRIMARY.light
+    linkIcon: PRIMARY.light,
+    search:"#2e3640"
   }
 };
 

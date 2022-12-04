@@ -1,5 +1,6 @@
 import React from 'react'
 import { useTheme } from '@mui/material/styles';
+import { alpha } from '@mui/system/colorManipulator';
 import { GlobalStyles as GlobalThemeStyles, Theme } from '@mui/material';
 import type {Interpolation} from '@mui/styled-engine'
 
@@ -120,7 +121,8 @@ export default function GlobalStyles({styles}: GlobalStylesProps) {
           marginBottom:'inherit !important'
         },
         a: {color:'inherit',textDecoration:'unset',WebkitTapHighlightColor:'transparent'},
-        'a:not(.no-underline) p,a:not(.no-underline) span':{
+        'a:not(.no-underline) p,a:not(.no-underline) span, p.underline, span.underline':{
+          cursor:'pointer',
           '&:hover':{textDecoration:'underline'}
         },
         'a.a-blank[target="blank"]:after, a.a-blank[target="_blank"]:after, a[target="_blank"]:not(.no-blank):after, a[target="blank"]:not(.no-blank):after':{

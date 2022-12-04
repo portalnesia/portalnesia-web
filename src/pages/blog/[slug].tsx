@@ -1,8 +1,6 @@
-import Container from "@comp/Container";
 import Pages from "@comp/Pages";
 import { Parser, usePageContent } from "@design/components/Parser";
 import SWRPages from "@comp/SWRPages";
-import View from "@comp/View";
 import useSWR from "@design/hooks/swr";
 import DefaultLayout from "@layout/default";
 import { BlogDetail } from "@model/pages";

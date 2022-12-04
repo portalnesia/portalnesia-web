@@ -33,7 +33,7 @@ const BoxStyle = styled(Box)(({theme})=>({
   position:'relative',
   zIndex:0,
   justifyContent:'center',
-  '& a:hover':{
+  '& a:not(.no-underline):hover':{
     textDecoration:'underline'
   },
 }))
@@ -118,12 +118,12 @@ export function MenuItem({data,sx,home,spanSx}: {data: IFooter,home?:boolean,sx?
 function FooterLogo({xs}: {xs?:boolean}) {
   return (
     <Stack direction='row' spacing={2} {...(xs ? {} : {justifyContent:'center',alignItems:'center'})}>
-      <Logo svg={{size:40}} />
+      <Logo href="/?utm_source=portalnesia+web&utm_medium=footer" svg={{size:40}} />
       <Box>
-        <Link href={`/`} passHref legacyBehavior><a style={{textDecoration:'none'}}>
+        <Link href={`/?utm_source=portalnesia+web&utm_medium=footer`} className='no-underline'>
           <Typography variant='h4' sx={{color: 'text.primary'}}>{config.title}</Typography>
           <Typography component='span' sx={{color: 'text.secondary',fontSize:14}}>{config.meta.tagline}</Typography>
-        </a></Link>
+        </Link>
       </Box>
     </Stack>
   )
@@ -136,7 +136,7 @@ function FooterCopyright({xs}: {xs?:boolean}) {
         <FooterMenu sx={{p:0,px:0}}>
           <FooterChild {...(xs ? {} : {sx:{textAlign:'center'}})}>
             <span {...({"xmlns:cc":"http://creativecommons.org/ns#","xmlns:dct":"http://purl.org/dc/terms/"})}>
-              <Link href='/' passHref legacyBehavior><a property="dct:title" rel="cc:attributionURL">{config.title}</a></Link> © {(new Date().getFullYear())}
+              <Link href='/?utm_source=portalnesia+web&utm_medium=footer+copyright'  property="dct:title" rel="cc:attributionURL">{config.title}</Link> © {(new Date().getFullYear())}
             </span>
           </FooterChild>
           <FooterChild {...(xs ? {} : {sx:{textAlign:'center'}})}><span>{`v${version}`}</span></FooterChild>

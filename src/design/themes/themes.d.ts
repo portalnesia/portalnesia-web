@@ -14,6 +14,7 @@ declare module '@mui/material' {
     customColor: {
       link: string
       linkIcon: string
+      search: string
     }
   }
   export interface PaletteColor {
@@ -40,6 +41,7 @@ declare module '@mui/material' {
     customColor: {
       link: string,
       linkIcon: string
+      search: string
     }
   }
 

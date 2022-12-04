@@ -34,11 +34,11 @@ function SvgLogo({size}: SvgProps) {
   )
 }
 
-export default function Logo({href='',svg}: LogoProps) {
+export default function Logo({href='/',svg}: LogoProps) {
     // const theme = useTheme();
     if(typeof href==='boolean') return <SvgLogo />
     return (
-      <Link href={`/${href}`}>
+      <Link href={href}>
         <SvgLogo {...svg} />
       </Link>
     );

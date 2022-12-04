@@ -21,7 +21,6 @@ function SvgLogo() {
 }
 
 export default function SplashScreen() {
-    // TODO - first time, bigger
     return (
       <div style={{position:'fixed',top:0,left:0,height:'100%',width:'100%',background:'#2f6f4e',zIndex:5000}}>
         {/* eslint-disable-next-line @next/next/no-img-element */}

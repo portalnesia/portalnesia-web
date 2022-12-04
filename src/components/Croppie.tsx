@@ -61,21 +61,22 @@ export default class Croppie extends React.PureComponent<CroppieProps,CroppieSta
     static defaultProps=defaultProps
 
     private async drawTwibbon(){
-        if(this.croppie && this.canvas) {
-            if(typeof this.props.background==="string" && this.ctx) {
-                let img = new Image();
-                img.src= this.props.background;
-                img.onload = ()=>{
-                    if(this.ctx && this.canvas) {
-                        this.ctx.drawImage(img, 0, 0, this.canvas.width, this.canvas.height);
-                        return this.canvas
-                    }
-                };
-            } else {
-                return this.canvas
-            }
-        }
-        throw new Error("Croppie instance not loaded");
+        return new Promise<HTMLCanvasElement>((res,rej)=>{
+            if(this.croppie && this.canvas) {
+                if(typeof this.props.background==="string" && this.ctx) {
+                    let img = new Image();
+                    img.src= this.props.background;
+                    img.onload = ()=>{
+                        if(this.ctx && this.canvas) {
+                            this.ctx.drawImage(img, 0, 0, this.canvas.width, this.canvas.height);
+                            res(this.canvas)
+                        }
+                    };
+                } else {
+                    res(this.canvas)
+                }
+            } else rej(new Error("Croppie instance not loaded"));
+        })
     }
 
     private drawImage(src: any){
@@ -109,9 +110,9 @@ export default class Croppie extends React.PureComponent<CroppieProps,CroppieSta
 
                 const base64 = await this.drawImage(result);
                 return base64;
-            }
-            throw new ApiError("Croppie instance not loaded");
-        } catch {
+            } else throw new ApiError("Croppie instance not loaded");
+        } catch(e) {
+            console.log(e)
             throw new ApiError("Croppie instance not loaded");
         }
     };
@@ -129,7 +130,7 @@ export default class Croppie extends React.PureComponent<CroppieProps,CroppieSta
      * @returns {Promise<void>}
      */
     loadImage(event: React.ChangeEvent<HTMLInputElement>): Promise<void> {
-        return new Promise<void>((res,rej)=>{
+        return new Promise<void>((res)=>{
             if(this.croppie && event?.target?.files !== null) {
                 const reader = new FileReader();
                 reader.onload = ((e)=>{
@@ -147,14 +148,6 @@ export default class Croppie extends React.PureComponent<CroppieProps,CroppieSta
                 reader.readAsDataURL(event.target.files[0]);
             } else res();
         })
-    }
-
-    private refreshImage(){
-        if(this.croppie && this.state.dataUrl !== null) {
-            this.croppie.bind({
-                url:this.state.dataUrl
-            })
-        }
     }
 
     private initial() {
@@ -187,6 +180,14 @@ export default class Croppie extends React.PureComponent<CroppieProps,CroppieSta
 
     componentDidMount(){
         this.initial();
+    }
+
+    componentDidUpdate(prevProps: Readonly<CroppieProps>, prevState: Readonly<CroppieState>, snapshot?: any): void {
+        if(
+            prevProps.background !== this.props.background
+        ) {
+            this.reset();
+        }
     }
 
     reset(): void {
@@ -231,4 +232,7 @@ export default class Croppie extends React.PureComponent<CroppieProps,CroppieSta
     }
 }
 
+/**
+ * Types only. Alias for class Croppie
+ */
 export type {Croppie as CroppieRef}

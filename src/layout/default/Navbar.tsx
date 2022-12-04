@@ -162,13 +162,20 @@ function NavbarMenuDesktop({data}: NavbarMenuDesktopProps) {
 
 const SearchComp = styled(Stack,{shouldForwardProp:prop=>prop!=='active'})<{active?:boolean}>(({theme,active})=>({
     borderRadius:16,
-    backgroundColor:theme.palette.action.hover,
+    backgroundColor:theme.palette.customColor.search,
+    border:`1px solid ${theme.palette.customColor.search}`,
     '&:hover':{
-        backgroundColor:theme.palette.divider,
+        border:`1px solid ${theme.palette.divider}`,
     },
     ...active ? {
-        backgroundColor:theme.palette.divider,
-    } : {}
+        border:`1px solid ${theme.palette.customColor.linkIcon} !important`,
+    } : {},
+    '& input:-webkit-autofill, & input:-internal-autofill-selected, & input:-internal-autofill-previewed':{
+        WebkitBoxShadow:`0 0 0 100px ${theme.palette.customColor.search} inset`,
+        WebkitTextFillColor:`${theme.palette.text.primary}`,
+        caretColor:`${theme.palette.text.primary}`,
+        backgroundColor:`${theme.palette.customColor.search} !important`
+    },
 }))
 function Search() {
     const router = useRouter();
@@ -264,7 +271,7 @@ export default function DefaultNavbar({logo,tableContent}: NavbarProps) {
                     <Grid item xs={6} lg={3}>
                         <Stack direction="row" alignItems="center" justifyContent='flex-start' spacing={1.5} height='100%'>
                             <Box sx={{ pr:2,mt:1,display: 'inline-flex' }}>
-                                <Logo svg={{size:35}} {...logo} />
+                                <Logo href="/?utm_source=portalnesia+web&utm_medium=header" svg={{size:35}} {...logo} />
                             </Box>
                             <Hidden only={['md','xs']}>
                                 <Search />

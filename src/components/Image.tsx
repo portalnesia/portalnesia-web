@@ -98,6 +98,14 @@ const Image=(props: ImageProps)=>{
                             const el = fancybox?.$image as HTMLImageElement|null
                             if(el) el.oncontextmenu = (e)=>e.preventDefault()
                         },
+                        reveal:(_: any, fancybox: any) => {
+                            const el = fancybox?.$image as HTMLImageElement|null
+                            if(el) el.oncontextmenu = (e)=>e.preventDefault()
+                        },
+                        load:(_: any, fancybox: any)=>{
+                            const el = fancybox?.$image as HTMLImageElement|null
+                            if(el) el.oncontextmenu = (e)=>e.preventDefault()
+                        }
                     }
                 });
             } catch{}

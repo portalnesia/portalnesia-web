@@ -121,7 +121,8 @@ const palette: PaletteOptions = {
   },
   customColor:{
     link: "#00AB55",
-    linkIcon: PRIMARY.main
+    linkIcon: PRIMARY.main,
+    search:"#eaeaea"
   }
 };
 

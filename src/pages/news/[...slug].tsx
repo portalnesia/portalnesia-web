@@ -1,8 +1,6 @@
-import Container from "@comp/Container";
 import Pages from "@comp/Pages";
 import { Parser, usePageContent } from "@design/components/Parser";
 import SWRPages from "@comp/SWRPages";
-import View from "@comp/View";
 import useSWR from "@design/hooks/swr";
 import DefaultLayout from "@layout/default";
 import { NewsDetail } from "@model/news";
@@ -64,6 +62,7 @@ export default function NewsPages({data:news,meta}: IPages<NewsDetail>) {
                                 {data && <Parser html={data?.text} />}
                             </Box>
                         </Grid>
+                        {/* TODO - Create comments */}
                         <Grid item xs={12} md={4}>
                             <Hidden mdDown>
                                 <Sidebar id='blog-content'>
@@ -72,6 +71,7 @@ export default function NewsPages({data:news,meta}: IPages<NewsDetail>) {
                                     </PaperBlock>
                                 </Sidebar>
                             </Hidden>
+                            {/* TODO - Create recommendation */}
                         </Grid>
                     </Grid>
                 </SWRPages>

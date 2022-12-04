@@ -1,7 +1,7 @@
 import React from 'react'
 import type {TooltipProps} from '@mui/material'
 import {LoadingButton as Buttonn,LoadingButtonProps} from '@mui/lab'
-import {Save,Delete,NavigateNext,ArrowBackIosRounded,Download,Upload,InsertDriveFile,Preview,CropRotate,Add,AddAPhoto,AddLink,Send as SendIcon, ArrowForwardIosRounded} from '@mui/icons-material'
+import {Save,Delete,NavigateNext,ArrowBackIosRounded,Download,Upload,InsertDriveFile,Preview,CropRotate,Add,AddAPhoto,AddLink,Send as SendIcon, ArrowForwardIosRounded, Share} from '@mui/icons-material'
 import { styled } from '@mui/material/styles';
 import dynamic from 'next/dynamic'
 
@@ -64,6 +64,7 @@ const Button=React.forwardRef<HTMLButtonElement,ButtonProps>((props,ref)=>{
             if(icon === 'send') return <SendIcon />
             if(icon === 'back') return <ArrowBackIosRounded />
             if(icon === 'next') return <ArrowForwardIosRounded />
+            if(icon === 'share') return <Share />
         }
         return undefined;
     },[icon,endIcon,startIcon,iconPosition])

@@ -9,20 +9,20 @@ export type IFooter = {
 export const generalFooter: IFooter[] = [
   {
     name:"Contact",
-    link:"/contact"
+    link:"/contact?utm_source=portalnesia+web&utm_medium=footer"
   },{
     name:"Status",
     exlink:config.url.status
   },
   {
     name:"Terms of Services",
-    link:"/pages/terms-of-service"
+    link:"/pages/terms-of-service?utm_source=portalnesia+web&utm_medium=footer"
   },{
     name:"Privacy Policy",
-    link:"/pages/privacy-policy"
+    link:"/pages/privacy-policy?utm_source=portalnesia+web&utm_medium=footer"
   },{
     name:"Cookie Policy",
-    link:"/pages/cookie-policy"
+    link:"/pages/cookie-policy?utm_source=portalnesia+web&utm_medium=footer"
   },{
     name:"Donate",
     exlink:"https://paypal.me/adityatranasuta"
@@ -31,42 +31,42 @@ export const generalFooter: IFooter[] = [
 
 export const featuresFooter: IFooter[] = [{
   name:"News",
-  link:"/news"
+  link:"/news?utm_source=portalnesia+web&utm_medium=footer"
 },{
   name:"Chord",
-  link:"/chord"
+  link:"/chord?utm_source=portalnesia+web&utm_medium=footer"
 },{
   name:"Twibbon",
-  link:"/twibbon"
+  link:"/twibbon?utm_source=portalnesia+web&utm_medium=footer"
 },{
   name:"Blog",
-  link:"/blog"
+  link:"/blog?utm_source=portalnesia+web&utm_medium=footer"
 },{
   name:"Quiz",
-  link:"/quiz"
+  link:"/quiz?utm_source=portalnesia+web&utm_medium=footer"
 },{
   name:"URL Shortener",
-  link:'/url'
+  link:'/url?utm_source=portalnesia+web&utm_medium=footer'
 }]
 
 export const toolsFooter: IFooter[] = [{
   name:"Transform Coordinate",
-  link:'/geodata/transform'
+  link:'/geodata/transform?utm_source=portalnesia+web&utm_medium=footer'
 },{
   name:"QR Code Generator",
-  link:'/qr-code'
+  link:'/qr-code?utm_source=portalnesia+web&utm_medium=footer'
 },{
   name:"Parse HTML",
-  link:"/parse-html"
+  link:"/parse-html?utm_source=portalnesia+web&utm_medium=footer"
 },{
   name:"Random Number Generator",
-  link:"/random-number"
+  link:"/random-number?utm_source=portalnesia+web&utm_medium=footer"
 },{
   name:"Downloader",
-  link:"/downloader"
+  link:"/downloader?utm_source=portalnesia+web&utm_medium=footer"
 },{
   name:"Images Checker",
-  link:"/images-checker"
+  link:"/images-checker?utm_source=portalnesia+web&utm_medium=footer"
 }]
 
 export const footerMenu: {header:string,child:IFooter[]}[] = ([

@@ -61,26 +61,26 @@ export default function News() {
                             </MenuPopover>
                         </Box>
                     </Box>
-                    <Container>
-                        <Grid container spacing={2}>
-                            {data && data?.data?.length > 0 ? ( data.data.map(d=>(
-                                <Grid key={d.title} item xs={12} sm={6} md={4} lg={3}>
-                                    <CustomCard link={href(d.link)} title={`${d.artist} - ${d.title}`} />
-                                </Grid>
-                            ))) : (
-                                <Grid key={'no-data'} item xs={12}>
-                                    <BoxPagination>
-                                        <Typography>No data</Typography>
-                                    </BoxPagination>
-                                </Grid>
-                            )}
-                            {data && (
-                                <Grid sx={{mt:2}} key={'pagination'} item xs={12}>
-                                    <Pagination page={page} onChange={setPage} count={data?.total_page} />
-                                </Grid>
-                            )}
-                        </Grid>
-                    </Container>
+                    
+                    <Grid container spacing={2}>
+                        {data && data?.data?.length > 0 ? ( data.data.map(d=>(
+                            <Grid key={d.title} item xs={12} sm={6} md={4} lg={3}>
+                                <CustomCard link={href(d.link)} title={`${d.artist} - ${d.title}`} />
+                            </Grid>
+                        ))) : (
+                            <Grid key={'no-data'} item xs={12}>
+                                <BoxPagination>
+                                    <Typography>No data</Typography>
+                                </BoxPagination>
+                            </Grid>
+                        )}
+                        {data && (
+                            <Grid sx={{mt:2}} key={'pagination'} item xs={12}>
+                                <Pagination page={page} onChange={setPage} count={data?.total_page} />
+                            </Grid>
+                        )}
+                    </Grid>
+                        
                 </SWRPages>
             </DefaultLayout>
         </Pages>
