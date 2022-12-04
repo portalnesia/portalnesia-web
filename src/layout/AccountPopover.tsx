@@ -13,7 +13,7 @@ import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import IconButtonActive from '@comp/IconButtonActive';
 import { Circular } from '@design/components/Loading';
-import { UserPagination } from '@model/user';
+import { IMe } from '@model/user';
 import useSWR from '@design/hooks/swr';
 
 export default function AccountPopover() {
@@ -22,7 +22,7 @@ export default function AccountPopover() {
   const dispatch = useDispatch();
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
-  const {data,mutate} = useSWR<UserPagination>(userRedux === undefined ? `/v2/user` : null,{
+  const {data,mutate} = useSWR<IMe>(userRedux === undefined ? `/v2/user` : null,{
     revalidateOnFocus:false,
     revalidateOnMount:false,
   });

@@ -125,16 +125,20 @@ export default function GlobalStyles({styles}: GlobalStylesProps) {
           cursor:'pointer',
           '&:hover':{textDecoration:'underline'}
         },
-        'a.a-blank[target="blank"]:after, a.a-blank[target="_blank"]:after, a[target="_blank"]:not(.no-blank):after, a[target="blank"]:not(.no-blank):after':{
-          backgroundImage:`url(/svg/new_tab_${theme.palette.mode}.svg)`,
-          backgroundRepeat:'no-repeat',
-          content:'""',
-          display:'inline-block',
-          height: '.8125rem',
-          position:'relative',
-          top:'.125rem',
-          left:5,
-          width: '.8125rem'
+        'a.a-blank[target="blank"], a.a-blank[target="_blank"], a[target="_blank"]:not(.no-blank), a[target="blank"]:not(.no-blank)':{
+          display:'inline-flex',
+          alignItems:'center',
+          '&:after':{
+            backgroundImage:`url(/svg/new_tab_${theme.palette.mode}.svg)`,
+            backgroundRepeat:'no-repeat',
+            content:'""',
+            display:'inline-block',
+            height: '.8125rem',
+            position:'relative',
+            left:5,
+            width: '.8125rem',
+            marginRight:7
+          }
         },
         img: { display: 'block', maxWidth: '100%' },
         // Lazy Load Img

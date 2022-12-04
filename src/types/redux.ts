@@ -1,10 +1,10 @@
-import { UserPagination } from "@model/user";
+import { IMe } from "@model/user";
 import {HYDRATE} from 'next-redux-wrapper';
 
 export type State = {
     theme:'auto'|'light'|'dark',
     redux_theme:'light'|'dark',
-    user?: UserPagination | null,
+    user?: IMe | null,
     appToken?: string
     hotkeys:{
         disabled:boolean
