@@ -5,7 +5,7 @@ import DefaultLayout from "@layout/default";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import { clean, truncate } from "@portalnesia/utils";
+import { adddesc, clean, truncate } from "@portalnesia/utils";
 import wrapper, { BackendError } from "@redux/store";
 import { IPages } from "@type/general";
 import { useRouter } from "next/router";
@@ -20,24 +20,27 @@ import MenuPopover from "@design/components/MenuPopover";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Button from "@comp/Button";
 import { Span } from "@design/components/Dom";
-
-const Chord = dynamic(()=>import('@comp/Chord'))
+import { portalUrl, staticUrl } from "@utils/main";
+import { ArticleJsonLd } from "next-seo";
+import Chord from '@comp/Chord'
 
 export const getServerSideProps = wrapper<ChordDetail>(async({params,redirect,fetchAPI})=>{
     const slug = params?.slug;
     if(typeof slug === 'undefined') return redirect();
 
     try {
-        const url = `/v2/chord/${slug}`;
-        const data = await fetchAPI<ChordDetail>(url);
+        const url: string = `/v2/chord/${slug}?with_original=true`;
+        const data: ChordDetail = await fetchAPI<ChordDetail>(url);
         
-        const desc = truncate(clean(data?.original||""),200);
+        const desc = truncate(data?.original||"",800);
+        
         return {
             props:{
                 data:data,
                 meta:{
                     title: `Chord ${data?.artist} ${data?.title}`,
-                    desc:`${data?.title} by ${data?.artist}.\n${desc}`
+                    desc:`${data?.title} by ${data?.artist}.\n${desc}`,
+                    image: staticUrl(`/ogimage/chord/${data.slug}`)
                 }
             }
         }
@@ -221,7 +224,21 @@ export default function ChordPage({data:chord,meta}: IPages<ChordDetail>) {
     },[slug])
 
     return (
-        <Pages title={meta?.title} desc={meta?.desc}>
+        <Pages title={meta?.title} desc={meta?.desc} canonical={`/chord/${data?.slug}`}>
+            <ArticleJsonLd
+                url={portalUrl(`chord/${slug}`)}
+                title={data?.title||""}
+                images={meta?.image ? [meta?.image] : [""]}
+                datePublished={data?.created||""}
+                dateModified={data?.last_modified||data?.created||""}
+                authorName={[{
+                    name:data?.user?.name,
+                    url: portalUrl(`/user/${data?.user?.username}`)
+                }]}
+                publisherName="Portalnesia"
+                publisherLogo={`${process.env.CONTENT_URL}/icon/android-chrome-512x512.png`}
+                description={adddesc(meta?.desc||"")}
+            />
             <DefaultLayout>
                 <SWRPages loading={!data&&!error} error={error}>
                     <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={5}>

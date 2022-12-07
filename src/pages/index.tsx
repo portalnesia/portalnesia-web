@@ -10,7 +10,7 @@ import Pages from "@comp/Pages";
 export default function Index() {
 
     return (
-        <Pages>
+        <Pages canonical="/">
             <DefaultLayout maxWidth={false} withoutContainer>
                 <FirstSection />
 

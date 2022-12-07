@@ -216,7 +216,7 @@ export default function DownloaderPages() {
     },[error,value,submitDownload])
 
     return (
-        <Pages title="Media Downloader">
+        <Pages title="Media Downloader" canonical="/downloader">
             <DefaultLayout maxWidth='md'>
                 <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
                     <Typography variant='h4' component='h1'>Downloader</Typography>

@@ -5,6 +5,7 @@ export type IPages<D extends {} = any> = {
     meta?: {
         title: string
         desc?: string
+        image?:string
     }
 }
 
@@ -19,7 +20,10 @@ export type ISeen = {
     format: string
 }
 
-export type IDate = Date
+/**
+ * Date string
+ */
+export type IDate = string
 
 declare global {
     interface Window {

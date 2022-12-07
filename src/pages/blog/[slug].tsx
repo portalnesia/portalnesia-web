@@ -7,31 +7,34 @@ import { BlogDetail } from "@model/pages";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import { clean, truncate } from "@portalnesia/utils";
+import { adddesc, clean, truncate } from "@portalnesia/utils";
 import wrapper, { BackendError } from "@redux/store";
 import { IPages } from "@type/general";
 import { useRouter } from "next/router";
 import React from "react";
 import Sidebar from "@design/components/Sidebar";
 import Hidden from "@mui/material/Hidden";
-import { HtmlMdUp } from "@design/components/TableContent";
+import useTableContent, { HtmlMdUp } from "@design/components/TableContent";
 import PaperBlock from "@design/components/PaperBlock";
+import { portalUrl, staticUrl } from "@utils/main";
+import {ArticleJsonLd} from 'next-seo'
 
 export const getServerSideProps = wrapper<BlogDetail>(async({params,redirect,fetchAPI})=>{
     const slug = params?.slug;
     if(typeof slug === 'undefined') return redirect();
 
     try {
-        const url = `/v2/blog/${slug}`;
-        const data = await fetchAPI<BlogDetail>(url);
+        const url: string = `/v2/blog/${slug}`;
+        const data: BlogDetail = await fetchAPI<BlogDetail>(url);
         
-        const desc = truncate(clean(data?.text||""),200);
+        const desc = truncate(clean(data?.text||""),800);
         return {
             props:{
                 data:data,
                 meta:{
                     title: data?.title,
-                    desc
+                    desc,
+                    image:staticUrl(`ogimage/blog/${data.slug}`)
                 }
             }
         }
@@ -48,9 +51,23 @@ export default function BlogPages({data:blog,meta}: IPages<BlogDetail>) {
     const router = useRouter();
     const slug = router.query?.slug;
     const {data,error} = useSWR<BlogDetail>(`/v2/blog/${slug}`,{fallbackData:blog});
+    const {content} = useTableContent({data})
 
     return (
-        <Pages title={meta?.title} desc={meta?.desc}>
+        <Pages title={meta?.title} desc={meta?.desc} canonical={`/blog/${data?.slug}`}>
+            <ArticleJsonLd
+                type="BlogPosting"
+                url={portalUrl(`blog/${data?.slug}`)}
+                title={meta?.title || ""}
+                datePublished={data?.created || ""}
+                dateModified={data?.last_modified || data?.created || ""}
+                authorName={[{
+                    name:data?.user?.name,
+                    url: portalUrl(`/user/${data?.user?.username}`)
+                }]}
+                description={adddesc(meta?.desc || "")}
+                images={meta?.image ? [meta?.image] : [""]}
+            />
             <DefaultLayout navbar={{tableContent:data}}>
                 <SWRPages loading={!data&&!error} error={error}>
                     <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={5}>
@@ -63,13 +80,15 @@ export default function BlogPages({data:blog,meta}: IPages<BlogDetail>) {
                             </Box>
                         </Grid>
                         <Grid item xs={12} md={4}>
-                            <Hidden mdDown>
-                                <Sidebar id='blog-content'>
-                                    <PaperBlock title="Table of Content">
-                                        <HtmlMdUp data={data} />
-                                    </PaperBlock>
-                                </Sidebar>
-                            </Hidden>
+                            {content.length > 0 && (
+                                <Hidden mdDown>
+                                    <Sidebar id='blog-content'>
+                                        <PaperBlock title="Table of Content">
+                                            <HtmlMdUp data={data} />
+                                        </PaperBlock>
+                                    </Sidebar>
+                                </Hidden>
+                            )}
                         </Grid>
                     </Grid>
                 </SWRPages>

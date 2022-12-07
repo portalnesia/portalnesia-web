@@ -19,6 +19,7 @@ import Textarea from "@design/components/Textarea";
 import Backdrop from "@design/components/Backdrop";
 import dynamic from "next/dynamic";
 import useNotification from "@design/components/Notification";
+import config from "@src/config";
 
 const Dialog = dynamic(()=>import("@design/components/Dialog"));
 
@@ -33,30 +34,30 @@ type IContact = {
 const dataContact: IContact[] = [
     {
         icon:"ic:baseline-email",
-        link:"mailto:support@portalnesia.com",
-        label:'support@portalnesia.com',
+        link:`mailto:${config.contact.email}`,
+        label:config.contact.email,
         notarget:true
     },
     {
         icon:"uil:facebook",
         link:"/fb",
-        label:'Portalnesia'
+        label:config.contact.facebook
     },
     {
         icon:"mdi:twitter",
         link:"/tw",
-        label:'@Portalnesia1'
+        label:config.contact.twitter
     },
     {
         icon:"ri:line-fill",
         link:"/ln",
-        label:'@540ytcnc',
+        label:config.contact.line,
         bot:true
     },
     {
         icon:"ic:sharp-telegram",
         link:"/tg",
-        label:'@portalnesia_bot',
+        label:config.contact.telegram,
         bot:true
     }
 ]
@@ -109,7 +110,7 @@ export default function ContactPages() {
     },[user,subject])
 
     return (
-        <Pages title="Contact">
+        <Pages title="Contact" canonical="/contact">
             <DefaultLayout maxWidth='md'>
                 <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
                     <Typography variant='h4' component='h1'>Contact</Typography>

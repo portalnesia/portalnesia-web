@@ -18,7 +18,7 @@ export default function News() {
     const {data,error} = useSWR<PaginationResponse<NewsPagination>>(`/v2/news?page=${page}&per_page=24`);
 
     return (
-        <Pages title="News">
+        <Pages title="News" canonical="/news">
             <DefaultLayout>
                 <SWRPages loading={!data&&!error} error={error}>
                     <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>

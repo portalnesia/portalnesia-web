@@ -54,7 +54,7 @@ export default function SearchPages() {
     const {data,error} = useSWR<IResponse>(typeof q === 'string' ? `/v2/search${typeof filter === 'string' ? `/${filter}` : ''}?q=${q}&page=${page}&per_page=${24}` : null)
 
     return (
-        <Pages title="Search">
+        <Pages title="Search" canonical="/search">
             <DefaultLayout>
                 <Box pb={0.5} mb={5}>
                     <Typography variant='h3' component='h1'>{title}</Typography>

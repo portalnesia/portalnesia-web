@@ -95,7 +95,7 @@ export default function UrlPages() {
     },[])
 
     return (
-        <Pages title="URL Shortener">
+        <Pages title="URL Shortener" canonical="/url">
             <DefaultLayout>
                 <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
                     <Typography variant='h4' component='h1'>URL Shortener</Typography>

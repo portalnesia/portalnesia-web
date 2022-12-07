@@ -111,7 +111,7 @@ export default function ImagesCheckerPages() {
     },[url,file,post,setNotif])
 
     return (
-        <Pages title="Images Checker">
+        <Pages title="Images Checker" canonical="/images-checker">
             <DefaultLayout maxWidth='sm'>
                 <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={3}>
                     <Typography variant='h4' component='h1'>Images Checker</Typography>

@@ -4,7 +4,7 @@ import { useTheme,styled, SxProps, Theme } from '@mui/material/styles';
 import {replaceAt,splice} from '@portalnesia/utils'
 import classNames from 'classnames'
 
-export const uChord =(text: string,func:any,html?:boolean)=>{
+export const uChord =(text: string,html?:boolean)=>{
     let hasChord= /(\b)(([A-G]((#?|b?|\d?)(\d?))?((sus|maj|min|aug|dim|add|m)(\d?))?)((?!\w)))((((\/)[A-G](#?|b?)?)?((sus|maj|min|aug|dim|add|m))?([A-G](#?|b?)?)?(\d?))|(\-{1,1}\d|\-\S+))?(\.+)?/g;
     //let hasChord= /(\b)(([A-G]((#?|b?|\d?)(\d?))?((sus|maj|min|aug|dim|add|m)(\d?))?)((?!\w)))((((\/)[A-G](#?|b?)?)?((sus|maj|min|aug|dim|add|m))?([A-G](#?|b?)?)?(\d?))|(\-\d))?(\.+)?/g;
     let buffer=[];
@@ -59,9 +59,6 @@ export const uChord =(text: string,func:any,html?:boolean)=>{
         //if(line.length < 1) buffer.push("");
         aa++;
     }
-    if(typeof func==='function') {
-        return func(buffer.join(spasi));
-    }
     return buffer.join(spasi);
 };
 
@@ -90,11 +87,10 @@ const Div = styled('div')(({theme})=>({
 }))
 
 type ChordFunc = (result: string)=>void
-const Kchord=function(template: string, transpose=0,margin?:boolean,func?: ChordFunc) {
+const Kchord=function(template: string, transpose=0,margin?:boolean) {
     const chordregex= /\[([^\]]*)\]/;
     const inword = /[a-z]$/;
     const buffer: string[] = [];
-    const chords: string[] = [];
     let last_was_lyric = false;
     let chord;
     const transpose_chord = function( chord: string, trans: number ) {
@@ -122,7 +118,6 @@ const Kchord=function(template: string, transpose=0,margin?:boolean,func?: Chord
         });
     };
     if (!template || template.length===0) {
-        if(typeof func==='function') return func("");
         return "";
     }
 
@@ -244,9 +239,6 @@ const Kchord=function(template: string, transpose=0,margin?:boolean,func?: Chord
         /* Anything else */
         buffer.push(line + "<br/>");
     });
-    if(typeof func==='function') {
-        return func(buffer.join("\n"));
-    }
     return buffer.join("\n");
 };
 
@@ -259,17 +251,13 @@ export interface ChordProps extends React.DetailedHTMLProps<React.HTMLAttributes
 
 export default function Chord({template="",transpose=0,margin=true,...other}: ChordProps) {
     const theme=useTheme();
-    const data = React.useMemo(()=>Kchord(template.replace(/&amp;/g, "\&"),transpose,margin),[template,transpose,theme])
+    const [data,setData] = React.useState("");
+
+    React.useEffect(()=>{
+        setData(Kchord(template.replace(/&amp;/g, "\&"),transpose,margin))
+    },[template,transpose,theme])
 
     return(
-        <>
-        {data ? (
-            <Div dangerouslySetInnerHTML={{__html:data}} {...other} />
-        ) : (
-            <div style={{margin:'20px auto',textAlign:'center'}}>
-                <Circular />
-            </div>
-        )}
-        </>
+        <Div dangerouslySetInnerHTML={{__html:data}} {...other} />
     )
 }

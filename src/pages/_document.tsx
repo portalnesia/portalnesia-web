@@ -28,13 +28,10 @@ class MyDocument extends Document {
           <link rel="apple-touch-icon" sizes="180x180" href={`${staticUrl('icon/apple-icon-180x180.png')}`} />
           <meta name="msapplication-TileImage" content={`${staticUrl('icon/ms-icon-144x144.png')}`} />
           <link rel="manifest" href="/manifest.json"/>
-          <script key='schema' type="application/ld+json" dangerouslySetInnerHTML={{__html:`{"@context": "https://schema.org","@type": "WebSite","url": "https://portalnesia.com/","potentialAction": {"@type": "SearchAction","target": "https://portalnesia.com/search?q={search_term_string}","query-input": "required name=search_term_string"}}`}} />
           {/* eslint-disable-next-line @next/next/no-css-tags */}
           <link className='higtlightjs-light' rel='stylesheet' href='/css/github.css' />
           {/* eslint-disable-next-line @next/next/no-css-tags */}
           <link className='higtlightjs-dark' rel='stylesheet' href='/css/github-dark.css' />
-          {process.env.NODE_ENV==='production' ? <Script key='arcio' strategy="lazyOnload" src="https://arc.io/widget.min.js#3kw38brn" /> : null}
-          {process.env.NODE_ENV==='production' ? <Script key="instatus" strategy="lazyOnload" src="https://portalnesia.instatus.com/widget/script.js" /> : null}
         </Head>
         <body className='scroll-disabled'>
           <Main />

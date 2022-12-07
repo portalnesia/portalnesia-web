@@ -123,7 +123,7 @@ export default function TransformCoordinate() {
     },[])
 
     return (
-        <Pages title="Transform Coordinate - Geodata">
+        <Pages title="Transform Coordinate - Geodata" canonical="/geodata/transform">
             <DefaultLayout>
                 <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
                     <Typography variant='h4' component='h1'>Transform Coordinate</Typography>

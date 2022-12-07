@@ -17,7 +17,7 @@ export default function TwibbonIndex() {
     const {data,error} = useSWR<PaginationResponse<TwibbonPagination>>(`/v2/twibbon?page=${page}`)
 
     return (
-        <Pages title="Twibbon">
+        <Pages title="Twibbon" canonical="/twibbon">
             <DefaultLayout>
                 <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
                     <Typography variant='h4' component='h1'>Twibbon</Typography>

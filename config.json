@@ -24,5 +24,12 @@
         "messagingSenderId": "152584550462",
         "appId": "1:152584550462:web:9e87f640a14eb1130d796f",
         "measurementId": "G-V1ZMDC79KP"
+    },
+    "contact":{
+        "email":"support@portalnesia.com",
+        "facebook":"Portalnesia",
+        "twitter":"@Portalnesia1",
+        "line":"@540ytcnc",
+        "telegram":"@portalnesia_bot"
     }
 }

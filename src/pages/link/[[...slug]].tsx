@@ -127,8 +127,9 @@ export default function LinkPages({data,meta}: IPages<UrlCustom|({url:string})>)
             await get(`/v2/url-shortener/${data.id}/update`,{success_notif:false})
         }
     },[data,get]);
+
     return (
-        <Pages title={meta?.title} desc={meta?.desc}>
+        <Pages title={meta?.title} desc={meta?.desc} canonical={`/link${'custom' in data ? `/${data.custom}` : ''}`}>
             <DefaultLayout>
                 <Grid container spacing={4} justifyContent='center'>
                     {'url' in data ? (

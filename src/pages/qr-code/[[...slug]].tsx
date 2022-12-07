@@ -208,7 +208,7 @@ export default function QrCodePages() {
     },[input,post,setNotif])
 
     return (
-        <Pages title={fullTitle}>
+        <Pages title={fullTitle} canonical={`/qr-code${slug?.[0] ? `/${slug?.[0]}` : ''}`}>
             <DefaultLayout maxWidth={false}>
                 <Box pt={isMdDown ? 6 : 0}>
                     <Grid container spacing={4}>

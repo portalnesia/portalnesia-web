@@ -9,7 +9,7 @@ import { PagesDetail } from "@model/pages";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import { clean, truncate } from "@portalnesia/utils";
+import { adddesc, clean, truncate } from "@portalnesia/utils";
 import wrapper, { BackendError } from "@redux/store";
 import { IPages } from "@type/general";
 import { useRouter } from "next/router";
@@ -18,6 +18,8 @@ import useTableContent, { HtmlMdUp } from "@design/components/TableContent";
 import Sidebar from "@design/components/Sidebar";
 import PaperBlock from "@design/components/PaperBlock";
 import Hidden from "@mui/material/Hidden";
+import { ArticleJsonLd } from "next-seo";
+import { portalUrl, staticUrl } from "@utils/main";
 
 export const getServerSideProps = wrapper<PagesDetail>(async({params,redirect,fetchAPI})=>{
     const slug = params?.slug;
@@ -25,7 +27,7 @@ export const getServerSideProps = wrapper<PagesDetail>(async({params,redirect,fe
 
     try {
         const url = `/v2/pages/${slug}`;
-        const data = await fetchAPI<PagesDetail>(url);
+        const data: PagesDetail = await fetchAPI<PagesDetail>(url);
         
         const desc = truncate(clean(data?.text||""),200);
         return {
@@ -33,7 +35,8 @@ export const getServerSideProps = wrapper<PagesDetail>(async({params,redirect,fe
                 data:data,
                 meta:{
                     title: data?.title,
-                    desc
+                    desc,
+                    image:staticUrl(`ogimage/pages/${data.slug}`)
                 }
             }
         }
@@ -53,7 +56,19 @@ export default function BlogPages({data:pages,meta}: IPages<PagesDetail>) {
     const {content} = useTableContent({data});
     
     return (
-        <Pages title={meta?.title} desc={meta?.desc}>
+        <Pages title={meta?.title} desc={meta?.desc} canonical={`/pages/${data?.slug}`}>
+            <ArticleJsonLd
+                url={portalUrl(`pages/${data?.slug}`)}
+                title={meta?.title || ""}
+                datePublished={data?.created || ""}
+                dateModified={data?.last_modified || data?.created || ""}
+                authorName={[{
+                    name:"Portalnesia",
+                    url: portalUrl(`/user/portalnesia`)
+                }]}
+                description={adddesc(meta?.desc || "")}
+                images={meta?.image ? [meta?.image] : [""]}
+            />
             <DefaultLayout navbar={{tableContent:data}}>
                 <SWRPages loading={!data&&!error} error={error}>
                     <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={5}>

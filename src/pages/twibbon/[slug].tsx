@@ -99,7 +99,7 @@ export default function TwibbonPages({data:twibbon,meta}: IPages<TwibbonDetail>)
     },[setNotif])
 
     return (
-        <Pages title={meta?.title} desc={meta?.desc}>
+        <Pages title={meta?.title} desc={meta?.desc} canonical={`/twibbon/${data?.slug}`}>
             <DefaultLayout>
                 <SWRPages loading={!data&&!error} error={error}>
                     <Grid container spacing={4}>

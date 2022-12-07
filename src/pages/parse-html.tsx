@@ -39,7 +39,7 @@ export default function ParseHTMLPages() {
     },[value])
 
     return (
-        <Pages title="Parse HTML">
+        <Pages title="Parse HTML" canonical="/parse-html">
             <DefaultLayout maxWidth='sm'>
                 <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={3}>
                     <Typography variant='h4' component='h1'>Parse HTML</Typography>

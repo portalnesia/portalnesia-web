@@ -122,7 +122,7 @@ export default function RandomNumberPages() {
     },[])
 
     return (
-        <Pages title="Random Number Generator">
+        <Pages title="Random Number Generator" canonical="/random-number">
             <DefaultLayout maxWidth='sm'>
                 <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={3}>
                     <Typography variant='h4' component='h1'>Random Number Generator</Typography>

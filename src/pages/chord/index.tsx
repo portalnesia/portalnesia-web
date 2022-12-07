@@ -44,7 +44,7 @@ export default function News() {
     },[query])
 
     return (
-        <Pages title="Chord">
+        <Pages title="Chord" canonical="/chord">
             <DefaultLayout>
                 <SWRPages loading={!data&&!error} error={error}>
                     <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>

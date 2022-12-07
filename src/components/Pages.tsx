@@ -1,7 +1,7 @@
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import config from '@src/config';
-import { NextSeo, LogoJsonLd } from 'next-seo';
+import { NextSeo, SiteLinksSearchBoxJsonLd, CorporateContactJsonLd } from 'next-seo';
 import { useRouter } from 'next/router';
 import { portalUrl, staticUrl } from '@utils/main';
 import { useSelector } from '@redux/store';
@@ -15,6 +15,7 @@ import { KeyboardArrowUp } from '@mui/icons-material';
 import Fab from '@mui/material/Fab';
 import Zoom from '@mui/material/Zoom';
 import { Socket } from './Socket';
+import Script from 'next/script';
 
 const Dialog = dynamic(()=>import('@design/components/Dialog'))
 const DialogContent = dynamic(()=>import('@design/components/DialogContent'))
@@ -25,17 +26,18 @@ export interface PageProps {
     title?:string
     desc?:string
     keyword?:string
+    canonical?: string
 }
-export default function Pages({children,title,desc,keyword}: PageProps) {
+export default function Pages({children,title,desc,keyword,canonical}: PageProps) {
     const router = useRouter()
     const { adBlock } = useInit();
     const appToken = useSelector(s=>s.appToken);
     const theme = useTheme();
     const [showToTop,setShowToTop] = useState(false);
 
-    const trigger = useScrollTrigger({
+    /*const trigger = useScrollTrigger({
         target: typeof window !== 'undefined' ? window : undefined,
-    });
+    });*/
     
     const header = useMemo(()=>{
         return {
@@ -79,6 +81,7 @@ export default function Pages({children,title,desc,keyword}: PageProps) {
             <NextSeo
                 title={header.title}
                 description={header.desc}
+                canonical={canonical}
                 additionalMetaTags={[{
                     property: 'keywords',
                     content: header.keyword
@@ -109,9 +112,22 @@ export default function Pages({children,title,desc,keyword}: PageProps) {
                     cardType: 'summary_large_image',
                 }}
             />
-            <LogoJsonLd
-                logo={staticUrl('icon/android-chrome-512x512.png')}
+            <SiteLinksSearchBoxJsonLd
                 url={portalUrl()}
+                potentialActions={[{
+                target: portalUrl(`/search?q`),
+                queryInput:'search_term_string'
+                }]}
+            />
+            <CorporateContactJsonLd
+                url={portalUrl()}
+                logo={staticUrl('icon/android-chrome-512x512.png')}
+                contactPoint={[{
+                contactType:"customer service",
+                email: config.contact.email,
+                areaServed: "ID",
+                availableLanguage: ["Indonesian","English"]
+                }]}          
             />
             {!adBlock && children}
             <Dialog open={adBlock} title="WARNING!" titleWithClose={false} actions={
@@ -124,6 +140,8 @@ export default function Pages({children,title,desc,keyword}: PageProps) {
                     <KeyboardArrowUp fontSize='large' />
                 </Fab>
             </Zoom>
+            {process.env.NODE_ENV==='production' ? <Script key='arcio' strategy="lazyOnload" src="https://arc.io/widget.min.js#3kw38brn" /> : null}
+            {process.env.NODE_ENV==='production' ? <Script key="instatus" strategy="lazyOnload" src="https://portalnesia.instatus.com/widget/script.js" /> : null}
         </div>
     )
 }

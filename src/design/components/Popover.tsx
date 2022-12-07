@@ -9,7 +9,7 @@ export interface PopoverProps extends Partial<MenuPopoverProps> {
     /**
      * Icon of button
      * 
-     * @example clarity:help-outline-badged
+     * @example ic:outline-help-outline
      */
     icon: string
 }
@@ -22,7 +22,7 @@ export interface PopoverProps extends Partial<MenuPopoverProps> {
  * 
  */
 const Popover=(props: PopoverProps)=>{
-    const {icon,children,onClose,open:op,anchorEl:_,...rest} = props
+    const {icon,children,onClose,open:op,anchorEl:_,paperSx,...rest} = props
     const anchorRef = React.useRef(null)
     const [open,setOpen] = React.useState(op||false);
 
@@ -45,7 +45,8 @@ const Popover=(props: PopoverProps)=>{
                 onClose={closePopOver}
                 anchorEl={anchorRef.current}
                 paperSx={{
-                    width:{xs:200,md:400},
+                    maxWidth:{xs:200,md:400},
+                    ...paperSx
                 }}
                 {...rest}
             >
