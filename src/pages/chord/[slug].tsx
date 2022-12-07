@@ -224,7 +224,7 @@ export default function ChordPage({data:chord,meta}: IPages<ChordDetail>) {
     },[slug])
 
     return (
-        <Pages title={meta?.title} desc={meta?.desc} canonical={`/chord/${data?.slug}`}>
+        <Pages title={meta?.title} desc={meta?.desc} canonical={`/chord/${data?.slug}`} image={meta?.image}>
             <ArticleJsonLd
                 url={portalUrl(`chord/${slug}`)}
                 title={data?.title||""}

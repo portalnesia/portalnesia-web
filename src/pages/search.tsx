@@ -91,7 +91,7 @@ export default function SearchPages() {
                                         )
                                     })}
                                 </Grid>
-                                {typeof filter === 'string' && (
+                                {(typeof filter === 'string' && (data?.total||0) > 0) &&  (
                                     <Box mt={5}>
                                         <Pagination page={page} onChange={setPage} count={data?.total_page||0} />
                                     </Box>

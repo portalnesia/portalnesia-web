@@ -27,8 +27,13 @@ export interface PageProps {
     desc?:string
     keyword?:string
     canonical?: string
+    /**
+     * Full URL
+     */
+    image?: string
+    noIndex?:boolean
 }
-export default function Pages({children,title,desc,keyword,canonical}: PageProps) {
+export default function Pages({children,title,desc,keyword,canonical,image,noIndex=false}: PageProps) {
     const router = useRouter()
     const { adBlock } = useInit();
     const appToken = useSelector(s=>s.appToken);
@@ -41,11 +46,12 @@ export default function Pages({children,title,desc,keyword,canonical}: PageProps
     
     const header = useMemo(()=>{
         return {
-            title: `${title ? `${title} | `:''}${config.meta.title}`,
-            desc: `${desc ? `${desc} `:''}${config.meta.description}`,
-            keyword: `${keyword ? `${keyword},`:''}${config.meta.keywords}`
+            title: `${title && title.length > 0 ? `${title} | `:''}${config.meta.title}`,
+            desc: `${desc && desc.length > 0 ? `${desc} `:''}${config.meta.description}`,
+            keyword: `${keyword && keyword.length > 0 ? `${keyword},`:''}${config.meta.keywords}`,
+            image: image && image.length > 0 ? image : staticUrl("og_image_default.png")
         }
-    },[title,desc,keyword])
+    },[title,desc,keyword,image])
 
     const handleToTop = useCallback(()=>{
         window.scrollTo({top:0,left:0,behavior:'smooth'});
@@ -82,6 +88,8 @@ export default function Pages({children,title,desc,keyword,canonical}: PageProps
                 title={header.title}
                 description={header.desc}
                 canonical={canonical}
+                nofollow={noIndex}
+                noindex={noIndex}
                 additionalMetaTags={[{
                     property: 'keywords',
                     content: header.keyword
@@ -96,11 +104,11 @@ export default function Pages({children,title,desc,keyword,canonical}: PageProps
                     content:theme.palette.background.paper
                 }]}
                 openGraph={{
-                    url: portalUrl(router.asPath),
+                    url: portalUrl(canonical),
                     title: header.title,
                     description: header.desc,
                     images: [
-                        { url: staticUrl("og_image_default.png") },
+                        { url: header.image },
                     ],
                     site_name: "Portalnesia",
                     type:'website'

@@ -30,12 +30,18 @@ type IMenu = {
 }
 
 const MENU_OPTIONS = (user?: IMe|null): IMenu[] => ([
+  ...(user ? [{
+    label: "Profile",
+    icon: 'gg:profile',
+    target: undefined,
+    href: `/user/${user?.username}?utm_source=portalnesia+web&utm_medium=header`
+  }] : []),
   {
     label: "Contact",
     icon: 'mdi:customer-service',
     target: undefined,
     href: `/contact?utm_source=portalnesia+web&utm_medium=header`
-  }
+  },
 ]);
 
 export default function AccountPopover() {

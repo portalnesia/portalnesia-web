@@ -123,16 +123,16 @@ function NavbarMenuDesktop({data}: NavbarMenuDesktopProps) {
                 <MenuPopover arrow={false} transformOrigin={undefined} open={open} onClose={handleOpen} anchorEl={anchorRef.current} paperSx={{py:1,px:2,pb:2,width:'60%',minWidth:800}}>
                     <Typography variant='h5' sx={{mb:2}}>{name}</Typography>
                         
-                    <Grid container spacing={1} alignItems='center'>
-                        <Grid item xs={6}>
-                            <Box bgcolor='background.default' p={2} borderRadius={2}>
+                    <Grid container spacing={1} alignItems='flex-start'>
+                        <Grid item xs={6} sx={{height:'100%'}}>
+                            <Box bgcolor='background.default' p={2} borderRadius={2} height='100%'>
                                 {child.filter((_,i)=>i%2 === 0).map(c=>(
                                     <MenuChild key={c.name} data={c} />
                                 ))}
                             </Box>
                         </Grid>
-                        <Grid item xs={6}>
-                            <Box bgcolor='background.default' p={2} borderRadius={2}>
+                        <Grid item xs={6} sx={{height:'100%'}}>
+                            <Box bgcolor='background.default' p={2} borderRadius={2} height='100%'>
                                 {child.filter((_,i)=>i%2 !== 0).map(c=>(
                                     <MenuChild key={c.name} data={c} />
                                 ))}

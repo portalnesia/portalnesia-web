@@ -54,7 +54,7 @@ export default function NewsPages({data:news,meta}: IPages<NewsDetail>) {
     const {content} = useTableContent({data})
 
     return (
-        <Pages title={meta?.title} desc={meta?.desc} canonical={`/news/${data?.source}/${encodeURIComponent(data?.title||"")}`}>
+        <Pages title={meta?.title} desc={meta?.desc} canonical={`/news/${data?.source}/${encodeURIComponent(data?.title||"")}`} image={meta?.image}>
             <NewsArticleJsonLd
                 section={""}
                 keywords={""}

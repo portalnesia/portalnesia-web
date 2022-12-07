@@ -20,8 +20,15 @@ const useDataProxy=(req,res,next)=>{
       host:'https://datas.portalnesia.com'
     },
     onProxyReq:function(proxy) {
-      proxy.setHeader('X-Local-Ip',req.headers["cf-connecting-ip"]);
-    }
+      if(process.env.NODE_ENV === 'production') proxy.setHeader('X-Local-Ip',req.headers["cf-connecting-ip"]);
+    },
+    onProxyRes:function(proxy) {
+      const type = proxy.headers['content-type'];
+      if(typeof type === 'string' && (type.startsWith('image') || type.startsWith('audio') || type.startsWith('video'))) {
+        proxy.headers['Cache-Control'] = 'public, max-age=86400';
+      }
+    },
+    logLevel:'error',
   });
   return exampleProxy(req,res,next);
 }
@@ -34,9 +41,10 @@ const useApiProxy=(req,res,next)=>{
       host:'https://api.portalnesia.com'
     },
     onProxyReq:function(proxy) {
-      proxy.setHeader('X-Local-Ip',req.headers["cf-connecting-ip"]);
+      if(process.env.NODE_ENV === 'production') proxy.setHeader('X-Local-Ip',req.headers["cf-connecting-ip"]);
     },
-    followRedirects:true
+    followRedirects:true,
+    logLevel:'error',
   });
   return apiProxy(req,res,next);
 }
@@ -50,6 +58,12 @@ const useContentProxy=(req,res,next) => {
     },
     headers:{
       host:'https://content.portalnesia.com'
+    },
+    onProxyRes:function(proxy) {
+      const type = proxy.headers['content-type'];
+      if(typeof type === 'string' && (type.startsWith('image') || type.startsWith('audio') || type.startsWith('video'))) {
+        proxy.headers['Cache-Control'] = 'public, max-age=86400';
+      }
     },
     logLevel:'error',
     followRedirects:true

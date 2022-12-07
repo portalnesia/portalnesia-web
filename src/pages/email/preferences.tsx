@@ -35,7 +35,7 @@ type IData = {
 export const getServerSideProps = wrapper<IData>(async({resolvedUrl,redirect,query,session})=>{
     const tokenQuery = query?.token;
     if(typeof tokenQuery !== 'string') return redirect();
-    const token = verifyToken<{login?:boolean,jenis?: string, slug?: string,userid?:string,name?:string,email?:string}>(tokenQuery);
+    const token = verifyToken<{login?:boolean,jenis?: string, slug?: string,userid?:string,name?:string,email?:string}>(tokenQuery,[1,'year']);
 
     if(token?.login && !session) return redirect(accountUrl(`login?redirect=${encodeURIComponent(portalUrl(resolvedUrl))}`));
     
@@ -105,7 +105,7 @@ export default function EmailSubsPages({data}: IPages<IData>) {
     }),[token,setNotif,post,token,input])
 
     return (
-        <Pages title="Email Preferences" canonical="/email/preferences">
+        <Pages title="Email Preferences" canonical="/email/preferences" noIndex>
             <DefaultLayout maxWidth='sm'>
                 <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={5}>
                     <Typography variant='h3' component='h1'>Email Notification</Typography>

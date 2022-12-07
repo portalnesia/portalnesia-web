@@ -121,9 +121,13 @@ export default function GlobalStyles({styles}: GlobalStylesProps) {
           marginBottom:'inherit !important'
         },
         a: {color:'inherit',textDecoration:'unset',WebkitTapHighlightColor:'transparent'},
-        'a:not(.no-underline) p,a:not(.no-underline) span, p.underline, span.underline':{
+        'a:not(.no-underline),a:not(.no-underline)':{
           cursor:'pointer',
-          '&:hover':{textDecoration:'underline'}
+          '&:hover':{
+            '& p, & span':{
+              textDecoration:'underline'
+            }
+          }
         },
         'a.a-blank[target="blank"], a.a-blank[target="_blank"], a[target="_blank"]:not(.no-blank), a[target="blank"]:not(.no-blank)':{
           display:'inline-flex',

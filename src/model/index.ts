@@ -1,6 +1,7 @@
 import { Session, SubscribeEmail } from "./session"
 import User, { Follow } from "./user"
 import dbOri,{DB} from './db'
+import './calendar'
 
 let db: DB|undefined;
 

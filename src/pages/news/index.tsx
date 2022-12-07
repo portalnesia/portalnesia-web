@@ -39,7 +39,7 @@ export default function News() {
                                 </BoxPagination>
                             </Grid>
                         )}
-                        {data && (
+                        {(data && data?.data?.length > 0) && (
                             <Grid sx={{mt:2}} key={'pagination'} item xs={12}>
                                 <Pagination page={page} onChange={setPage} count={data?.total_page} />
                             </Grid>

@@ -26,6 +26,7 @@ type DialogActionType=State['hotkeys']['dialog']
 
 export function useHotKeys(register?: boolean) {
     const dispatch = useDispatch();
+    const user = useSelector(s=>s.user);
     const {hotkeys:{disabled,dialog}} = useSelector<Pick<State,'hotkeys'>>(s=>({hotkeys:s.hotkeys}));
     
     const setDialog = useCallback((data: DialogActionType)=>{
@@ -49,6 +50,15 @@ export function useHotKeys(register?: boolean) {
             if(input) input?.focus();
         }
     },[]);
+
+    const profileAction=useCallback((e?: KeyboardEvent)=>{
+        if(e?.preventDefault) e.preventDefault();
+        if(user) {
+            const username = Router.query?.slug?.[0];
+            if(Router.pathname==='/user/[...slug]' && username === user?.username) Router.replace(`/user/${user?.username}?utm_source=portalnesia+web&utm_medium=navigation+keyboard`)
+            else Router.push(`/user/${user?.username}?utm_source=portalnesia+web&utm_medium=navigation+keyboard`)
+        }
+    },[user]);
 
     const contactAction=useCallback((e?: KeyboardEvent)=>{
         if(e?.preventDefault) e.preventDefault();
@@ -76,6 +86,14 @@ export function useHotKeys(register?: boolean) {
                 custom:'shiftf',
                 button:['SHIFT','F']
             },
+            ...(user ? {
+                PROFILE:{
+                    name:'Profile',
+                    sequence:'shift+p',
+                    custom:'shiftp',
+                    button:['SHIFT','P']
+                }
+            } : {}),
             CONTACT:{
                 name:'Contact',
                 sequence:'shift+c',
@@ -255,6 +273,7 @@ export function useHotKeys(register?: boolean) {
     const handlers: HandlersMap={
         KEYBOARD: keyboardAction,
         SEARCH: searchAction,
+        PROFILE: profileAction,
         CONTACT:contactAction,
         HOME:homeAction,
         TRANSFORM_COORDINATE:transformCoodrinateAction,

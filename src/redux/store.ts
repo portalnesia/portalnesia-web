@@ -139,7 +139,7 @@ export default function wrapper<P extends {}>(callback: Callback<P>) {
             const fetchAPI = async<D=any>(url: string)=>{
                 const resp = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${url}`,{
                     headers:{
-                        'Pn-Internal-Server':createToken({
+                        'Pn-Internal-Portalnesia':createToken({
                             ...(session ? {
                                 id:session.id,
                                 userid:session.userid

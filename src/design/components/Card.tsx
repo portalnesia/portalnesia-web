@@ -34,7 +34,7 @@ export default function CustomCard({title,link,image,children,ellipsis}: CustomC
             <Link href={link} legacyBehavior passHref>
                 <CardActionArea component='a' className="no-underline" sx={{width:'100%',height:'100%'}}>
                     {image && (
-                        <Image src={image} alt={title} sx={{width:'100%'}} />
+                        <Image webp src={image} alt={title} sx={{width:'100%'}} />
                     )}
                     <CardContent sx={{p:2,position:'relative'}}>
                         <Tooltip title={title}><EllipsisTypography ellipsis={ellipsis}>{title}</EllipsisTypography></Tooltip>

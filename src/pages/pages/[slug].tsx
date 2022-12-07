@@ -56,7 +56,7 @@ export default function BlogPages({data:pages,meta}: IPages<PagesDetail>) {
     const {content} = useTableContent({data});
     
     return (
-        <Pages title={meta?.title} desc={meta?.desc} canonical={`/pages/${data?.slug}`}>
+        <Pages title={meta?.title} desc={meta?.desc} canonical={`/pages/${data?.slug}`} image={meta?.image}>
             <ArticleJsonLd
                 url={portalUrl(`pages/${data?.slug}`)}
                 title={meta?.title || ""}

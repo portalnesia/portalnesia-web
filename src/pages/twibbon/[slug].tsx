@@ -21,6 +21,7 @@ import Croppie from "@comp/Croppie";
 import dynamic from "next/dynamic";
 import useNotification from "@design/components/Notification";
 import { ShareAction } from "@comp/Action";
+import { staticUrl } from "@utils/main";
 
 const Backdrop = dynamic(()=>import("@design/components/Backdrop"))
 const Dialog = dynamic(()=>import("@design/components/Dialog"))
@@ -32,7 +33,7 @@ export const getServerSideProps = wrapper<TwibbonDetail>(async({params,redirect,
 
     try {
         const url = `/v2/twibbon/${slug}`;
-        const data = await fetchAPI<TwibbonDetail>(url);
+        const data: TwibbonDetail = await fetchAPI<TwibbonDetail>(url);
 
         const desc = truncate(clean(data?.description||""),200);
 
@@ -41,7 +42,8 @@ export const getServerSideProps = wrapper<TwibbonDetail>(async({params,redirect,
                 data:data,
                 meta:{
                     title: data?.title,
-                    desc
+                    desc,
+                    image: staticUrl(`img/twibbon/${data.slug}`)
                 }
             }
         }
@@ -99,7 +101,7 @@ export default function TwibbonPages({data:twibbon,meta}: IPages<TwibbonDetail>)
     },[setNotif])
 
     return (
-        <Pages title={meta?.title} desc={meta?.desc} canonical={`/twibbon/${data?.slug}`}>
+        <Pages title={meta?.title} desc={meta?.desc} canonical={`/twibbon/${data?.slug}`} image={meta?.image}>
             <DefaultLayout>
                 <SWRPages loading={!data&&!error} error={error}>
                     <Grid container spacing={4}>
