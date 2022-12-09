@@ -43,14 +43,6 @@ export function useHotKeys(register?: boolean) {
         else setDialog('keyboard');
     },[dialog])
 
-    const searchAction=useCallback((event?: KeyboardEvent)=>{
-        if(event?.preventDefault) event.preventDefault();
-        if(typeof window !== 'undefined') {
-            const input=document.getElementById('search-input-home')
-            if(input) input?.focus();
-        }
-    },[]);
-
     const profileAction=useCallback((e?: KeyboardEvent)=>{
         if(e?.preventDefault) e.preventDefault();
         if(user) {
@@ -272,7 +264,6 @@ export function useHotKeys(register?: boolean) {
 
     const handlers: HandlersMap={
         KEYBOARD: keyboardAction,
-        SEARCH: searchAction,
         PROFILE: profileAction,
         CONTACT:contactAction,
         HOME:homeAction,
@@ -294,14 +285,14 @@ export function useHotKeys(register?: boolean) {
         const mousetrap=require('mousetrap')
 
         if(register && !disabled) {
-            Object.keys(keyMap).forEach(key=>{
+            Object.keys(keyMap).filter(k=>k!=="SEARCH").forEach(key=>{
                 mousetrap.bind(keyMap[key].sequence,handlers[key])
             })
         }
         
 
         return ()=>{
-            Object.keys(keyMap).forEach(key=>{
+            Object.keys(keyMap).filter(k=>k!=="SEARCH").forEach(key=>{
                 mousetrap.unbind(keyMap[key].sequence);
             })
         }

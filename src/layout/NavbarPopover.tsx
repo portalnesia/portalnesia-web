@@ -11,7 +11,6 @@ import { navbarMenu } from './navbar.config';
 import ButtonBase from '@mui/material/ButtonBase';
 import { styled } from '@mui/material/styles';
 import Fade from '@mui/material/Fade';
-import ExpandMore from '@design/components/ExpandMore';
 import ListItemText from '@mui/material/ListItemText';
 import Link from '@design/components/Link';
 import { useRouter } from 'next/router';

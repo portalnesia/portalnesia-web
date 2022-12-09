@@ -21,12 +21,12 @@ const classes = {
     blueGrey: 'avaBlueGray'
 }
 
-const Ava = styled(Av,{shouldForwardProp:prop=>prop!=="withTop"})<{withtop?:boolean}>(({children,theme})=>({
-    ...(typeof children !== 'string' ? {
+const Ava = styled(Av)(({children,theme})=>({
+    /*...(typeof children !== 'string' ? {
         '&.MuiAvatar-root':{
             paddingTop:2
         }
-    } : {}),
+    } : {}),*/
     [`&.${classes.orange}`]: {
         color: '#fff',
         background: `linear-gradient(33deg,${deepOrange[200]},${deepOrange[500]})`,
@@ -80,7 +80,7 @@ const Ava = styled(Av,{shouldForwardProp:prop=>prop!=="withTop"})<{withtop?:bool
 const randomArr=['orange','purple','pink','green','red','blue','indigo','brown','grey','cyan','teal','blueGrey'];
 
 export interface AvatarProps extends AvaProps {
-    withTop?:boolean
+    
 }
 
 /**
@@ -90,7 +90,7 @@ export interface AvatarProps extends AvaProps {
  * Homepage: [Portalnesia](https://portalnesia.com)
  */
 export default function Avatar(props: AvatarProps){
-    const {children,className,style,withTop=undefined,...other}=props
+    const {children,className,style,...other}=props
     const select: keyof typeof classes = React.useMemo(()=>{
         const i = Math.floor(Math.random() * randomArr.length);
         return randomArr[i] as keyof typeof classes
@@ -102,6 +102,6 @@ export default function Avatar(props: AvatarProps){
     },[children])
 
     return (
-        <Ava withtop={withTop} className={clx(className,typeof children==='string' ? classes[select] : '' )} {...(React.isValidElement(children) ? {style:{...style}} : {style:{...style,paddingTop:0}})} {...other}>{child}</Ava>
+        <Ava className={clx(className,typeof children==='string' ? classes[select] : '' )} {...(React.isValidElement(children) ? {style:{...style}} : {style:{...style,paddingTop:0}})} {...other}>{child}</Ava>
     )
 }

@@ -1,5 +1,5 @@
 import Logo, { LogoProps } from "@comp/Logo";
-import { Div } from "@design/components/Dom";
+import { Div, Form } from "@design/components/Dom";
 import Iconify from "@design/components/Iconify";
 import Link from "@design/components/Link";
 import AccountPopover from "@layout/AccountPopover";
@@ -27,6 +27,9 @@ import MenuPopover from "@design/components/MenuPopover";
 import useResponsive from "@design/hooks/useResponsive";
 import dynamic from "next/dynamic";
 import Portal from "@mui/material/Portal";
+import IconButton from "@mui/material/IconButton";
+import { ArrowBack } from "@mui/icons-material";
+import { useMousetrap } from "@hooks/hotkeys";
 
 const HtmlMdDown = dynamic(()=>import('@design/components/TableContent').then(m=>m.HtmlMdDown),{ssr:false})
 
@@ -120,7 +123,7 @@ function NavbarMenuDesktop({data}: NavbarMenuDesktopProps) {
                         <Iconify icon={open && iconActive ? iconActive : icon} sx={{width:35,height:35,...(open ? {color:'customColor.linkIcon'} : {})}} />
                     </MenuDesktop>
                 </Tooltip>
-                <MenuPopover arrow={false} transformOrigin={undefined} open={open} onClose={handleOpen} anchorEl={anchorRef.current} paperSx={{py:1,px:2,pb:2,width:'60%',minWidth:800}}>
+                <MenuPopover arrow={false} transformOrigin={undefined} open={open} onClose={handleOpen} anchorEl={anchorRef.current} paperSx={{py:1,px:2,pb:2,width:'60%',minWidth:800}} disableScrollLock>
                     <Typography variant='h5' sx={{mb:2}}>{name}</Typography>
                         
                     <Grid container spacing={1} alignItems='flex-start'>
@@ -161,12 +164,16 @@ function NavbarMenuDesktop({data}: NavbarMenuDesktopProps) {
     )
 }
 
-const SearchComp = styled(Stack,{shouldForwardProp:prop=>prop!=='active'})<{active?:boolean}>(({theme,active})=>({
+const InputSearch = styled(InputBase,{shouldForwardProp:prop=>prop!=='active'})<{active?:boolean}>(({theme,active})=>({
+    width:'100%',
     borderRadius:16,
     backgroundColor:theme.palette.customColor.search,
     border:`1px solid ${theme.palette.customColor.search}`,
     '&:hover':{
         border:`1px solid ${theme.palette.divider}`,
+    },
+    '&:active': {
+        border:`1px solid ${theme.palette.customColor.linkIcon} !important`,
     },
     ...active ? {
         border:`1px solid ${theme.palette.customColor.linkIcon} !important`,
@@ -184,6 +191,10 @@ function Search() {
     const [q,setQ] = useState("");
     const [open,setOpen] = useState(false);
     const [focus,setFocus] = useState(false);
+    const ref = useRef<HTMLInputElement>(null);
+    const ref2 = useRef<HTMLInputElement>(null);
+    const xs = useResponsive('only','xs');
+    const md= useResponsive('only','md')
 
     useEffect(()=>{
         if(typeof query === "string") setQ(decodeURIComponent(query))
@@ -195,44 +206,64 @@ function Search() {
         router.push({pathname:`/search`,query:{q}},`/search?q=${encodeURIComponent(q)}`);
     },[router,q])
 
+    const openSearch = useCallback(()=>{
+        if(xs || md) {
+            setOpen(true)
+            setTimeout(()=>{
+                ref.current?.focus()
+            },100)
+        } else {
+            setTimeout(()=>{
+                ref2.current?.focus()
+            },100)
+        }
+    },[xs,md])
+
+    useMousetrap("/",openSearch);
+
     return (
-        <form onSubmit={handleSearch}>
+        <Form sx={{flexGrow:{lg:1,sm:1,xl:1,md:0,xs:0}}} onSubmit={handleSearch}>
             <Hidden only={['md','xs']}>
-                <SearchComp active={focus} direction='row' spacing={1} alignItems='center' sx={{px:2,py:1}}>
-                    <InputBase
-                        id='search-input-home'
-                        value={q}
-                        onFocus={()=>setFocus(true)}
-                        onBlur={()=>setFocus(false)}
-                        onChange={(e)=>setQ(e.target.value)}
-                        placeholder="Search..."
-                        inputProps={{ 'aria-label': 'Search'}} />
-                </SearchComp>
+                <InputSearch
+                    sx={{px:2,py:1}}
+                    id='search-input-home'
+                    active={focus}
+                    value={q}
+                    onFocus={()=>setFocus(true)}
+                    onBlur={()=>setFocus(false)}
+                    onChange={(e)=>setQ(e.target.value)}
+                    placeholder="Search..."
+                    inputProps={{ 'aria-label': 'Search'}}
+                    inputRef={ref2}
+                />
             </Hidden>
             <Hidden only={['lg','sm','xl']}>
-                <Tooltip title="Search"><IconButtonActive open={open} onClick={()=>setOpen(!open)}>
+                <Tooltip title="Search"><IconButtonActive open={open} onClick={openSearch}>
                     <Iconify icon='material-symbols:search' sx={{width:25,height:25}} />
                 </IconButtonActive></Tooltip>
                 
                 <Portal>
                     <Fade in={open}>
-                        <Box position='fixed' bgcolor='background.paper' px={2} py={1} width='100%' left={0} top={64} zIndex={1102}>
-                            <SearchComp active={focus} spacing={1} alignItems='center' sx={{px:2,py:1}}>
-                            <InputBase
+                        <Stack direction='row' spacing={2} position='fixed' bgcolor='background.paper' px={2} py={1} width='100%' left={0} top={0} zIndex={1102}>
+                            <IconButton onClick={()=>setOpen(false)}>
+                                <ArrowBack />
+                            </IconButton>
+                            <InputSearch
+                                sx={{px:2,py:1}}
+                                active={focus}
                                 id='search-input-home'
-                                sx={{width:'100%'}}
                                 value={q}
                                 onFocus={()=>setFocus(true)}
                                 onBlur={()=>setFocus(false)}
                                 onChange={(e)=>setQ(e.target.value)}
                                 placeholder="Search..."
-                                inputProps={{ 'aria-label': 'Search'}} />
-                            </SearchComp>
-                        </Box>
+                                inputProps={{ 'aria-label': 'Search'}}
+                                inputRef={ref} />
+                        </Stack>
                     </Fade>
                 </Portal>
             </Hidden>
-        </form>
+        </Form>
     )
 }
 

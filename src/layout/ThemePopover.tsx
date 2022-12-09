@@ -55,7 +55,7 @@ export default function ThemePopover() {
         </IconButtonActive>
       </Tooltip>
       
-      <MenuPopover open={open} onClose={handleClose()} anchorEl={anchorRef.current}>
+      <MenuPopover open={open} onClose={handleClose()} anchorEl={anchorRef.current} disableScrollLock>
         <Box sx={{ py: 1 }}>
           {Theme.map((t)=>(
             <MenuItem

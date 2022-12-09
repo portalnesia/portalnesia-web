@@ -24,8 +24,6 @@ import Stack from "@mui/material/Stack";
 import { Span } from "@design/components/Dom";
 import Iconify from "@design/components/Iconify";
 import Tooltip from "@mui/material/Tooltip";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
 import { BoxPagination, usePagination } from "@design/components/Pagination";
 import useAPI, { ApiError, PaginationResponse } from "@design/hooks/api";
 import { ChordPagination } from "@model/chord";
@@ -34,8 +32,18 @@ import Pagination from "@mui/material/Pagination";
 import { TwibbonPagination } from "@model/twibbon";
 import dynamic from "next/dynamic";
 import useNotification from "@design/components/Notification";
+import IconButton from "@mui/material/IconButton";
+import { AccountCircle, Check, Clear, MoreVert } from "@mui/icons-material";
+import MenuItem from "@mui/material/MenuItem";
 
+const MenuPopover = dynamic(()=>import("@design/components/MenuPopover"));
+const ListItemIcon = dynamic(()=>import("@mui/material/ListItemIcon"));
+const Card = dynamic(()=>import("@mui/material/Card"));
+const CardActions = dynamic(()=>import("@mui/material/CardActions"));
+const CardContent = dynamic(()=>import("@mui/material/CardContent"));
+const CardHeader = dynamic(()=>import("@mui/material/CardHeader"));
 const Dialog = dynamic(()=>import('@design/components/Dialog'))
+const Backdrop = dynamic(()=>import('@design/components/Backdrop'))
 
 type IData = UserDetail & ({
     chord: ChordPagination[]
@@ -124,6 +132,7 @@ const CustomTabs = styled(Tabs)(()=>({
     width:'100%'*/
 }))
 
+// TODO - QUIZ
 export default function UserPages({data:userData,meta}: IPages<IData>) {
     const router = useRouter();
     const username = router?.query?.slug?.[0];
@@ -135,7 +144,7 @@ export default function UserPages({data:userData,meta}: IPages<IData>) {
         if(typeof action !== 'string') return 0;
         if(action === 'friend-request') return tabArr.length
         const index = tabArr.findIndex(c=>c.link.indexOf(action) > 0);
-        return index > -1 ? index : 0;
+        return index;
     },[action])
 
     const title = React.useMemo(()=>{
@@ -209,7 +218,7 @@ export default function UserPages({data:userData,meta}: IPages<IData>) {
                                         {data?.birthday && (
                                             <Stack direction='row' spacing={1}>
                                                 <Iconify icon='fa-solid:birthday-cake' />
-                                                <Typography>{getDayJs(data?.birthday).format('DD MMMM')}</Typography>
+                                                <Typography>{getDayJs(data?.birthday).pn_format('fulldate')}</Typography>
                                             </Stack>
                                         )}
                                         {data?.facebook && (
@@ -257,7 +266,7 @@ export default function UserPages({data:userData,meta}: IPages<IData>) {
                             <Grid item xs={12} md={8} sx={{position:'relative'}}>
                                 <Box id='user-content'>
                                     <Box borderBottom={theme=>`1px solid ${theme.palette.divider}`}>
-                                        <CustomTabs variant='scrollable' value={tabValue} sx={{px:1}}>
+                                        <CustomTabs variant='scrollable' value={tabValue > -1 ? tabValue : undefined} sx={{px:1}}>
                                             {tabArr.map(t=>(
                                                 <Link key={t.label} href={`/user/${username}${t.link}`} passHref legacyBehavior shallow scroll><CustomTab sx={{py:1}} label={t.label} component='a' /></Link>
                                             ))}
@@ -277,6 +286,8 @@ export default function UserPages({data:userData,meta}: IPages<IData>) {
                                                     </>
                                                 )}
                                             </BoxPagination>
+                                        ) : action === "followers" || action === "following" || action === "friend-request" ? (
+                                            <FollowPage user={user} type={action} data={data} mutate={mutate} />
                                         ) : tabValue === 0 ? (
                                             <OverviewPages data={data} user={user} />
                                         ) : tabValue === 1 ? (
@@ -394,7 +405,7 @@ function ChordPages({data:user}: SubcomProps){
             <SWRPages loading={!data&&!error} error={error}>
                 <Grid container spacing={2}>
                     {data && data?.data?.length > 0 ? (data.data.map(d=>(
-                        <Grid item xs={12} sm={6} lg={4}>
+                        <Grid key={d.slug} item xs={12} sm={6} lg={4}>
                             <CustomCard link={href(d.link)} title={`${d.artist} - ${d.title}`} />
                         </Grid>
                     ))) : (
@@ -423,7 +434,7 @@ function BlogPages({data:user}: SubcomProps){
             <SWRPages loading={!data&&!error} error={error}>
                 <Grid container spacing={2}>
                     {data && data?.data?.length > 0 ? (data.data.map(d=>(
-                        <Grid item xs={12} sm={6} lg={4}>
+                        <Grid key={d.slug} item xs={12} sm={6} lg={4}>
                             <CustomCard link={href(d.link)} title={d.title} image={`${d.image}&export=banner&size=300`} />
                         </Grid>
                     ))) : (
@@ -452,7 +463,7 @@ function TwibbonPages({data:user}: SubcomProps){
             <SWRPages loading={!data&&!error} error={error}>
                 <Grid container spacing={2}>
                     {data && data?.data?.length > 0 ? (data.data.map(d=>(
-                        <Grid item xs={12} sm={6} lg={4}>
+                        <Grid key={d.slug} item xs={12} sm={6} lg={4}>
                             <CustomCard link={href(d.link)} title={d.title} image={`${d.image}&export=banner&size=300`} ellipsis={1} />
                         </Grid>
                     ))) : (
@@ -470,5 +481,183 @@ function TwibbonPages({data:user}: SubcomProps){
                 </Grid>
             </SWRPages>
         </Box>
+    )
+}
+
+type IFollowResult = {
+    isFollowPending: boolean;
+    isFollower: boolean;
+    isFollowing: boolean;
+    id: number;
+    name: string;
+    username: string;
+    picture: string | null;
+    verify: boolean;
+}
+type IPendingFollowResult = {
+    token: string;
+    id: number;
+    name: string;
+    username: string;
+    picture: string | null;
+    verify: boolean;
+}
+type IFollowData = IFollowResult | IPendingFollowResult;
+
+function FollowPage({user,data:dataUser,type,mutate:userMutate}: SubcomProps & ({type:'followers'|'following'|'friend-request',mutate:()=>void})) {
+    const [page,setPage] = usePagination(1);
+    const {data,error,mutate} = useSWR<PaginationResponse<IFollowData>>(dataUser ? `/v2/user/${dataUser?.username}/${type}?page=${page}&per_page=12` : null);
+
+    const [loading,setLoading] = React.useState(false)
+    const setNotif = useNotification();
+    const {post,del} = useAPI()
+
+    const handleFollow = React.useCallback((data: IFollowResult)=>async()=>{
+        if(!user) {
+            setNotif(`Login to continue!`,true);
+            setTimeout(()=>{
+                window.location.href=accountUrl(`/login?redirect=${encodeURIComponent(href(Router.asPath))}`)
+            },1000)
+        } else {
+            try {
+                setLoading(true)
+                if(data?.isFollowing || data?.isFollowPending) {
+                    await del(`/v2/user/${user?.username}/following/${data?.username}`)
+                } else {
+                    await post(`/v2/user/${user?.username}/following/${data?.username}`,{})
+                }
+                mutate();
+                userMutate();
+            } catch(e) {
+                if(e instanceof ApiError) setNotif(e.message,true);
+            } finally {
+                setLoading(false)
+            }
+        }
+    },[user,post,setNotif,del,mutate,userMutate])
+
+    const handlePending=React.useCallback((data: IPendingFollowResult,isAccept: boolean)=>async()=>{
+        if(!user) {
+            setNotif(`Login to continue!`,true);
+            setTimeout(()=>{
+                window.location.href=accountUrl(`/login?redirect=${encodeURIComponent(href(Router.asPath))}`)
+            },1000)
+        } else {
+            try {
+                setLoading(true)
+                if(!isAccept) {
+                    await del(`/v2/user/${user?.username}/followers/pending/${data?.token}`)
+                } else {
+                    await post(`/v2/user/${user?.username}/followers/pending/${data?.token}`,{})
+                }
+                mutate();
+                userMutate();
+            } catch(e) {
+                if(e instanceof ApiError) setNotif(e.message,true);
+            } finally {
+                setLoading(false)
+            }
+        }
+    },[user,post,setNotif,mutate,del,userMutate])
+
+    return (
+        <Box>
+            <SWRPages loading={!data&&!error} error={error}>
+                <Grid container spacing={2}>
+                    {data && data?.data?.length > 0 ? data?.data?.map((d,i)=>(
+                        <Grid key={d.username} item xs={12} sm={6}>
+                            <Card>
+                                <CardHeader
+                                    sx={{
+                                        p:2
+                                    }}
+                                    title={d.name}
+                                    subheader={`@${d.username}`}
+                                    avatar={
+                                        <Avatar aria-label={`${d.name}'s Photo Profile`}>
+                                            {d.picture ? <Image src={`${d.picture}&size=40&watermark=no`} alt={`@${d.username}`} /> : d?.name}
+                                        </Avatar>
+                                    }
+                                    action={
+                                        <MenuButton user={user} data={d} onFollow={handleFollow} disabled={loading} />
+                                    }
+                                />
+                                {'token' in d && (
+                                    <CardActions>
+                                        <Button sx={{width:'100%'}} endIcon={<Check />} onClick={handlePending(d,true)}>Accept</Button>
+                                        <Button sx={{width:'100%'}} color='error' endIcon={<Clear />} onClick={handlePending(d,false)}>Decline</Button>
+                                    </CardActions>
+                                )}
+                            </Card>
+                        </Grid>
+                    )) : (
+                        <Grid key={'no-data'} item xs={12}>
+                            <BoxPagination>
+                                <Typography>No data</Typography>
+                            </BoxPagination>
+                        </Grid>
+                    )}
+                    {(data && data?.data?.length > 0) && (
+                        <Grid sx={{mt:2}} key={'pagination'} item xs={12}>
+                            <Pagination page={page} onChange={setPage} count={data?.total_page} />
+                        </Grid>
+                    )}
+                </Grid>
+            </SWRPages>
+            <Backdrop open={loading} />
+        </Box>
+    )
+}
+
+type MenuButtonProps = {
+    user: IMe|null|undefined
+    data: IFollowResult | IPendingFollowResult;
+    disabled?: boolean
+    onFollow: (data: IFollowResult) => () => void
+}
+function MenuButton({data,disabled,onFollow,user}: MenuButtonProps) {
+    const [open,setOpen] = React.useState(false);
+    const anchorRef = React.useRef(null);
+
+    const handleMenu = React.useCallback((open: boolean)=>()=>{
+        setOpen(open);
+    },[])
+
+    const handleFollow = React.useCallback((data: IFollowResult)=>()=>{
+        setOpen(false);
+        onFollow(data)()
+    },[onFollow])
+
+    return (
+        <>
+            <IconButton
+                disabled={disabled}
+                onClick={handleMenu(true)}
+                ref={anchorRef}
+            >
+                <MoreVert />
+            </IconButton>
+            <MenuPopover
+                open={open}
+                onClose={handleMenu(false)}
+                anchorEl={anchorRef.current}
+            >
+                <Box sx={{ my: 1.5}}>
+                    <Link href={`/user/${data.username}`} passHref legacyBehavior><MenuItem component='a' onClick={handleMenu(false)}><ListItemIcon><AccountCircle/></ListItemIcon> View Profile</MenuItem></Link>
+                    {('isFollowing' in data && user && user.id !== data.id) && (
+                        <>
+                            <MenuItem onClick={handleFollow(data)}>
+                                {data?.isFollowing || data?.isFollowPending ? (
+                                    <ListItemIcon><Clear /></ListItemIcon>
+                                ) : (
+                                    <ListItemIcon><Check /></ListItemIcon>
+                                )}
+                                {data?.isFollowing || data?.isFollowPending ? "Unfollow" : "Follow"}
+                            </MenuItem>
+                        </>
+                    )}
+                </Box>
+            </MenuPopover>
+        </>
     )
 }

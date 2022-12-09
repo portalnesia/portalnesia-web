@@ -50,7 +50,7 @@ export default function AccountPopover() {
   const dispatch = useDispatch();
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
-  const {data,mutate} = useSWR<IMe>(userRedux === undefined ? `/v2/user` : null,{
+  const {data,mutate} = useSWR<IMe|null>(userRedux === undefined ? `/v2/user` : null,{
     revalidateOnFocus:false,
     revalidateOnMount:false,
   });
@@ -64,7 +64,7 @@ export default function AccountPopover() {
 
   useEffect(()=>{
     if(userRedux === undefined) {
-      if(data) {
+      if(data !== undefined) {
         setUser(data);
         dispatch({type:"CUSTOM",payload:{user:data}});
       }
@@ -83,9 +83,9 @@ export default function AccountPopover() {
         {user === undefined ? (
           <Circular size={25} />
         ) : (
-          <Avatar alt="Profiles">
+          <Avatar alt="Profiles" sx={{width:44,height:44}}>
             {user && user?.picture ? (
-              <Image src={`${user?.picture}&size=40&watermark=no`} webp alt={user?.name} />
+              <Image src={`${user?.picture}&size=44&watermark=no`} webp alt={user?.name} />
             ) : undefined}
           </Avatar>
         )}
@@ -96,6 +96,7 @@ export default function AccountPopover() {
         onClose={handleClose}
         anchorEl={anchorRef.current}
         sx={{ width: 220 }}
+        disableScrollLock
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle1" noWrap>

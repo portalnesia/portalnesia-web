@@ -55,14 +55,16 @@ export const navbarMenu: INavbar[] = [{
     icon: 'material-symbols:photo-frame-outline',
     iconActive: 'material-symbols:photo-frame'
 },{
+    name:"Quiz",
+    link:"/quiz?utm_source=portalnesia+web&utm_medium=header",
+    desc:"Create your own quiz and share with friends or answer a few quizzes",
+    icon: 'fluent:clipboard-task-list-ltr-20-regular',
+    iconActive: 'fluent:clipboard-task-list-ltr-20-filled'
+},{
     name:"More",
     link:"",
     icon:"fe:app-menu",
     child:[{
-        name:"Quiz",
-        link:"/quiz?utm_source=portalnesia+web&utm_medium=header",
-        desc:"Create your own quiz and share with friends or answer a few quizzes"
-    },{
         name:"Transform Coordinate",
         link:"/geodata/transform?utm_source=portalnesia+web&utm_medium=header",
         desc:"Insert value pairs of geographic coordinates and transform them to different coordinate system or cartographic projection"
