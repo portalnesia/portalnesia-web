@@ -1,5 +1,7 @@
 
 export const NAVBAR_HEIGHT = 64;
+export const NAVBAR_HEIGHT_DESKTOP = 92;
+export const DRAWER_WIDTH = 280;
 
 export type INavbarChild = {
     name: string,
@@ -13,7 +15,7 @@ export type INavbar = {
     name: string,
     link: string,
     tooltip?: string
-    icon: string
+    icon?: string
     iconActive?: string
     desc?: string
     child?: INavbarChild[]
@@ -89,4 +91,18 @@ export const navbarMenu: INavbar[] = [{
         link:"/images-checker?utm_source=portalnesia+web&utm_medium=header",
         desc:"Online tools to help you quickly identify unseemly images"
     }]
+}]
+
+export const dashboardMenu: INavbar[] = [{
+    name:"Dashboard",
+    link:"/dashboard?utm_source=portalnesia+web&utm_medium=header",
+    icon: 'material-symbols:dashboard-rounded',
+},{
+    name:"Chord",
+    link:"/dashboard/chord?utm_source=portalnesia+web&utm_medium=header",
+    icon: 'material-symbols:music-video-outline',
+},{
+    name:"Blog",
+    link:"/dashboard/blog?utm_source=portalnesia+web&utm_medium=header",
+    icon: 'material-symbols:library-books-outline',
 }]

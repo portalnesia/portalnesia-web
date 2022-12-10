@@ -3,6 +3,7 @@ import Link from 'next/link';
 import SvgIcon from '@mui/material/SvgIcon';
 import { Theme, useTheme } from "@mui/material/styles";
 import { SystemCssProperties } from '@mui/system/styleFunctionSx';
+import {A} from '@design/components/Dom'
 
 interface SvgProps {
   size?:SystemCssProperties<Theme>['fontSize']
@@ -38,8 +39,8 @@ export default function Logo({href='/',svg}: LogoProps) {
     // const theme = useTheme();
     if(typeof href==='boolean') return <SvgLogo />
     return (
-      <Link href={href}>
+      <Link href={href} passHref legacyBehavior><A sx={{height:'100%',display:'inline-flex'}}>
         <SvgLogo {...svg} />
-      </Link>
+      </A></Link>
     );
 }

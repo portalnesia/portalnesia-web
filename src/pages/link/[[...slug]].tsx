@@ -120,10 +120,10 @@ export default function LinkPages({data,meta}: IPages<UrlCustom|({url:string})>)
     const {get} = useAPI();
     const handleRedirect=React.useCallback(async()=>{
         if('url' in data) {
-            window.open(data.url);
+            window.open(data.url,'_blank','noopener,noreferrer,popup=0');
             window.location.href='https://civadsoo.net/afu.php?zoneid=3824553'
         } else {
-            window.open(data.long_url);
+            window.open(data.long_url,'_blank','noopener,noreferrer,popup=0');
             await get(`/v2/url-shortener/${data.id}/update`,{success_notif:false})
         }
     },[data,get]);

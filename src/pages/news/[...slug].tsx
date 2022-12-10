@@ -72,6 +72,7 @@ export default function NewsPages({data:news,meta}: IPages<NewsDetail>) {
             />
             <DefaultLayout navbar={{tableContent:data}}>
                 <SWRPages loading={!data&&!error} error={error}>
+                    {/* TODO - Add actions (report) */}
                     <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={5}>
                         <Typography variant='h3' component='h1'>{data?.title||news.title}</Typography>
                     </Box>

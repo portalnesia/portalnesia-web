@@ -3,6 +3,7 @@ import type {PaginationProps} from '@mui/material'
 import Paging from '@mui/material/Pagination';
 import Box,{BoxProps} from '@mui/material/Box';
 import Router,{useRouter} from 'next/router';
+import { Circular } from './Loading';
 
 export function usePagination(initialPage: number|true=true): [number,(e: any,page: number)=>void] {
   const router = useRouter();
@@ -29,7 +30,8 @@ export function usePagination(initialPage: number|true=true): [number,(e: any,pa
       const quer = url.searchParams;
       quer.set('page',`${next_page}`)
       const path = `${url.pathname}?${quer.toString()}`
-      Router.push({pathname,query:q},path,{shallow:true,scroll:true})
+      Router.push({pathname,query:q},path,{shallow:true})
+      window.scrollTo({left:0,top:0,behavior:'smooth'})
     }
   },[initialPage])
 
@@ -40,10 +42,16 @@ export default function Pagination({page,count,...other}: PaginationProps) {
     return <Paging color='primary' count={Number(count)} page={Number(page)} boundaryCount={2} siblingCount={2} hidePrevButton hideNextButton showFirstButton showLastButton {...other} />
 }
 
-export function BoxPagination({children,...props}: BoxProps) {
+export interface BoxPaginationProps extends BoxProps {
+  loading?: boolean
+}
+
+export function BoxPagination({loading,children,...props}: BoxPaginationProps) {
   return (
     <Box width="100%" minHeight={200} display='flex' flexDirection="column" justifyContent="center" alignItems='center' textAlign='center' {...props}>
-      {children}
+      {loading ? (
+        <Circular />
+      ) : children}
     </Box>
   )
 }

@@ -20,11 +20,10 @@ export default function News() {
     return (
         <Pages title="News" canonical="/news">
             <DefaultLayout>
+                <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
+                    <Typography variant='h4' component='h1'>Recent News</Typography>
+                </Box>
                 <SWRPages loading={!data&&!error} error={error}>
-                    <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
-                        <Typography variant='h4' component='h1'>Recent News</Typography>
-                    </Box>
-                    
                     <Grid container spacing={2}>
                         {data && data?.data?.length > 0 ? ( data.data.map(d=>(
                             <Grid key={d.title} item xs={12} sm={6} md={4} lg={3}>
@@ -39,7 +38,7 @@ export default function News() {
                                 </BoxPagination>
                             </Grid>
                         )}
-                        {(data && data?.data?.length > 0) && (
+                        {(data) && (
                             <Grid sx={{mt:2}} key={'pagination'} item xs={12}>
                                 <Pagination page={page} onChange={setPage} count={data?.total_page} />
                             </Grid>

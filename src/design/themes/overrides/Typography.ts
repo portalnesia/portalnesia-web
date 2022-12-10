@@ -9,6 +9,9 @@ export default function Typography(theme: Theme) {
         },
         gutterBottom: {
           marginBottom: theme.spacing(1)
+        },
+        body2:{
+          color: theme.palette.text.secondary
         }
       }
     }

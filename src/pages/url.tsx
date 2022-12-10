@@ -36,6 +36,7 @@ import Tooltip from "@mui/material/Tooltip";
 import Recaptcha from "@design/components/Recaptcha";
 import type { KeyedMutator } from "swr";
 import Image from "@comp/Image";
+import { TableSWRPages } from "@comp/SWRPages";
 
 const Backdrop = dynamic(()=>import("@design/components/Backdrop"));
 const Dialog = dynamic(()=>import("@design/components/Dialog"))
@@ -215,6 +216,10 @@ function UrlLibrary({getMutate}: UrlLibraryProps) {
         window?.open(staticUrl(`download_qr/url/${data.custom}?token=${data.download_token}`))
     },[])
 
+    const getNumber = React.useCallback((i:number)=>{
+        return ((page-1)*rowsPerPage)+i+1
+    },[page,rowsPerPage])
+
     return (
         <Box mt={10}>
             <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
@@ -236,43 +241,35 @@ function UrlLibrary({getMutate}: UrlLibraryProps) {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {!data&&!error ? (
-                            <TableRow key='loading'>
-                                <TableCell colSpan={6} align='center'>
-                                    <Box display='flex' minHeight={200} width="100%"><Circular /></Box>
-                                </TableCell>
-                            </TableRow>
-                        ) : error ? (
-                            <TableRow key='error'>
-                                <TableCell colSpan={6} align='center'>{error?.message||"Something went wrong"}</TableCell>
-                            </TableRow>
-                        ) : data && data?.data.length > 0 ? data?.data.map((d,i)=>(
-                            <TableRow key={`data-${d.custom}`}>
-                                <TableCell>{((page-1)*10)+i+1}</TableCell>
-                                <TableCell><a className="underline" href={d?.short_url} target="_blank"><Span sx={{fontWeight:'bold',color:'customColor.link'}}>{parseURL(d.short_url)}</Span></a></TableCell>
-                                <TableCell>{truncate(isURL(d?.long_url) ? parseURL(d?.long_url) : d?.long_url,50)}</TableCell>
-                                <TableCell>{getDayJs(d.created).pn_format('minimal')}</TableCell>
-                                <TableCell align="right">{d?.click}</TableCell>
-                                <TableCell align="right">
-                                    <Stack direction='row' alignItems='center'>
-                                        <Tooltip title={`QR Code`}>
-                                            <IconButton edge="end"aria-label="QR Code"onClick={openQRCode(d)} size="large">
-                                                <QrCode2 />
-                                            </IconButton>
-                                        </Tooltip>
-                                        <Tooltip title={`Delete`}>
-                                            <IconButton edge="end"aria-label="delete"onClick={handleDelete(d)} size="large">
-                                                <Delete />
-                                            </IconButton>
-                                        </Tooltip>
-                                    </Stack>
-                                </TableCell>
-                            </TableRow>
-                        )) : (
-                            <TableRow key='no-data'>
-                                <TableCell colSpan={6} align='center'>No data</TableCell>
-                            </TableRow>
-                        )}
+                        <TableSWRPages loading={!data && !error} error={error} colSpan={6}>
+                            {data && data?.data.length > 0 ? data?.data.map((d,i)=>(
+                                <TableRow key={`data-${d.custom}`}>
+                                    <TableCell>{getNumber(i)}</TableCell>
+                                    <TableCell><a className="underline" href={d?.short_url} target="_blank"><Span sx={{fontWeight:'bold',color:'customColor.link'}}>{parseURL(d.short_url)}</Span></a></TableCell>
+                                    <TableCell>{truncate(isURL(d?.long_url) ? parseURL(d?.long_url) : d?.long_url,50)}</TableCell>
+                                    <TableCell>{getDayJs(d.created).pn_format('minimal')}</TableCell>
+                                    <TableCell align="right">{d?.click}</TableCell>
+                                    <TableCell align="right">
+                                        <Stack direction='row' alignItems='center' justifyContent='flex-end'>
+                                            <Tooltip title={`QR Code`}>
+                                                <IconButton aria-label="QR Code"onClick={openQRCode(d)}>
+                                                    <QrCode2 />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Tooltip title={`Delete`}>
+                                                <IconButton aria-label="delete"onClick={handleDelete(d)}>
+                                                    <Delete />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </Stack>
+                                    </TableCell>
+                                </TableRow>
+                            )) : (
+                                <TableRow key='no-data'>
+                                    <TableCell colSpan={6} align='center'>No data</TableCell>
+                                </TableRow>
+                            )}
+                        </TableSWRPages>
                     </TableBody>
                 </Table>
             </Scrollbar>

@@ -233,7 +233,7 @@ export type ShareActionProps={
     	}
     },[posId,campaign,setNotif,handleOpenMenu,post,shareType])
     return (
-        <div>
+        <>
             {variant==='icon' ? (
                 <Tooltip title="Share">
                     <IconButton ref={anchorEl} onClick={handleClick}>
@@ -256,7 +256,7 @@ export type ShareActionProps={
                 <MenuItem key={'telegram'} onClick={handleMenuClick('telegram')}>Telegram</MenuItem>
                 <MenuItem key={'copy'} onClick={handleMenuClick('copy')}>Copy URL</MenuItem>
             </MenuPopover>
-        </div>
+        </>
     );
 }
 

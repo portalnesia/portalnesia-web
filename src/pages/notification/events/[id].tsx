@@ -20,6 +20,7 @@ export const getServerSideProps = wrapper<IData>(async({params,redirect,query,se
     const event_id = params?.id;
     const tokenQuery = query?.token;
     if(typeof tokenQuery !== 'string') return redirect();
+    if(typeof event_id !== 'string') return redirect();
     
     const token = verifyToken<{userid?:string|number,event_id?: string|number}>(tokenQuery,[1,'year']);
     if(typeof token?.userid !== 'undefined') {

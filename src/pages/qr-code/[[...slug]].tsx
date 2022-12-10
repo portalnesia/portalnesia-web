@@ -17,7 +17,6 @@ import { useBeforeUnload } from "@hooks/hotkeys";
 import Grid from "@mui/material/Grid";
 import Hidden from "@mui/material/Hidden";
 import Sidebar from "@design/components/Sidebar";
-import { INavItems } from "@layout/dashboard/NavSection";
 import List from "@mui/material/List";
 import PasswordForm from "@design/components/PasswordForm";
 import Textarea from "@design/components/Textarea";
@@ -30,36 +29,37 @@ import RadioGroup from "@mui/material/RadioGroup";
 import Radio from "@mui/material/Radio";
 import {Subnav, SubnavMobile} from "@layout/default/Subnav";
 import useResponsive from "@design/hooks/useResponsive";
+import { INavbar } from "@layout/navbar.config";
 
 const Dialog = dynamic(()=>import('@design/components/Dialog'));
 
 type QrCodeObj = 'url'|'text'|'vcard'|'email'|'telephone'|'sms'|'wifi'|'geographic'
 const qrCodeObj: QrCodeObj[] = ['url','text','vcard','email','telephone','sms','wifi','geographic']
 
-const navItems: INavItems[] = [{
-    title:"URL",
-    path:"/qr-code/url"
+const navItems: INavbar[] = [{
+    name:"URL",
+    link:"/qr-code/url"
 },{
-    title:"Text",
-    path:"/qr-code/text"
+    name:"Text",
+    link:"/qr-code/text"
 },{
-    title:"VCard",
-    path:"/qr-code/vcard"
+    name:"VCard",
+    link:"/qr-code/vcard"
 },{
-    title:"Email",
-    path:"/qr-code/email"
+    name:"Email",
+    link:"/qr-code/email"
 },{
-    title:"Telephone",
-    path:"/qr-code/telephone"
+    name:"Telephone",
+    link:"/qr-code/telephone"
 },{
-    title:"SMS",
-    path:"/qr-code/sms"
+    name:"SMS",
+    link:"/qr-code/sms"
 },{
-    title:"Wifi",
-    path:"/qr-code/wifi"
+    name:"Wifi",
+    link:"/qr-code/wifi"
 },{
-    title:"Geographic",
-    path:"/qr-code/geographic"
+    name:"Geographic",
+    link:"/qr-code/geographic"
 }]
 
 type QrResult = {
@@ -73,8 +73,8 @@ export default function QrCodePages() {
     const {title,fullTitle} = React.useMemo(()=>{
         if(typeof slug?.[0] === 'string') {
             if(qrCodeObj.includes(slug[0].toLowerCase() as QrCodeObj)) {
-                const item = navItems.find(i=>i.title.toLowerCase() === slug[0]);
-                if(item) return {fullTitle:`${item.title} - QR Code Generator`,title:item.title} 
+                const item = navItems.find(i=>i.name.toLowerCase() === slug[0]);
+                if(item) return {fullTitle:`${item.name} - QR Code Generator`,title:item.name} 
             }
         }
         return {fullTitle:'QR Code Generator',title:"URL"}

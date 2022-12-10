@@ -308,10 +308,12 @@ export function useMousetrap(handlerKey: MouseTrapKeySequence, handlerCallback: 
         if(global) {
             require('mousetrap/plugins/global-bind/mousetrap-global-bind')
             mousetrap.bindGlobal(handlerKey, (evt: KeyboardEvent) => {
+                if(typeof evt?.preventDefault === 'function') evt?.preventDefault();
                 typeof handlerCallback === 'function' && handlerCallback(evt);
             });
         } else {
             mousetrap.bind(handlerKey, (evt: KeyboardEvent) => {
+                if(typeof evt?.preventDefault === 'function') evt?.preventDefault();
                 typeof handlerCallback === 'function' && handlerCallback(evt);
             });
         }

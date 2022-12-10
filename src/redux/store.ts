@@ -159,7 +159,7 @@ export default function wrapper<P extends {}>(callback: Callback<P>) {
             const result = await callback({store,redirect:redirect({req:ctx.req,res:ctx.res}),getUser,session,fetchAPI,...ctx})
             return result;
         } catch(err) {
-            if(process.env.NEXT_PUBLIC_PN_ENV !== 'production') console.log(err)
+            if(process.env.NODE_ENV !== 'production' && err instanceof Error) console.log(err.message,err.stack)
             if(ctx.res) {
                 ctx.res.statusCode=503;
                 ctx.res.setHeader('Retry-After',3600);

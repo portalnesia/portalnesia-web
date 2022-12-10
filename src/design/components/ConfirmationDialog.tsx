@@ -65,8 +65,16 @@ export default class ConfirmationDialog extends PureComponent<ConfirmationDialog
             >
                 <Box>
                     {(typeof this.props.body === "string" || typeof this.props.body === 'undefined') ? (
-                        <Typography>{this.props.body||"Delete?"}</Typography>
-                    ) : this.props.body}
+                        <>
+                            <Typography gutterBottom>{this.props.body||"Delete?"}</Typography>
+                            <Typography sx={{fontWeight:'bold',color:'error.main'}}>THIS ACTION CANNOT BE UNDONE!</Typography>
+                        </>
+                    ) : (
+                        <>
+                            {this.props.body}
+                            <Typography sx={{fontWeight:'bold',color:'error.main',mt:2}}>THIS ACTION CANNOT BE UNDONE!</Typography>
+                        </>
+                    )}
                 </Box>
             </Dialog>
         )

@@ -10,6 +10,8 @@ import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
 import List from '@mui/material/List';
 import Box, { BoxProps } from '@mui/material/Box';
+import { INavbar } from '@layout/navbar.config';
+import { portalUrl } from '@utils/main';
 
 // ----------------------------------------------------------------------
 
@@ -47,20 +49,8 @@ export const ListItemIconStyle = styled(ListItemIcon)({
 
 // ----------------------------------------------------------------------
 
-export type IRootNavItems = {
-  title: string,
-  path: string,
-  icon?: string|JSX.Element,
-  info?: string,
-  new_tab?: boolean
-}
-
-export type INavItems = IRootNavItems & ({
-  children?: IRootNavItems[]
-})
-
 export interface NavItemProps {
-  item: INavItems,
+  item: INavbar,
   active(path?: string): boolean
   linkProps?: Partial<LinkProps>
   rootSx?: SxProps<Theme>
@@ -68,8 +58,8 @@ export interface NavItemProps {
 
 export function NavItem({ item, active,linkProps,rootSx }: NavItemProps) {
   const theme = useTheme();
-  const isActiveRoot = active(item.path);
-  const { title, path, icon, info, children,new_tab } = item;
+  const isActiveRoot = active(item.link);
+  const { name, link, icon, child,desc } = item;
   const [open, setOpen] = useState(isActiveRoot);
 
   const handleOpen = useCallback(() => {
@@ -88,7 +78,7 @@ export function NavItem({ item, active,linkProps,rootSx }: NavItemProps) {
     fontWeight: 'fontWeightMedium'
   }),[]);
 
-  if (children) {
+  if (child) {
     return (
       <>
         <ListItemStyle
@@ -100,8 +90,8 @@ export function NavItem({ item, active,linkProps,rootSx }: NavItemProps) {
           }}
         >
           {icon && <ListItemIconStyle>{icon}</ListItemIconStyle>}
-          <ListItemText disableTypography primary={title} />
-          {info && info}
+          <ListItemText disableTypography primary={name} />
+          {desc && desc}
           <Iconify
             icon={open ? 'eva:arrow-ios-downward-fill' : 'eva:arrow-ios-forward-fill'}
             sx={{ width: 16, height: 16, ml: 1 }}
@@ -110,20 +100,19 @@ export function NavItem({ item, active,linkProps,rootSx }: NavItemProps) {
 
         <Collapse in={open} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            {children.map((item) => {
-              const { title, path,new_tab } = item;
-              const isActiveSub = active(path);
+            {child.map((item) => {
+              const { name, link } = item;
+              const isActiveSub = active(link);
 
               return (
-                <Link key={item.path} href={path} passHref legacyBehavior {...linkProps}>
+                <Link key={item.link} href={link} passHref legacyBehavior {...linkProps}>
                   <ListItemStyle
                     component='a'
                     disableGutters
-                    key={title}
+                    key={name}
                     sx={{
                       ...(isActiveSub && activeSubStyle)
                     }}
-                    {...(new_tab ? {target:'_blank'} : {})}
                   >
                     <ListItemIconStyle>
                       <Box
@@ -144,7 +133,7 @@ export function NavItem({ item, active,linkProps,rootSx }: NavItemProps) {
                         }}
                       />
                     </ListItemIconStyle>
-                    <ListItemText disableTypography primary={title} />
+                    <ListItemText disableTypography primary={name} />
                   </ListItemStyle>
                 </Link>
               );
@@ -156,7 +145,7 @@ export function NavItem({ item, active,linkProps,rootSx }: NavItemProps) {
   }
 
   return (
-    <Link href={path} passHref legacyBehavior {...linkProps}>
+    <Link href={link} passHref legacyBehavior {...linkProps}>
       <ListItemStyle
         component='a'
         disableGutters
@@ -164,35 +153,36 @@ export function NavItem({ item, active,linkProps,rootSx }: NavItemProps) {
           ...(isActiveRoot && activeRootStyle),
           ...rootSx
         }}
-        {...(new_tab ? {target:'_blank'} : {})}
       >
-        {icon && <ListItemIconStyle>{icon}</ListItemIconStyle>}
-        <ListItemText disableTypography primary={title} />
-        {info && info}
+        {icon && <ListItemIconStyle><Iconify icon={icon} /></ListItemIconStyle>}
+        <ListItemText disableTypography primary={name} />
+        {desc && desc}
       </ListItemStyle>
     </Link>
   );
 }
 
 export interface NavConfigProps extends BoxProps {
-  navConfig: INavItems[]
+  navConfig: INavbar[]
+  indexPath?: string
 };
 
-export default function NavSection({ navConfig, ...other }: NavConfigProps) {
+export default function NavSection({ navConfig,indexPath, ...other }: NavConfigProps) {
   const router = useRouter();
   const pathname = router.pathname
-  const asPath = router.asPath
 
   const match = useCallback((path?: string) => {
-    const a = (path ? path === '/' ? '/' === pathname : new RegExp((path||'/'),'i').test(asPath) : false)
+    const pathUrl = new URL(pathname,portalUrl());
+    const linkUrl = new URL((path||"/"),portalUrl());
+    const a = (linkUrl.pathname === (indexPath||'/') ? linkUrl.pathname === pathUrl.pathname : new RegExp((linkUrl.pathname||'/'),'i').test(pathUrl.pathname||'/'))
     return a;
-  },[pathname,asPath]);
+  },[pathname,indexPath]);
 
   return (
     <Box {...other}>
       <List disablePadding>
         {navConfig.map((item) => (
-          <NavItem key={item.title} item={item} active={match} />
+          <NavItem key={item.name} item={item} active={match} />
         ))}
       </List>
     </Box>

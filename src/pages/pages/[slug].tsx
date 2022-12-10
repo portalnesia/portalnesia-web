@@ -23,7 +23,7 @@ import { portalUrl, staticUrl } from "@utils/main";
 
 export const getServerSideProps = wrapper<PagesDetail>(async({params,redirect,fetchAPI})=>{
     const slug = params?.slug;
-    if(typeof slug === 'undefined') return redirect();
+    if(typeof slug !== 'string') return redirect();
 
     try {
         const url = `/v2/pages/${slug}`;

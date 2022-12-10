@@ -21,7 +21,7 @@ import {ArticleJsonLd} from 'next-seo'
 
 export const getServerSideProps = wrapper<BlogDetail>(async({params,redirect,fetchAPI})=>{
     const slug = params?.slug;
-    if(typeof slug === 'undefined') return redirect();
+    if(typeof slug !== 'string') return redirect();
 
     try {
         const url: string = `/v2/blog/${slug}`;
@@ -71,7 +71,7 @@ export default function BlogPages({data:blog,meta}: IPages<BlogDetail>) {
             <DefaultLayout navbar={{tableContent:data}}>
                 <SWRPages loading={!data&&!error} error={error}>
                     <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={5}>
-                        <Typography variant='h3' component='h1'>{data?.title||blog.title}</Typography>
+                        <Typography variant='h3' component='h1'>{data?.title||blog?.title}</Typography>
                     </Box>
                     <Grid container spacing={4}>
                         <Grid item xs={12} md={8}>

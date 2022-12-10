@@ -46,22 +46,22 @@ export default function News() {
     return (
         <Pages title="Chord" canonical="/chord">
             <DefaultLayout>
-                <SWRPages loading={!data&&!error} error={error}>
-                    <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
-                        <Box sx={{display:"flex",flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
-                            <Typography variant='h4' component='h1'>Recent Chord</Typography>
-                            <Button disabled={!data&&!error} ref={orderRef} color='inherit' text onClick={()=>setDOrder(true)} endIcon={<Iconify icon='fe:list-order' />}>{order}</Button>
+                <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
+                    <Box sx={{display:"flex",flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
+                        <Typography variant='h4' component='h1'>Recent Chord</Typography>
+                        <Button disabled={!data&&!error} ref={orderRef} color='inherit' text onClick={()=>setDOrder(true)} endIcon={<Iconify icon='fe:list-order' />}>{order}</Button>
 
-                            <MenuPopover open={dOrder} onClose={()=>setDOrder(false)} anchorEl={orderRef.current} paperSx={{py:1,width:150}}>
-                                {selectArr.map(s=>(
-                                    <MenuItem key={s} sx={{ color: 'text.secondary',py:1 }} onClick={handleOrder(s)} selected={order === s}>
-                                        <ListItemText primary={ucwords(s)} />
-                                    </MenuItem>
-                                ))}
-                            </MenuPopover>
-                        </Box>
+                        <MenuPopover open={dOrder} onClose={()=>setDOrder(false)} anchorEl={orderRef.current} paperSx={{py:1,width:150}}>
+                            {selectArr.map(s=>(
+                                <MenuItem key={s} sx={{ color: 'text.secondary',py:1 }} onClick={handleOrder(s)} selected={order === s}>
+                                    <ListItemText primary={ucwords(s)} />
+                                </MenuItem>
+                            ))}
+                        </MenuPopover>
                     </Box>
-                    
+                </Box>
+
+                <SWRPages loading={!data&&!error} error={error}>
                     <Grid container spacing={2}>
                         {data && data?.data?.length > 0 ? ( data.data.map(d=>(
                             <Grid key={d.title} item xs={12} sm={6} md={4} lg={3}>
@@ -74,7 +74,7 @@ export default function News() {
                                 </BoxPagination>
                             </Grid>
                         )}
-                        {(data && data?.data?.length > 0) && (
+                        {(data) && (
                             <Grid sx={{mt:2}} key={'pagination'} item xs={12}>
                                 <Pagination page={page} onChange={setPage} count={data?.total_page} />
                             </Grid>

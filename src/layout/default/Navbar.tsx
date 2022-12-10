@@ -15,7 +15,6 @@ import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import Tooltip from "@mui/material/Tooltip";
-import useScrollTrigger from "@mui/material/useScrollTrigger";
 import { useRouter } from "next/router";
 import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {CustomListItemText, NavbarPopover} from "@layout/NavbarPopover";
@@ -30,6 +29,7 @@ import Portal from "@mui/material/Portal";
 import IconButton from "@mui/material/IconButton";
 import { ArrowBack } from "@mui/icons-material";
 import { useMousetrap } from "@hooks/hotkeys";
+import { portalUrl } from "@utils/main";
 
 const HtmlMdDown = dynamic(()=>import('@design/components/TableContent').then(m=>m.HtmlMdDown),{ssr:false})
 
@@ -96,7 +96,9 @@ function NavbarMenuDesktop({data}: NavbarMenuDesktopProps) {
     const {name,child,link,tooltip,icon,iconActive} = data;
     const pathname = router.pathname
     const isActive = useMemo(() => {
-        const a = (link === '/' ? link === pathname : new RegExp((link||'/'),'i').test(pathname||'/'))
+        const pathUrl = new URL(pathname,portalUrl());
+        const linkUrl = new URL(link,portalUrl());
+        const a = (linkUrl.pathname === '/' ? linkUrl.pathname === pathUrl.pathname : new RegExp((linkUrl.pathname||'/'),'i').test(pathUrl.pathname||'/'))
         return a;
     },[pathname,link]);
     const [open,setOpen] = useState(false);
@@ -120,7 +122,7 @@ function NavbarMenuDesktop({data}: NavbarMenuDesktopProps) {
             <>
                 <Tooltip title={tooltip||name}>
                     <MenuDesktop ref={anchorRef} className='no-underline' sx={{px:2}} childActive={open} onClick={handleOpen}>
-                        <Iconify icon={open && iconActive ? iconActive : icon} sx={{width:35,height:35,...(open ? {color:'customColor.linkIcon'} : {})}} />
+                        {icon && <Iconify icon={open && iconActive ? iconActive : icon} sx={{width:35,height:35,...(open ? {color:'customColor.linkIcon'} : {})}} />}
                     </MenuDesktop>
                 </Tooltip>
                 <MenuPopover arrow={false} transformOrigin={undefined} open={open} onClose={handleOpen} anchorEl={anchorRef.current} paperSx={{py:1,px:2,pb:2,width:'60%',minWidth:800}} disableScrollLock>
@@ -154,7 +156,7 @@ function NavbarMenuDesktop({data}: NavbarMenuDesktopProps) {
             <Link href={link} passHref legacyBehavior>
                 <Tooltip title={tooltip||name}>
                     <MenuDesktop className='no-underline' active={isActive} component='a' sx={{px:2}}>
-                        <Iconify icon={isActive && iconActive ? iconActive : icon} sx={{width:35,height:35}} />
+                        {icon && <Iconify icon={isActive && iconActive ? iconActive : icon} sx={{width:35,height:35}} /> }
                     </MenuDesktop>
                 </Tooltip>
             </Link>
@@ -274,9 +276,6 @@ export interface NavbarProps {
 
 export default function DefaultNavbar({logo,tableContent}: NavbarProps) {
     const [scrolled,setScrolled] = useState(false);
-    const trigger = useScrollTrigger({
-        target: typeof window !== 'undefined' ? window : undefined,
-    });
     const smDown = useResponsive('down','md');
 
     const dataTableContent = useMemo(()=>{

@@ -27,7 +27,8 @@ export default function useTablePagination(initialPage: number|true=1,initialPer
       const quer = url.searchParams;
       quer.set('page',`${newPage+1}`)
       const path = `${url.pathname}?${quer.toString()}`
-      Router.push({pathname,query:q},path,{shallow:true,scroll:true})
+      Router.push({pathname,query:q},path,{shallow:true})
+      window.scrollTo({left:0,top:0,behavior:'smooth'})
     }
   },[initialPage]);
 
@@ -36,5 +37,5 @@ export default function useTablePagination(initialPage: number|true=1,initialPer
     if(page !== 1) onPageChange({},0);
   },[onPageChange,page]);
 
-  return {page,rowsPerPage,onPageChange,onRowsPerPageChange,component:'div' as ElementType<any>,rowsPerPageOptions:[10,25,50]}
+  return {page,rowsPerPage,onPageChange,onRowsPerPageChange,component:'div' as ElementType<any>,rowsPerPageOptions:[10,25,50],showFirstButton:true,showLastButton:true}
 }

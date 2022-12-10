@@ -11,7 +11,7 @@ const Linear = dynamic(()=>import('@mui/material/LinearProgress'))
 const Box = dynamic(()=>import('@mui/material/Box'))
 const Typography = dynamic(()=>import('@mui/material/Typography'))
 
-const LinearProgress = styled(Linear)(()=>({
+export const LinearProgress = styled(Linear)(()=>({
     '&.MuiLinearProgress-root': {
         height:10,
         borderRadius: 5,

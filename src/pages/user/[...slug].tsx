@@ -12,7 +12,7 @@ import { IPages } from "@type/general";
 import Router, { useRouter } from "next/router";
 import React from "react";
 import { accountUrl, getDayJs, href, staticUrl } from "@utils/main";
-import { IMe, UserDetail } from "@model/user";
+import type { IMe, UserDetail } from "@model/user";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Link from "@design/components/Link";
@@ -26,15 +26,16 @@ import Iconify from "@design/components/Iconify";
 import Tooltip from "@mui/material/Tooltip";
 import { BoxPagination, usePagination } from "@design/components/Pagination";
 import useAPI, { ApiError, PaginationResponse } from "@design/hooks/api";
-import { ChordPagination } from "@model/chord";
-import CustomCard from "@design/components/Card";
-import Pagination from "@mui/material/Pagination";
-import { TwibbonPagination } from "@model/twibbon";
+import type { ChordPagination } from "@model/chord";
+import type { TwibbonPagination } from "@model/twibbon";
 import dynamic from "next/dynamic";
 import useNotification from "@design/components/Notification";
 import IconButton from "@mui/material/IconButton";
-import { AccountCircle, Check, Clear, MoreVert } from "@mui/icons-material";
+import { AccountCircle, Check, Clear, MoreVert, QrCode2 } from "@mui/icons-material";
 import MenuItem from "@mui/material/MenuItem";
+import Badge from "@mui/material/Badge";
+import ButtonBase from "@mui/material/ButtonBase";
+import { QuizPagination } from "@model/quiz";
 
 const MenuPopover = dynamic(()=>import("@design/components/MenuPopover"));
 const ListItemIcon = dynamic(()=>import("@mui/material/ListItemIcon"));
@@ -43,7 +44,9 @@ const CardActions = dynamic(()=>import("@mui/material/CardActions"));
 const CardContent = dynamic(()=>import("@mui/material/CardContent"));
 const CardHeader = dynamic(()=>import("@mui/material/CardHeader"));
 const Dialog = dynamic(()=>import('@design/components/Dialog'))
-const Backdrop = dynamic(()=>import('@design/components/Backdrop'))
+const Backdrop = dynamic(()=>import('@design/components/Backdrop'));
+const CustomCard = dynamic(()=>import("@design/components/Card"));
+const Pagination = dynamic(()=>import("@mui/material/Pagination"));
 
 type IData = UserDetail & ({
     chord: ChordPagination[]
@@ -160,6 +163,7 @@ export default function UserPages({data:userData,meta}: IPages<IData>) {
     },[data,action]);
 
     const [loading,setLoading] = React.useState(false)
+    const [showQr,setShowQr] = React.useState(false)
     const setNotif = useNotification();
     const {post,del} = useAPI()
 
@@ -186,6 +190,11 @@ export default function UserPages({data:userData,meta}: IPages<IData>) {
         }
     },[data,user,post,setNotif,del])
 
+    const downloadQR=React.useCallback(()=>{
+        window?.open(staticUrl(`/download_qr/user/${data?.username}?token=${data?.token_qr}`))
+        setShowQr(false)
+    },[data])
+
     return (
         <Pages title={title} desc={meta?.desc} image={meta?.image} canonical={`/user/${username}`}>
             <DefaultLayout maxWidth={false} withoutContainer>
@@ -196,9 +205,33 @@ export default function UserPages({data:userData,meta}: IPages<IData>) {
                                 <Box display={{xs:'none',md:'block'}} position='absolute' top={0} left={0} width='100%' height={57} borderBottom={theme=>`1px solid ${theme.palette.divider}`} />
                             
                                 <Box display='flex' justifyContent={{md:"center",xs:'flex-start'}} px={{xs:2,md:3}}>
-                                    <Avatar sx={{width:{xs:100,md:200,lg:250},height:{xs:100,md:200,lg:250},fontSize:{xs:25,md:50}}}>
-                                        {!isMe && data?.private && !data?.isFollowing ? data?.name : data?.picture ? <Image src={`${data?.picture}&size=300&watermark=no`} dataSrc={`${data?.picture}&watermark=no`} fancybox={!data?.private || (data?.private && data?.isFollowing)} dataFancybox="profile" alt={data?.username} /> : data?.name}
-                                    </Avatar>
+                                    <Badge
+                                        overlap="circular"
+                                        anchorOrigin={{vertical:"bottom",horizontal:"right"}}
+                                        badgeContent={
+                                            <Tooltip title="QR Code">
+                                                <ButtonBase sx={{borderRadius:'50%',bgcolor:'background.paper'}} onClick={()=>setShowQr(true)}>
+                                                    <Avatar
+                                                        alt={`${data?.name}'s QR Code`}
+                                                        sx={{
+                                                            width:47,
+                                                            height:47,
+                                                            cursor:'pointer',
+                                                            color:'customColor.link',
+                                                            bgcolor:'background.paper',
+                                                            ":hover":{
+                                                                bgcolor:'action.hover'
+                                                            }
+                                                        }}
+                                                    ><QrCode2 sx={{width:30,height:30}} /></Avatar>
+                                                </ButtonBase>
+                                            </Tooltip>
+                                        }
+                                    >
+                                        <Avatar sx={{width:{xs:100,md:200,lg:250},height:{xs:100,md:200,lg:250},fontSize:{xs:25,md:50}}}>
+                                            {!isMe && data?.private && !data?.isFollowing ? data?.name : data?.picture ? <Image src={`${data?.picture}&size=300&watermark=no`} dataSrc={`${data?.picture}&watermark=no`} fancybox={!data?.private || (data?.private && data?.isFollowing)} dataFancybox="profile" alt={data?.username} /> : data?.name}
+                                        </Avatar>
+                                    </Badge>
                                 </Box>
                                 <Box px={{xs:2,md:3}} mt={2} mb={5}>
                                     <Box mb={2}>
@@ -222,26 +255,34 @@ export default function UserPages({data:userData,meta}: IPages<IData>) {
                                             </Stack>
                                         )}
                                         {data?.facebook && (
-                                            <a href={data?.facebook} target='_blank' className="no-blank">
+                                            <a href={data?.facebook?.url} target='_blank' className="no-blank">
                                                 <Stack direction='row' spacing={1}>
                                                     <Iconify icon='uil:facebook' />
-                                                    <Typography>Facebook</Typography>
+                                                    <Typography>{data?.facebook?.label}</Typography>
                                                 </Stack>
                                             </a>
                                         )}
                                         {data?.twitter && (
-                                            <a href={data?.twitter} target='_blank' className="no-blank">
+                                            <a href={href(data?.twitter?.url)} target='_blank' className="no-blank">
                                                 <Stack direction='row' spacing={1}>
                                                     <Iconify icon='mdi:twitter' />
-                                                    <Typography>Twitter</Typography>
+                                                    <Typography>{data?.twitter?.label}</Typography>
                                                 </Stack>
                                             </a>
                                         )}
                                         {data?.telegram && (
-                                            <a href={data?.telegram} target='_blank' className="no-blank">
+                                            <a href={data?.telegram?.url} target='_blank' className="no-blank">
                                                 <Stack direction='row' spacing={1}>
                                                     <Iconify icon='ic:sharp-telegram' />
-                                                    <Typography>Telegram</Typography>
+                                                    <Typography>{data?.telegram?.label}</Typography>
+                                                </Stack>
+                                            </a>
+                                        )}
+                                        {data?.website && (
+                                            <a href={data?.website?.url} target='_blank' className="no-blank">
+                                                <Stack direction='row' spacing={1}>
+                                                    <Iconify icon='ph:globe' />
+                                                    <Typography>{data?.website?.label}</Typography>
                                                 </Stack>
                                             </a>
                                         )}
@@ -294,6 +335,8 @@ export default function UserPages({data:userData,meta}: IPages<IData>) {
                                             <ChordPages data={data} />
                                         ) : tabValue === 2 ? (
                                             <BlogPages data={data} />
+                                        ) : tabValue === 3 ? (
+                                            <QuizPages data={data} />
                                         ) : tabValue === 4 ? (
                                             <TwibbonPages data={data} />
                                         ) : null}
@@ -304,6 +347,13 @@ export default function UserPages({data:userData,meta}: IPages<IData>) {
                     </Box>
                 </Box>
             </DefaultLayout>
+            <Dialog open={showQr} handleClose={()=>setShowQr(false)} title="QR Code" maxWidth='sm'
+                actions={
+                    <Button onClick={downloadQR} icon='download'>Download</Button>
+                }
+            >
+                <Image src={staticUrl(`/qr/user/${data?.username}`)} sx={{width:'100%'}} alt={`${data?.name}'s QR Code`} />
+            </Dialog>
         </Pages>
     )
 }
@@ -337,7 +387,7 @@ function OverviewPages({data}: SubcomProps) {
                 </Box>
                 <Grid container spacing={2}>
                     {(data?.chord?.length||0) > 0 ? data?.chord?.map(d=>(
-                        <Grid item xs={12} sm={6} lg={4}>
+                        <Grid key={d.slug} item xs={12} sm={6} lg={4}>
                             <CustomCard link={href(d.link)} title={`${d.artist} - ${d.title}`} />
                         </Grid>
                     )) : (
@@ -359,7 +409,7 @@ function OverviewPages({data}: SubcomProps) {
                 </Box>
                 <Grid container spacing={2}>
                     {(data?.blog?.length||0) > 0 ? data?.blog?.map(d=>(
-                        <Grid item xs={12} sm={6} lg={4}>
+                        <Grid key={d.slug} item xs={12} sm={6} lg={4}>
                             <CustomCard link={href(d.link)} title={d.title} image={`${d.image}&export=banner&size=300`} />
                         </Grid>
                     )) : (
@@ -381,7 +431,7 @@ function OverviewPages({data}: SubcomProps) {
                 </Box>
                 <Grid container spacing={2}>
                     {(data?.twibbon?.length||0) > 0 ? data?.twibbon?.map(d=>(
-                        <Grid item xs={12} sm={6} lg={4}>
+                        <Grid key={d.slug} item xs={12} sm={6} lg={4}>
                             <CustomCard link={href(d.link)} title={d.title} image={`${d.image}&export=banner&size=300`} ellipsis={1} />
                         </Grid>
                     )) : (
@@ -415,7 +465,7 @@ function ChordPages({data:user}: SubcomProps){
                             </BoxPagination>
                         </Grid>
                     )}
-                    {(data && data?.data?.length > 0) && (
+                    {(data) && (
                         <Grid sx={{mt:2}} key={'pagination'} item xs={12}>
                             <Pagination page={page} onChange={setPage} count={data?.total_page} />
                         </Grid>
@@ -444,7 +494,36 @@ function BlogPages({data:user}: SubcomProps){
                             </BoxPagination>
                         </Grid>
                     )}
-                    {(data && data?.data?.length > 0) && (
+                    {(data) && (
+                        <Grid sx={{mt:2}} key={'pagination'} item xs={12}>
+                            <Pagination page={page} onChange={setPage} count={data?.total_page} />
+                        </Grid>
+                    )}
+                </Grid>
+            </SWRPages>
+        </Box>
+    )
+}
+
+function QuizPages({data:user}: SubcomProps){
+    const [page,setPage] = usePagination(1);
+    const {data,error} = useSWR<PaginationResponse<QuizPagination>>(user ? `/v2/user/${user?.username}/quiz?page=${page}` : null);
+    return (
+        <Box>
+            <SWRPages loading={!data&&!error} error={error}>
+                <Grid container spacing={2}>
+                    {data && data?.data?.length > 0 ? (data.data.map(d=>(
+                        <Grid key={d.id} item xs={12}>
+                            <CustomCard link={href(d.link)} title={d.title} sx={{bgcolor:'background.default'}} variant='outlined' />
+                        </Grid>
+                    ))) : (
+                        <Grid key={'no-data'} item xs={12}>
+                            <BoxPagination>
+                                <Typography>No data</Typography>
+                            </BoxPagination>
+                        </Grid>
+                    )}
+                    {(data) && (
                         <Grid sx={{mt:2}} key={'pagination'} item xs={12}>
                             <Pagination page={page} onChange={setPage} count={data?.total_page} />
                         </Grid>
@@ -473,7 +552,7 @@ function TwibbonPages({data:user}: SubcomProps){
                             </BoxPagination>
                         </Grid>
                     )}
-                    {(data && data?.data?.length > 0) && (
+                    {(data) && (
                         <Grid sx={{mt:2}} key={'pagination'} item xs={12}>
                             <Pagination page={page} onChange={setPage} count={data?.total_page} />
                         </Grid>
@@ -597,7 +676,7 @@ function FollowPage({user,data:dataUser,type,mutate:userMutate}: SubcomProps & (
                             </BoxPagination>
                         </Grid>
                     )}
-                    {(data && data?.data?.length > 0) && (
+                    {(data) && (
                         <Grid sx={{mt:2}} key={'pagination'} item xs={12}>
                             <Pagination page={page} onChange={setPage} count={data?.total_page} />
                         </Grid>

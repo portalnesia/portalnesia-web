@@ -26,7 +26,7 @@ import Chord from '@comp/Chord'
 
 export const getServerSideProps = wrapper<ChordDetail>(async({params,redirect,fetchAPI})=>{
     const slug = params?.slug;
-    if(typeof slug === 'undefined') return redirect();
+    if(typeof slug !== 'string') return redirect();
 
     try {
         const url: string = `/v2/chord/${slug}?with_original=true`;

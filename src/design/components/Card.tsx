@@ -1,20 +1,21 @@
 import React from "react";
-import Card from '@mui/material/Card'
+import Card,{CardProps} from '@mui/material/Card'
 import CardActionArea from '@mui/material/CardActionArea'
 import CardContent from '@mui/material/CardContent'
 import Image from "@comp/Image";
 import NativeTypography from "@mui/material/Typography";
-import { styled } from "@mui/material/styles";
+import { styled, SxProps, Theme } from "@mui/material/styles";
 import Link from "./Link";
 import Tooltip from "@mui/material/Tooltip";
 import Box from "@mui/material/Box";
 
-export interface CustomCardProps {
+export interface CustomCardProps extends CardProps {
     title: string
     link: string
     image?: string 
     children?: React.ReactElement|React.ReactElement[] 
     ellipsis?:number
+    sx?: SxProps<Theme>
 }
 
 export const EllipsisTypography = styled(NativeTypography,{
@@ -27,10 +28,10 @@ export const EllipsisTypography = styled(NativeTypography,{
     WebkitLineClamp:ellipsis
 }))
 
-export default function CustomCard({title,link,image,children,ellipsis}: CustomCardProps) {
+export default function CustomCard({title,link,image,children,ellipsis,sx,...rest}: CustomCardProps) {
 
     return (
-        <Card sx={{width:'100%',height:'100%'}}>
+        <Card sx={{width:'100%',height:'100%',...sx}} {...rest}>
             <Link href={link} legacyBehavior passHref>
                 <CardActionArea component='a' className="no-underline" sx={{width:'100%',height:'100%'}}>
                     {image && (

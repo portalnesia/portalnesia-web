@@ -1,12 +1,13 @@
 import React from 'react'
-import { alpha, styled,SxProps,Theme } from '@mui/material/styles';
+import { styled,SxProps,Theme } from '@mui/material/styles';
+import { alpha } from '@mui/system/colorManipulator';
 
 // ----------------------------------------------------------------------
 
-export type Color = 'primary'|'secondary'|'info'|'success'|'warning'|'error';
+export type Color = "primary" | "secondary" | "info" | "success" | "warning" | "error";
 export type FullColor = Color | 'default'
 
-const RootStyle = styled('span',{shouldForwardProp:prop=>prop!=="ownerState"})<{ownerState: Pick<LabelProps,'color'|'variant'>}>(({ theme, ownerState }) => {
+const RootStyle = styled('span',{shouldForwardProp:prop=>prop!=="ownerState"})<{ownerState: Pick<Required<LabelProps>,'color'|'variant'>}>(({ theme, ownerState }) => {
   const { color, variant } = ownerState;
 
   const styleFilled = (color: Color) => ({
@@ -66,8 +67,8 @@ const RootStyle = styled('span',{shouldForwardProp:prop=>prop!=="ownerState"})<{
 
 export interface LabelProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> {
   children: React.ReactNode,
-  color: FullColor,
-  variant: 'filled'|'outlined'|'ghost',
+  color?: FullColor,
+  variant?: 'filled'|'outlined'|'ghost',
   sx?: SxProps<Theme>
 }
 

@@ -18,9 +18,12 @@ export default function PaperBlock({header,title,content,children,footer}: Paper
 
     return (
         <Card sx={{p:0}}>
-            <Box {...header}>
-                <Typography variant='h5' sx={{pb:0.5,pt:2,px:2,mb:2,borderBottom:theme=>`2px solid ${theme.palette.divider}`}}>{title}</Typography>
-            </Box>
+            {title && (
+                <Box {...header}>
+                    <Typography variant='h5' sx={{pb:0.5,pt:2,px:2,mb:2,borderBottom:theme=>`2px solid ${theme.palette.divider}`}}>{title}</Typography>
+                </Box>
+            )}
+            
             <CardContent {...content} sx={{...content?.sx,pt:0}}>
                 {children}
             </CardContent>

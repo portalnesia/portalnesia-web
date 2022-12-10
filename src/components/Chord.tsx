@@ -4,22 +4,21 @@ import { useTheme,styled, SxProps, Theme } from '@mui/material/styles';
 import {replaceAt,splice} from '@portalnesia/utils'
 import classNames from 'classnames'
 
-export const uChord =(text: string,html?:boolean)=>{
+export function uChord(text: string,html?:boolean) {
     let hasChord= /(\b)(([A-G]((#?|b?|\d?)(\d?))?((sus|maj|min|aug|dim|add|m)(\d?))?)((?!\w)))((((\/)[A-G](#?|b?)?)?((sus|maj|min|aug|dim|add|m))?([A-G](#?|b?)?)?(\d?))|(\-{1,1}\d|\-\S+))?(\.+)?/g;
-    //let hasChord= /(\b)(([A-G]((#?|b?|\d?)(\d?))?((sus|maj|min|aug|dim|add|m)(\d?))?)((?!\w)))((((\/)[A-G](#?|b?)?)?((sus|maj|min|aug|dim|add|m))?([A-G](#?|b?)?)?(\d?))|(\-\d))?(\.+)?/g;
-    let buffer=[];
+    let buffer: string[]=[];
     let pisah=text.split("\n");
     let spasi=(html===true)?"<br>":"\n";
     let sudah=[];
     let aa=0;
+    
     while(aa < pisah.length) {
         let line=pisah[aa],linenum=aa,mat = line.match(hasChord);
-        if(line.match(/^\#/)) {
+        if(/^\#/.test(line)) {
             buffer.push("{c:"+line.slice(1)+"}");
-        }
-        if(mat) {
+        } else if(mat) {
             let hasil=pisah[linenum+1],p=0,k,ind=0;
-            if(typeof hasil !== 'undefined' && hasil.match(hasChord) || typeof hasil === 'undefined' || typeof hasil !== 'undefined' && hasil.length < 1) {
+            if(typeof hasil !== 'undefined' && hasChord.test(hasil) || typeof hasil === 'undefined' || typeof hasil !== 'undefined' && hasil.length < 1) {
                 hasil=line;
                 mat.forEach(function(ch,i){
                     let li=hasil;
@@ -31,7 +30,7 @@ export const uChord =(text: string,html?:boolean)=>{
                     hasil=ha;
                 });
                 buffer.push(hasil);
-            } else if(typeof hasil !== 'undefined' && !hasil.match(hasChord) && hasil.length > 0) {
+            } else if(typeof hasil !== 'undefined' && !hasChord.test(hasil) && hasil.length > 0) {
                 mat.forEach(function(ch,i){
                     let li=hasil;
                     var n = line.indexOf(ch,ind); //0 2 6 8 | D F#m E G   | 0, 0
@@ -86,7 +85,6 @@ const Div = styled('div')(({theme})=>({
     }
 }))
 
-type ChordFunc = (result: string)=>void
 const Kchord=function(template: string, transpose=0,margin?:boolean) {
     const chordregex= /\[([^\]]*)\]/;
     const inword = /[a-z]$/;
@@ -123,11 +121,11 @@ const Kchord=function(template: string, transpose=0,margin?:boolean) {
 
     template.split("\n").forEach(function(line, linenum) {
         /* Comment, ignore */
-        if (line.match(/^#/)) {
+        if (/^#/.test(line)) {
             return "";
         }
         /* Chord line */
-        if (line.match(chordregex)) {
+        if (chordregex.test(line)) {
             if( !buffer.length ) {
                 buffer.push('<div class="lyric_block">');
                 last_was_lyric = true;
@@ -146,7 +144,7 @@ const Kchord=function(template: string, transpose=0,margin?:boolean) {
                   /*
                    * Whether or not to add a dash (within a word)
                    */
-                    if (word.match(inword)) {
+                    if (inword.test(word)) {
                         dash = 1;
                     }
                   /*
@@ -177,8 +175,8 @@ const Kchord=function(template: string, transpose=0,margin?:boolean) {
                     chords = chords + '<span class="chord" data-original-val="' + chord + '">' + chord + '</span>';
                 }
             });
-            var cek=lyrics.match(/(?!nbsp\b)\b\w+/); //Cek ada lirik *null= tidak ada
-            if( cek === null){
+            var cek = /(?!nbsp\b)\b\w+/.test(lyrics); //Cek ada lirik *null= tidak ada
+            if( !cek){
                 buffer.push('<span class="line">' + chords + "</span><br/>");
             } else {
                 buffer.push('<span class="line">' + chords + "<br/>\n" + lyrics + "</span><br/>");
@@ -186,7 +184,7 @@ const Kchord=function(template: string, transpose=0,margin?:boolean) {
             return;
         }
         /* Commands, ignored for now */
-        if (line.match(/^{.*}/)) {
+        if (/^{.*}/.test(line)) {
             if( !buffer.length ) {
                 buffer.push('<div class="command_block">');
                 last_was_lyric = false;
@@ -197,7 +195,7 @@ const Kchord=function(template: string, transpose=0,margin?:boolean) {
             //ADD COMMAND PARSING HERE
             //reference: http://tenbyten.com/software/songsgen/help/HtmlHelp/files_reference.htm
             // implement basic formatted text commands
-            var matches = line.match(/^{(title|t|subtitle|st|comment|c|#):\s*(.*)}/ig);
+            var matches = /^{(title|t|subtitle|st|comment|c|#):\s*(.*)}/ig.exec(line);
             if( matches && matches.length >= 3 ) {
                 var command = matches[1];
                 var text = matches[2];
@@ -226,6 +224,7 @@ const Kchord=function(template: string, transpose=0,margin?:boolean) {
                         break;
                 }
                 if( wrap ) {
+                    console.log(wrap)
                     if(wrap==='em') {
                         buffer.push('<' + wrap + ' class="' + command + '">[' + text + ']</' + wrap + '>' );
                     } else {

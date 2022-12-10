@@ -93,10 +93,19 @@ export const FooterChild = styled('div')(({theme})=>({
 export const FooterAChild = styled('a')<{home?:boolean}>(({theme,home})=>({
   overflowWrap:'break-word',
   padding:0,
-  whiteSpace:'pre-wrap'
+  whiteSpace:'pre-wrap',
+  ...(home ? {
+
+  } : {
+    color:theme.palette.text.secondary,
+    paddingRight:10,
+    fontSize:13,
+    margin:'2px 0',
+    lineHeight:'20px',
+  }),
 }))
 
-export function MenuItem({data,sx,home,spanSx}: {data: IFooter,home?:boolean,sx?: SxProps<Theme>,spanSx?: SxProps<Theme>}) {
+export function MenuItem({data,sx,home=true,spanSx}: {data: IFooter,home?:boolean,sx?: SxProps<Theme>,spanSx?: SxProps<Theme>}) {
 
   return (
     <>
@@ -157,12 +166,12 @@ function XsFooter() {
           <Grid container spacing={4}>
             {footerMenu.map((f)=>(
               <Grid item key={f.header} xs={12} sm={isSmXsFooter}>
-                <Box display='flex' flexDirection='column' alignItems='flex-start'>
+                <Stack direction='column' justifyContent='center' spacing={0.5}>
                   <Typography sx={{color:'text.secondary',fontSize:14,mb:1,borderBottom:t=>`1px solid ${t.palette.divider}`}}>{f.header}</Typography>
                   {f.child?.map((c)=>(
                     <MenuItem home sx={{color:'text.primary'}} spanSx={{fontSize:15}} key={c.name} data={c} />
                   ))}
-                </Box>
+                </Stack>
               </Grid>
             ))}
           </Grid>
@@ -196,12 +205,12 @@ function SmFooter() {
           </Hidden>
           {footerMenu.map((f)=>(
             <Grid item key={f.header} xs={12} sm={sm}>
-              <Box display='flex' flexDirection='column' justifyContent='center' alignItems='center'>
+              <Stack direction='column' justifyContent='center' spacing={0.5}>
                 <Typography sx={{color:'text.secondary',fontSize:14,mb:1,borderBottom:t=>`1px solid ${t.palette.divider}`}}>{f.header}</Typography>
                 {f.child?.map((c)=>(
                   <MenuItem home sx={{color:'text.primary'}} spanSx={{fontSize:15}} key={c.name} data={c} />
                 ))}
-              </Box>
+              </Stack>
             </Grid>
           ))}
         </Grid>

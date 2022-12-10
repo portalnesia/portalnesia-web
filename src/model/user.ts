@@ -33,15 +33,17 @@ export interface UserDetail extends UserPagination {
     isFollower: boolean;
     isFollowPending: boolean;
     //instagram?: string|null;
-    twitter?: string|null;
-    facebook?: string;
-    telegram?: string|null;
+    twitter?: {label: string,url: string}|null;
+    facebook?: {label: string,url: string};
+    telegram?: {label: string,url: string}|null;
     //line?: string|null;
     birthday?: Date,
     follower_count: number;
     following_count:number;
     //media_count:number;
     email?: string
+    token_qr?: string
+    website: {label: string,url: string}|null
 }
 
 export type UserWebAuthn = {
