@@ -27,7 +27,7 @@ export default function DialogActions({fixed,children,...rest}: DialogActionsPro
 
   if(!isFixed) return <Dialogg {...rest}>{children}</Dialogg>
   return (
-    <Box position={'fixed'} bottom={0} width='100%' padding={2} sx={{backgroundColor:"background.paper"}} >
+    <Box position={'fixed'} bottom={0} left={0} width='100%' padding={2} sx={{backgroundColor:"background.paper",...rest?.sx}} >
       <Stack direction={'row'} spacing={2} justifyContent='flex-end'>
         {children}
       </Stack>

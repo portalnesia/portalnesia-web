@@ -60,6 +60,7 @@ export default function ChordDashIndex() {
             const confirm = await confirmRef.current?.show();
             if(!confirm) return;
 
+            setLoading(true);
             await del(`/v2/chord/${chord.slug}`)
             mutate();
         } catch(e) {

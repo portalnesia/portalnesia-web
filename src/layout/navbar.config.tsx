@@ -105,4 +105,8 @@ export const dashboardMenu: INavbar[] = [{
     name:"Blog",
     link:"/dashboard/blog?utm_source=portalnesia+web&utm_medium=header",
     icon: 'material-symbols:library-books-outline',
+},{
+    name:"Twibbon",
+    link:"/dashboard/twibbon?utm_source=portalnesia+web&utm_medium=header",
+    icon: 'material-symbols:photo-frame-outline',
 }]
