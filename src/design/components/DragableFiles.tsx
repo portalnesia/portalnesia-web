@@ -1,4 +1,4 @@
-import {HTMLProps, useMemo, useState,DragEvent, useCallback, ChangeEvent, DragEventHandler, ReactNode} from 'react'
+import {HTMLProps, useMemo, useState,DragEvent, useCallback, ChangeEvent, DragEventHandler, ReactNode, useRef} from 'react'
 import { styled } from '@mui/material/styles'
 import { generateRandom } from '@portalnesia/utils'
 import { Div } from './Dom'
@@ -45,6 +45,7 @@ export interface DragableFilesProps extends HTMLProps<HTMLInputElement> {
 export default function DragableFiles({id,label,handleChange:onChange,onChange:_a,file,disabled,children,...inputProps}: DragableFilesProps) {
     const [hover,setHover] = useState(false)
     const [labelText,setLabelText] = useState(label);
+    const inputEl = useRef<HTMLInputElement>(null);
 
     const handleDrag=useCallback((enter: boolean)=>(e: DragEvent<HTMLDivElement>)=>{
         e.preventDefault();
@@ -62,6 +63,7 @@ export default function DragableFiles({id,label,handleChange:onChange,onChange:_
         setHover(false);
         if(disabled) return;
         if(onChange) onChange(e);
+        if(inputEl.current) inputEl.current.value = '';
     },[onChange,label,disabled])
 
     const handleDrop=useCallback((e: DragEvent<HTMLDivElement>)=>{
@@ -83,7 +85,7 @@ export default function DragableFiles({id,label,handleChange:onChange,onChange:_
                     onDragLeave={handleDrag(false)}
                     onDrop={handleDrop}
                 >
-                    <input style={{display:'none'}} {...inputProps} id={id} onChange={handleChange} disabled={disabled} />
+                    <input ref={inputEl} style={{display:'none'}} {...inputProps} id={id} onChange={handleChange} disabled={disabled} />
                     <label htmlFor={id}>{labelText}</label>
                 </InputContainer>
             ) : children}

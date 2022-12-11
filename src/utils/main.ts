@@ -51,6 +51,9 @@ export function href(path?: string) {
 export function portalUrl(path?: string) {
     return process.env.NEXT_PUBLIC_URL + parsePath(path);
 }
+export function shortUrl(path?: string) {
+    return config.url.short + parsePath(path);
+}
 export function profileUrl<D=string|null>(path: string|null) {
     return ((path === 'images/avatar.png' || path === null) ? null : analyzeStaticUrl(path)) as unknown as D;
 }

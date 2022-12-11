@@ -80,13 +80,14 @@ export interface SearchProps {
     value: string;
     autosize?: boolean;
     sx?: SxProps<Theme>;
+    wrapperSx?: SxProps<Theme>;
     /**
      * Position if not autosize
      */
     position?:'left'|'right'
   }
   
-  export default function Search({onsubmit,onremove,onchange,remove=false,value,autosize=false,sx}: SearchProps) {
+  export default function Search({onsubmit,onremove,onchange,remove=false,value,autosize=false,sx,wrapperSx}: SearchProps) {
     const [open,setOpen] = React.useState(false);
   
     const inputRef = React.useRef<HTMLInputElement>(null);
@@ -115,7 +116,7 @@ export interface SearchProps {
         <>
             {autosize ? (
                 <form onSubmit={handleSubmit}>
-                    <Wrapper autoresize>
+                    <Wrapper autoresize sx={{...wrapperSx}}>
                         {remove && value?.length > 0? (
                             <DeleteStyle focused={value?.length > 0 }>
                                 <IconButton onClick={handleRemove} size="small">
@@ -146,7 +147,7 @@ export interface SearchProps {
                         }}
                     >
                         <form onSubmit={handleSubmit}>
-                            <Wrapper sx={{width:`calc(100vw - 30px)`,height:45}}>
+                            <Wrapper sx={{width:`calc(100vw - 30px)`,height:45,...wrapperSx}}>
                                 {remove && value?.length > 0? (
                                     <DeleteStyle focused={value?.length > 0 }>
                                         <IconButton onClick={handleRemove} size="small">

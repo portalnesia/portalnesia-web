@@ -109,4 +109,8 @@ export const dashboardMenu: INavbar[] = [{
     name:"Twibbon",
     link:"/dashboard/twibbon?utm_source=portalnesia+web&utm_medium=header",
     icon: 'material-symbols:photo-frame-outline',
+},{
+    name:"Quiz",
+    link:"/dashboard/quiz?utm_source=portalnesia+web&utm_medium=header",
+    icon: 'fluent:clipboard-task-list-ltr-20-regular',
 }]

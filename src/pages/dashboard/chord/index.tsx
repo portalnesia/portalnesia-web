@@ -29,6 +29,8 @@ import Button from "@comp/Button";
 import ConfirmationDialog from "@design/components/ConfirmationDialog";
 import dynamic from "next/dynamic";
 import useNotification from "@design/components/Notification";
+import { useMousetrap } from "@hooks/hotkeys";
+import Router from "next/router";
 
 const Backdrop = dynamic(()=>import("@design/components/Backdrop"));
 
@@ -69,14 +71,18 @@ export default function ChordDashIndex() {
             setLoading(false)
         }
     },[setNotif,del,mutate])
+
+    useMousetrap(['+','shift+='],()=>{
+        Router.push(`/dashboard/chord/new`);
+    },false)
     
     return (
         <Pages title="Chord - Dashboard" canonical={`/dashboard/chord`} noIndex>
             <DashboardLayout>
-                <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={5}>
+                <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
                     <Stack direction='row' justifyContent='space-between'>
                         <Typography variant='h3' component='h1'>Chord</Typography>
-                        <Link href={`/dashboard/chord/new`} passHref legacyBehavior><Button component='a' icon='add'>New</Button></Link>
+                        <Link href={`/dashboard/chord/new`} passHref legacyBehavior><Button tooltip="New Chord (+)" component='a' icon='add'>New</Button></Link>
                     </Stack>
                 </Box>
 
@@ -102,13 +108,13 @@ export default function ChordDashIndex() {
                                             <TableCell><Label color={d.publish ? 'secondary':'default'} variant='filled'>{d.publish ? "Published" : "Draft"}</Label></TableCell>
                                             <TableCell align="right">
                                                 <Stack direction='row' spacing={1} justifyContent='flex-end'>
-                                                    <Tooltip title="Edit">
-                                                        <Link href={`/dashboard/chord/${d.slug}`} passHref legacyBehavior>
+                                                    <Link href={`/dashboard/chord/${d.slug}`} passHref legacyBehavior>
+                                                        <Tooltip title="Edit">
                                                             <IconButton aria-label="Edit" component='a'>
                                                                 <Edit />
                                                             </IconButton>
-                                                        </Link>
-                                                    </Tooltip>
+                                                        </Tooltip>
+                                                    </Link>
                                                     <Tooltip title="Delete">
                                                         <IconButton aria-label="Delete" onClick={handleDelete(d)}>
                                                             <Delete />

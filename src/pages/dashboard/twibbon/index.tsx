@@ -29,12 +29,14 @@ import ListItemSecondaryAction from "@mui/material/ListItemSecondaryAction";
 import ListItem from "@mui/material/ListItem";
 import submitForm from "@utils/submit-form";
 import Recaptcha from "@design/components/Recaptcha";
-import TextField from "@mui/material/TextField";
-import Textarea from "@design/components/Textarea";
-import FormGroup from "@mui/material/FormGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
+import Textarea from "@design/components/Textarea"
+import { useMousetrap } from "@hooks/hotkeys";
+import Router from "next/router";
 
+const FormGroup = dynamic(()=>import("@mui/material/FormGroup"));
+const FormControlLabel = dynamic(()=>import("@mui/material/FormControlLabel"));
+const Switch = dynamic(()=>import("@mui/material/Switch"));
+const TextField = dynamic(()=>import("@mui/material/TextField"));
 const Backdrop = dynamic(()=>import("@design/components/Backdrop"));
 const Dialog = dynamic(()=>import("@design/components/Dialog"));
 const DialogActions = dynamic(()=>import("@design/components/DialogActions"));
@@ -104,6 +106,10 @@ export default function TwibbonDashIndex() {
             setDialog(undefined)
         }
     },[dialog])
+
+    useMousetrap(['+','shift+='],()=>{
+        Router.push(`/dashboard/twibbon/new`);
+    },false)
     
     return (
         <Pages title="Twibbon - Dashboard" canonical={`/dashboard/twibbon`} noIndex>
@@ -111,7 +117,7 @@ export default function TwibbonDashIndex() {
                 <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={5}>
                     <Stack direction='row' justifyContent='space-between'>
                         <Typography variant='h3' component='h1'>Twibbon</Typography>
-                        <Link href={`/dashboard/twibbon/new`} passHref legacyBehavior><Button component='a' icon='add'>New</Button></Link>
+                        <Link href={`/dashboard/twibbon/new`} passHref legacyBehavior><Button tooltip="New Twibbon (+)" component='a' icon='add'>New</Button></Link>
                     </Stack>
                 </Box>
 

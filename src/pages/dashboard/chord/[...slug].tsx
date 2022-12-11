@@ -1,6 +1,6 @@
 import Pages from "@comp/Pages";
 import DashboardLayout from "@layout/dashboard";
-import wrapper from "@redux/store";
+import wrapper, { BackendError } from "@redux/store";
 import { accountUrl, portalUrl } from "@utils/main";
 import React from "react";
 import Typography from '@mui/material/Typography'
@@ -14,7 +14,7 @@ import useNotification from "@design/components/Notification";
 import { CopyPartial, IPages } from "@type/general";
 import Router, { useRouter } from "next/router";
 import Recaptcha from "@design/components/Recaptcha";
-import { useBeforeUnload } from "@hooks/hotkeys";
+import { useBeforeUnload, useMousetrap } from "@hooks/hotkeys";
 import Autocomplete, { AutocompleteInputChangeReason, createFilterOptions } from "@mui/material/Autocomplete";
 import Chord, { uChord } from "@comp/Chord";
 import submitForm from "@utils/submit-form";
@@ -57,15 +57,23 @@ export const getServerSideProps = wrapper<IChordEdit>(async({redirect,session,pa
             }
         }
     } else {
-        const data: ChordDetail = await fetchAPI<ChordDetail>(`/v2/chord/dashboard/${slug[0]}`);
-        return {
-            props:{
-                data,
-                meta:{
-                    title:"Edit Chord"
+        try {
+            const data: ChordDetail = await fetchAPI<ChordDetail>(`/v2/chord/dashboard/${slug[0]}`);
+            return {
+                props:{
+                    data,
+                    meta:{
+                        title:"Edit Chord"
+                    }
                 }
             }
+        } catch(e) {
+            if(e instanceof BackendError) {
+                if(e?.status === 404) return redirect();
+            }
+            throw e;
         }
+        
     }
 })
 
@@ -232,6 +240,10 @@ export default function EditChordPages({data,meta}: IPages<IChordEdit>) {
             setValue(data);
         }
     },[slug,data])
+
+    useMousetrap(['ctrl+s','meta+s'],(e)=>{
+        handleSubmit()
+    },true)
 
     return (
         <Pages title={meta?.title} noIndex canonical={'slug' in data ? `/dashboard/chord/${data?.slug}` : '/dashboard/chord/new'}>

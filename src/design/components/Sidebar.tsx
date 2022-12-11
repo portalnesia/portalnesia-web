@@ -10,19 +10,25 @@ export interface SidebarProps {
      */
     id: string,
     disabled?:boolean
+    minimalScreen?: 'md'|'lg'
 }
 
-export default function Sidebar({children,type='scroll',id,disabled}: SidebarProps) {
+export default function Sidebar({children,type='scroll',id,disabled,minimalScreen='md'}: SidebarProps) {
     const isMd = useResponsive('up','md')
+    const isLg = useResponsive('up','lg')
     const staticDynamic = React.useRef<HTMLDivElement>(null);
     const dynamic = React.useRef<HTMLDivElement>(null);
     const staticEl = React.useRef<HTMLDivElement>(null);
+
+    const isActive = React.useMemo(()=>{
+        if(minimalScreen === 'md') return isMd;
+        else return isLg
+    },[minimalScreen,isMd,isLg])
 
     React.useEffect(()=>{
         function getScrollTop() {
             return document?.documentElement?.scrollTop || document.body.scrollTop
         }
-        const isLg = window.matchMedia("(min-width: 992px)"); // lg
         const padding = 64+24;
         let lastScroll = getScrollTop(),last: number=lastScroll+padding,t: number;
         
@@ -30,7 +36,8 @@ export default function Sidebar({children,type='scroll',id,disabled}: SidebarPro
             // IF SCROLL
             const idHeight = Number((document.getElementById(id)?.offsetHeight||0)) + padding;
             const dynOfs = (dynamic.current?.offsetHeight||0) + padding
-            if(type === 'scroll' && dynOfs > (window.outerHeight)) {
+            console.log(dynOfs,window.outerHeight,idHeight)
+            if(type === 'scroll' && dynOfs > (window.outerHeight) && idHeight > dynOfs) {
                 const staticTop = Number(getOffset(staticEl.current).top),st=getScrollTop();
                 const idTop = Number(getOffset(document.getElementById(id)).top)
 
@@ -87,21 +94,41 @@ export default function Sidebar({children,type='scroll',id,disabled}: SidebarPro
         }
 
         if(!disabled) {
-            if(isMd) {
+            if(isActive) {
                 window.addEventListener('scroll',onScroll)
             } else {
                 if(dynamic.current) {
-                    dynamic.current.style.position='relative';
-                    dynamic.current.style.zIndex = '1'
+                    dynamic.current.style.removeProperty('position');
+                    dynamic.current.style.removeProperty('z-index');
+                    dynamic.current.style.removeProperty('top')
+                    dynamic.current.style.removeProperty('width')
+                }
+                if(staticDynamic.current) {
+                    staticDynamic.current.style.removeProperty('z-index');
+                    staticDynamic.current.style.removeProperty('position');
+                    staticDynamic.current.style.removeProperty('top')
+                    staticDynamic.current.style.removeProperty('width')
                 }
             }
         }
         
 
         return ()=>{
+            if(dynamic.current) {
+                dynamic.current.style.removeProperty('position');
+                dynamic.current.style.removeProperty('z-index');
+                dynamic.current.style.removeProperty('top')
+                dynamic.current.style.removeProperty('width')
+            }
+            if(staticDynamic.current) {
+                staticDynamic.current.style.removeProperty('z-index');
+                staticDynamic.current.style.removeProperty('position');
+                staticDynamic.current.style.removeProperty('top')
+                staticDynamic.current.style.removeProperty('width')
+            }
             window.removeEventListener('scroll',onScroll)
         }
-    },[id,type,isMd,disabled,children])
+    },[id,type,isActive,disabled,children])
 
     return (
         <div ref={staticDynamic} style={{width:'100%'}}>

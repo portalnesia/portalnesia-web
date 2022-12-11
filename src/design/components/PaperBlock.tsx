@@ -20,7 +20,7 @@ export default function PaperBlock({header,title,content,children,footer}: Paper
         <Card sx={{p:0}}>
             {title && (
                 <Box {...header}>
-                    <Typography variant='h5' sx={{pb:0.5,pt:2,px:2,mb:2,borderBottom:theme=>`2px solid ${theme.palette.divider}`}}>{title}</Typography>
+                    <Typography variant='h5' sx={{p:2,mb:2,borderBottom:theme=>`2px solid ${theme.palette.divider}`}}>{title}</Typography>
                 </Box>
             )}
             

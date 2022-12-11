@@ -21,6 +21,7 @@ import Box from '@mui/material/Box'
 import { portalUrl, staticUrl } from '@utils/main'
 import Scrollbar from './Scrollbar'
 import { handlePageContent } from './TableContent'
+import { BoxPagination } from './Pagination'
 
 export const editorStyles=(theme: Theme)=>({
   '& pre code':{
@@ -363,6 +364,10 @@ export function Markdown({source,skipHtml,preview,...other}: MarkdrownProps) {
     return html;
   },[preview,html,source])
 
-  if(!finalHtml) return <Loading />
+  if(!finalHtml) {
+    return (
+      <BoxPagination style={{width:50,height:50}} loading />
+    )
+  }
   return <Parser preview={preview} html={finalHtml} {...other} />
 }

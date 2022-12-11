@@ -12,7 +12,8 @@
         "link":"https://link.portalnesia.com",
         "deep":"https://go.portalnesia.com",
         "account":"https://accounts.portalnesia.com",
-        "status": "https://status.portalnesia.com"
+        "status": "https://status.portalnesia.com",
+        "short":"http://kakek.c1.biz"
     },
     "recaptcha":"6LdeqPYUAAAAAL-nPJZjgAE0gYD5DeyH7-i-_Hee",
     "firebase":{

@@ -16,8 +16,7 @@ export type DashboardLayoutProps = {
 
 const RootStyle = styled('div')({
     display: 'flex',
-    minHeight: '100%',
-    overflow: 'hidden'
+    minHeight: '100%'
   });
 
 export default function DashboardLayout({children,withoutContainer}:DashboardLayoutProps) {

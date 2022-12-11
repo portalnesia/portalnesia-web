@@ -36,6 +36,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Badge from "@mui/material/Badge";
 import ButtonBase from "@mui/material/ButtonBase";
 import { QuizPagination } from "@model/quiz";
+import { CustomTab, CustomTabs } from "@design/components/Tab";
 
 const MenuPopover = dynamic(()=>import("@design/components/MenuPopover"));
 const ListItemIcon = dynamic(()=>import("@mui/material/ListItemIcon"));
@@ -112,28 +113,6 @@ const tabArr = [{
     label:"Twibbon",
     link:"/twibbon"
 }]
-
-const CustomTab = styled(Tab)<{component?: string}>(({theme})=>({
-    borderRadius:5,
-    minHeight: 35,
-    '&:hover':{
-        backgroundColor: theme.palette.action.hover
-    }
-}))
-const CustomTabs = styled(Tabs)(()=>({
-    minHeight:40,
-    height:40,
-    '& .MuiTabScrollButton-root':{
-        height:35
-    },
-    '& .MuiTabs-indicator':{
-        height:3
-    }
-    /*position:'absolute',
-    left:0,
-    top:0,
-    width:'100%'*/
-}))
 
 // TODO - QUIZ
 export default function UserPages({data:userData,meta}: IPages<IData>) {

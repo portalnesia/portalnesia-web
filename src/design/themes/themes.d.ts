@@ -2,7 +2,8 @@ import {customShadows} from './shadows'
 import {GRADIENTS,PRIMARY,CHART_COLORS} from './palette'
 import type {LoadingButtonTypeMap} from '@mui/lab'
 import type {OverrideProps} from '@mui/material/OverridableComponent'
-import type {ElementType} from 'react'
+import type {ElementType,FunctionComponent} from 'react'
+import type {CKEditorReactProps} from '@portalnesia/custom-ckeditor5'
 
 declare module '@mui/material' {
   export interface Theme {
