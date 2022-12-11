@@ -1,7 +1,7 @@
-import TextField from '@mui/material/TextField'
+import TextField, { TextFieldProps } from '@mui/material/TextField'
 import { styled } from '@mui/material/styles'
 
-const Textarea = styled(TextField)(({theme})=>({
+const TextareaComp = styled(TextField)(({theme})=>({
     '& textarea':{
         '@media (hover: hover) and (pointer: fine)':{
             '&::-webkit-scrollbar':{
@@ -33,4 +33,6 @@ const Textarea = styled(TextField)(({theme})=>({
     }
 }))
 
-export default Textarea;
+export default function Textarea(props: TextFieldProps) {
+    return <TextareaComp {...props} />
+};

@@ -18,6 +18,7 @@ import useTableContent, { HtmlMdUp } from "@design/components/TableContent";
 import PaperBlock from "@design/components/PaperBlock";
 import { portalUrl, staticUrl } from "@utils/main";
 import {ArticleJsonLd} from 'next-seo'
+import Comment from "@comp/Comment";
 
 export const getServerSideProps = wrapper<BlogDetail>(async({params,redirect,fetchAPI})=>{
     const slug = params?.slug;
@@ -76,7 +77,15 @@ export default function BlogPages({data:blog,meta}: IPages<BlogDetail>) {
                     <Grid container spacing={4}>
                         <Grid item xs={12} md={8}>
                             <Box id='blog-content'>
-                                {data && <Parser html={data?.text} />}
+                                {data && (
+                                    <>
+                                        <Parser html={data?.text} />
+
+                                        <Box mt={2}>
+                                            <Comment posId={data.id} type='blog' />
+                                        </Box>
+                                    </>
+                                )}
                             </Box>
                         </Grid>
                         <Grid item xs={12} md={4}>

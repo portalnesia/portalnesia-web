@@ -5,7 +5,7 @@ import CardHeader,{CardHeaderProps} from "@mui/material/CardHeader";
 import Typography from "@mui/material/Typography";
 import React from "react";
 
-export interface PaperblockProps {
+export interface PaperblockProps extends CardProps {
     title?: string
     header?: BoxProps
     content?:CardContentProps
@@ -13,11 +13,10 @@ export interface PaperblockProps {
     footer?: React.ReactNode
 }
 
-export default function PaperBlock({header,title,content,children,footer}: PaperblockProps) {
-    
+export default function PaperBlock({header,title,content,children,footer,...rest}: PaperblockProps) {
 
     return (
-        <Card sx={{p:0}}>
+        <Card sx={{p:0,...rest?.sx}} {...rest}>
             {title && (
                 <Box {...header}>
                     <Typography variant='h5' sx={{p:2,mb:2,borderBottom:theme=>`2px solid ${theme.palette.divider}`}}>{title}</Typography>

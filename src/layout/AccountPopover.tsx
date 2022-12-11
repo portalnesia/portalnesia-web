@@ -18,6 +18,7 @@ import useSWR from '@design/hooks/swr';
 import Link from '@design/components/Link';
 import MenuItem from '@mui/material/MenuItem';
 import Iconify from '@design/components/Iconify';
+import { useRouter } from 'next/router';
 
 type IMenu = {
   label: string
@@ -45,6 +46,8 @@ const MENU_OPTIONS = (user?: IMe|null): IMenu[] => ([
 ]);
 
 export default function AccountPopover() {
+  const router = useRouter();
+  const pathname = router.pathname;
   const {user:userRedux,appToken} = useSelector<Pick<State,'user'|'appToken'>>(s=>({user:s.user,appToken:s.appToken}));
   const [user,setUser] = useState<State['user']>(userRedux);
   const dispatch = useDispatch();
@@ -109,6 +112,15 @@ export default function AccountPopover() {
 
         <Divider sx={{ my: 1 }} />
         
+        {!pathname.startsWith("/dashboard") && user ? (
+          <Link key={'dashboard'} href={"/dashboard"} passHref legacyBehavior>
+            <MenuItem component='a' onClick={handleClose} sx={{typography:'body2',py:1,px:2.5}}>
+              <Iconify icon={"material-symbols:dashboard-rounded"} sx={{mr:2,width:24,height:24}} />
+              Dashboard
+            </MenuItem>
+          </Link>
+        ) : null}
+
         {MENU_OPTIONS(user).map(m=>{
           if(m.href) {
             return (
