@@ -16,13 +16,13 @@ export interface ResponseData<R=any> {
     message: string;
     error_description?:string
 }
-export type PaginationResponse<D> = {
+export type PaginationResponse<D,Other extends {} = {}> = {
     page: number,
     total_page: number,
     can_load:boolean,
     total: number,
     data: D[]
-}
+} & Other
 class CatchApiError extends Error {
     constructor(dt: ResponseData<any>) {
         let msg="";

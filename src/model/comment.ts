@@ -1,9 +1,11 @@
 import { CopyPartial, IDate } from "@type/general"
 import { UserPagination } from "./user"
 
+export type ContentCommentType = "news" | "thread" | "chord" | "blog" | "url" | "files";
+
 export type ICommentContent={
     id: number,
-    type: string,
+    type: ContentCommentType,
     link: string,
     userid: number
 }
@@ -25,8 +27,6 @@ export type IReply = {
     total: number,
     data: ICommentReply[]
 }
-
-export type CommentType = "news" | "twitter_thread" | "chord" | "blog" | "url" | "media"
 
 export interface IComment extends ICommentReply {
     replies?: IReply

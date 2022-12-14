@@ -10,8 +10,8 @@ import Grid from "@mui/material/Grid";
 import type { NewsPagination } from "@model/news";
 import type { PaginationResponse } from "@design/hooks/api";
 import CustomCard from "@design/components/Card";
-import { href } from "@utils/main";
-import Container from "@comp/Container";
+import { getDayJs, href } from "@utils/main";
+import Stack from "@mui/material/Stack";
 
 export default function News() {
     const [page,setPage] = usePagination();
@@ -28,7 +28,10 @@ export default function News() {
                         {data && data?.data?.length > 0 ? ( data.data.map(d=>(
                             <Grid key={d.title} item xs={12} sm={6} md={4} lg={3}>
                                 <CustomCard link={href(d.link)} title={d.title} image={`${d.image}&export=banner&size=300`}>
-                                    <Typography variant='caption'>{d.source}</Typography>
+                                    <Stack direction='row' justifyContent='space-between'>
+                                        <Typography variant='caption'>{d.source}</Typography>
+                                        <Typography variant='caption'>{getDayJs(d.created).time_ago().format}</Typography>
+                                    </Stack>
                                 </CustomCard>
                             </Grid>
                         ))) : (

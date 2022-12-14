@@ -9,10 +9,12 @@ import React from "react";
 import Grid from "@mui/material/Grid";
 import type { PaginationResponse } from "@design/hooks/api";
 import CustomCard from "@design/components/Card";
-import { href } from "@utils/main";
+import { getDayJs, href } from "@utils/main";
 import Container from "@comp/Container";
 import { BlogPagination } from "@model/pages";
 import View from "@comp/View";
+import Stack from "@mui/material/Stack";
+import { truncate } from "@portalnesia/utils";
 
 export default function News() {
     const [page,setPage] = usePagination();
@@ -29,7 +31,12 @@ export default function News() {
                     <Grid container spacing={2}>
                         {data && data?.data?.length > 0 ? ( data.data.map(d=>(
                             <Grid key={d.title} item xs={12} sm={6} md={4} lg={3}>
-                                <CustomCard link={href(d.link)} title={d.title} image={`${d.image}&export=banner&size=300`} />
+                                <CustomCard link={href(d.link)} title={d.title} image={`${d.image}&export=banner&size=300`}>
+                                    <Stack direction='row' justifyContent='space-between'>
+                                        <Typography variant='caption'>{`By ${truncate(d.user.name,20)}`}</Typography>
+                                        <Typography variant='caption'>{getDayJs(d.last_modified||d.created).time_ago().format}</Typography>
+                                    </Stack>
+                                </CustomCard>
                             </Grid>
                         ))) : (
                             <Grid key={'no-data'} item xs={12}>

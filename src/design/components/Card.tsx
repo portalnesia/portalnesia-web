@@ -28,6 +28,15 @@ export const EllipsisTypography = styled(NativeTypography,{
     WebkitLineClamp:ellipsis
 }))
 
+const CustomBox = styled('div',{
+    shouldForwardProp:(prop:string)=>![''].includes(prop)
+})<{childrenCard?: React.ReactNode,ellipsis?:number}>(({theme,childrenCard,ellipsis=2})=>({
+    position:'relative',
+    ...(childrenCard ? {
+        minHeight: (ellipsis * (15 * 1.5)) + 25
+    } : {})
+}))
+
 export default function CustomCard({title,link,image,children,ellipsis,sx,...rest}: CustomCardProps) {
 
     return (
@@ -37,11 +46,15 @@ export default function CustomCard({title,link,image,children,ellipsis,sx,...res
                     {image && (
                         <Image webp src={image} alt={title} sx={{width:'100%'}} />
                     )}
-                    <CardContent sx={{p:2,position:'relative'}}>
-                        <Tooltip title={title}><EllipsisTypography ellipsis={ellipsis}>{title}</EllipsisTypography></Tooltip>
-                        {children && <Box mt={1}>
-                            {children}
-                        </Box>}
+                    <CardContent sx={{p:2}}>
+                        <CustomBox childrenCard={children} ellipsis={ellipsis}>
+                            <Tooltip title={title}><EllipsisTypography ellipsis={ellipsis}>{title}</EllipsisTypography></Tooltip>
+                            {children && (
+                                <Box position='absolute' bottom={0} width='100%'>
+                                    {children}
+                                </Box>
+                            )}
+                        </CustomBox>
                     </CardContent>
                 </CardActionArea>
             </Link>

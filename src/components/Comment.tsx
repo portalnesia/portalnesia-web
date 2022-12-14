@@ -1,5 +1,5 @@
 import React from 'react'
-import { IComment,ICommentReply,IReply } from '@model/comment'
+import { ContentCommentType, IComment,ICommentReply,IReply } from '@model/comment'
 import Box, { BoxProps } from '@mui/material/Box'
 import submitForm from '@utils/submit-form'
 import PaperBlock from '@design/components/PaperBlock'
@@ -37,6 +37,7 @@ import { truncate } from '@portalnesia/utils'
 import Tooltip from '@mui/material/Tooltip'
 import Collapse from '@mui/material/Collapse'
 import { isMobile } from 'react-device-detect'
+import Portal from '@mui/material/Portal'
 
 const Backdrop = dynamic(()=>import("@design/components/Backdrop"));
 
@@ -45,7 +46,7 @@ export interface CommentProps {
      * ID Number
      */
     posId:number
-    type:'blog'|'chord'|'thread'|'news'
+    type:ContentCommentType
     /**
      * Comment ID for notification
      */
@@ -321,19 +322,6 @@ function CommentSection({data,onDelete,type,posId,comment_id,onSubmit}: CommentS
                         </IconButton>
                     </Tooltip>
                 </ListItemSecondaryAction>
-                <MenuPopover
-                    open={open}
-                    onClose={()=>setOpen(false)}
-                    anchorEl={anchorEl.current}
-                    sx={{ width: 220 }}
-                >
-                    <Box py={2}>
-                        <MenuItem>
-                            <ListItemIcon><Delete /></ListItemIcon>
-                            <ListItemText onClick={handleDelete}>Delete</ListItemText>
-                        </MenuItem>
-                    </Box>
-                </MenuPopover>
             </ListItem>
             <Collapse in={showReplies} unmountOnExit>
                 <Box ml={7}>
@@ -358,6 +346,21 @@ function CommentSection({data,onDelete,type,posId,comment_id,onSubmit}: CommentS
                     </SWRPages>
                 </Box>
             </Collapse>
+            <Portal>
+                <MenuPopover
+                    open={open}
+                    onClose={()=>setOpen(false)}
+                    anchorEl={anchorEl.current}
+                    paperSx={{ width: 220 }}
+                >
+                    <Box py={1}>
+                        <MenuItem>
+                            <ListItemIcon><Delete /></ListItemIcon>
+                            <ListItemText onClick={handleDelete}>Delete</ListItemText>
+                        </MenuItem>
+                    </Box>
+                </MenuPopover>
+            </Portal>
         </Box>
     )
 }
@@ -377,44 +380,49 @@ function RepliesSection({data,onDelete}: RepliesSectionProps) {
     },[onDelete,data])
 
     return (
-        <ListItem sx={{alignItems:"flex-start"}} divider>
-            <ListItemAvatar>
-                <Avatar>
-                    {data.user?.picture ? <Image src={`${data.user.picture}&watermark=no&size=40`} alt={data.user.name} /> : data.user.name }
-                </Avatar>
-            </ListItemAvatar>
-            <ListItemText
-                primary={
-                    data.user?.username ? (
-                        <Stack alignItems='flex-start'><Link href={`/user/${data.user.username}`}><Typography gutterBottom sx={{fontSize:16}}>{data?.user?.name}</Typography></Link></Stack>
-                    ) : <Typography gutterBottom sx={{fontSize:16}}>{data?.user?.name}</Typography>
-                }
-                secondary={
-                    <Typography>{data.comment}</Typography>
-                }
-            />
-            {(data.can_deleted) && (
-                <>
-                    <ListItemSecondaryAction>
-                        <IconButton ref={anchorEl} onClick={()=>setOpen(true)}>
-                            <MoreVert />
-                        </IconButton>
-                    </ListItemSecondaryAction>
-                    <MenuPopover
-                        open={open}
-                        onClose={()=>setOpen(false)}
-                        anchorEl={anchorEl.current}
-                        sx={{ width: 220 }}
-                    >
-                        <Box py={2}>
-                            <MenuItem>
-                                <ListItemIcon><Delete /></ListItemIcon>
-                                <ListItemText onClick={handleDelete}>Delete</ListItemText>
-                            </MenuItem>
-                        </Box>
-                    </MenuPopover>
-                </>
-            )}
-        </ListItem>
+        <>
+            <ListItem sx={{alignItems:"flex-start"}} divider>
+                <ListItemAvatar>
+                    <Avatar>
+                        {data.user?.picture ? <Image src={`${data.user.picture}&watermark=no&size=40`} alt={data.user.name} /> : data.user.name }
+                    </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                    primary={
+                        data.user?.username ? (
+                            <Stack alignItems='flex-start'><Link href={`/user/${data.user.username}`}><Typography gutterBottom sx={{fontSize:16}}>{data?.user?.name}</Typography></Link></Stack>
+                        ) : <Typography gutterBottom sx={{fontSize:16}}>{data?.user?.name}</Typography>
+                    }
+                    secondary={
+                        <Typography>{data.comment}</Typography>
+                    }
+                />
+                {(data.can_deleted) && (
+                    <>
+                        <ListItemSecondaryAction>
+                            <IconButton ref={anchorEl} onClick={()=>setOpen(true)}>
+                                <MoreVert />
+                            </IconButton>
+                        </ListItemSecondaryAction>
+                    </>
+                )}
+            </ListItem>
+            <Portal>
+                <MenuPopover
+                    open={open}
+                    onClose={()=>setOpen(false)}
+                    anchorEl={anchorEl.current}
+                    paperSx={{ width: 220 }}
+                >
+                    <Box py={1}>
+                        <MenuItem>
+                            <ListItemIcon><Delete /></ListItemIcon>
+                            <ListItemText onClick={handleDelete}>Delete</ListItemText>
+                        </MenuItem>
+                    </Box>
+                </MenuPopover>
+            </Portal>
+        </>
+        
     )
 }

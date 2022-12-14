@@ -95,22 +95,22 @@ export const navbarMenu: INavbar[] = [{
 
 export const dashboardMenu: INavbar[] = [{
     name:"Dashboard",
-    link:"/dashboard?utm_source=portalnesia+web&utm_medium=header",
+    link:"/dashboard?utm_source=portalnesia+web&utm_medium=navbar",
     icon: 'material-symbols:dashboard-rounded',
 },{
     name:"Chord",
-    link:"/dashboard/chord?utm_source=portalnesia+web&utm_medium=header",
+    link:"/dashboard/chord?utm_source=portalnesia+web&utm_medium=navbar",
     icon: 'material-symbols:music-video-outline',
 },{
     name:"Blog",
-    link:"/dashboard/blog?utm_source=portalnesia+web&utm_medium=header",
+    link:"/dashboard/blog?utm_source=portalnesia+web&utm_medium=navbar",
     icon: 'material-symbols:library-books-outline',
 },{
     name:"Twibbon",
-    link:"/dashboard/twibbon?utm_source=portalnesia+web&utm_medium=header",
+    link:"/dashboard/twibbon?utm_source=portalnesia+web&utm_medium=navbar",
     icon: 'material-symbols:photo-frame-outline',
 },{
     name:"Quiz",
-    link:"/dashboard/quiz?utm_source=portalnesia+web&utm_medium=header",
+    link:"/dashboard/quiz?utm_source=portalnesia+web&utm_medium=navbar",
     icon: 'fluent:clipboard-task-list-ltr-20-regular',
 }]

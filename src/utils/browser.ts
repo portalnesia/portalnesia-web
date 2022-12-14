@@ -141,6 +141,7 @@ export default function getBrowserInfo() {
   
     let sysInfo: IBrowserInfo={
       ...(typeof browser==="object" ? {...browser} : {}),
+      isBrowser:true,
       cookieEnabled: navigator.cookieEnabled,
       mimeType: navigator.mimeTypes,
       platform: navigator.platform,

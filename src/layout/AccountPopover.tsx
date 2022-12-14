@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 // material
 // components
 import Avatar from '@design/components/Avatar';
@@ -58,12 +58,12 @@ export default function AccountPopover() {
     revalidateOnMount:false,
   });
 
-  const handleOpen = () => {
+  const handleOpen = useCallback(() => {
     setOpen(true);
-  };
-  const handleClose = () => {
+  },[]);
+  const handleClose = useCallback(() => {
     setOpen(false);
-  };
+  },[]);
 
   useEffect(()=>{
     if(userRedux === undefined) {
@@ -113,7 +113,7 @@ export default function AccountPopover() {
         <Divider sx={{ my: 1 }} />
         
         {!pathname.startsWith("/dashboard") && user ? (
-          <Link key={'dashboard'} href={"/dashboard"} passHref legacyBehavior>
+          <Link key={'dashboard'} href={"/dashboard?utm_source=portalnesia+web&utm_medium=header"} passHref legacyBehavior>
             <MenuItem component='a' onClick={handleClose} sx={{typography:'body2',py:1,px:2.5}}>
               <Iconify icon={"material-symbols:dashboard-rounded"} sx={{mr:2,width:24,height:24}} />
               Dashboard

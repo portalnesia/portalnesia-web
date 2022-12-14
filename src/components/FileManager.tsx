@@ -450,7 +450,7 @@ export default function FileManager(props: BrowserProps) {
                 sx={{ width: 220 }}
             >
                 {typeof selected === 'object' && (
-                    <Box py={2}>
+                    <Box py={1}>
                         <MenuItem onClick={()=>handleSelect(selected)}>
                             <ListItemIcon><AddPhotoIcon /></ListItemIcon>
                             <ListItemText>Use image</ListItemText>
@@ -528,7 +528,7 @@ function PortalnesiaFiles({data:dt,selected,index:i,onClick,onRightClick,disable
                 anchorPosition={
                     anchorEl !== null ? { top: anchorEl[1], left: anchorEl[0] } : undefined
                 }
-                sx={{ width: 220 }}
+                paperSx={{ width: 220 }}
                 slotProps={{
                     backdrop:{
                         // @ts-ignore
@@ -536,7 +536,7 @@ function PortalnesiaFiles({data:dt,selected,index:i,onClick,onRightClick,disable
                     }
                 }}
             >
-                <Box py={2}>
+                <Box py={1}>
                     <MenuItem onClick={handleSelect}>
                         <ListItemIcon><AddPhotoIcon /></ListItemIcon>
                         <ListItemText>Use image</ListItemText>

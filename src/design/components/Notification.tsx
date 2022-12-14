@@ -4,6 +4,9 @@ import {useSnackbar} from 'notistack'
 import { styled } from '@mui/material/styles';
 import dynamic from 'next/dynamic'
 import IconButton from '@mui/material/IconButton';
+import { useSWRPagination } from '@design/hooks/swr';
+import { PaginationResponse } from '@design/hooks/api';
+import { INotifications } from '@model/message';
 
 const Close = dynamic(()=>import('@mui/icons-material/Close'),{ssr:false})
 
@@ -45,4 +48,10 @@ export default function useNotification() {
     },[enqueueSnackbar,closeSnackbar])
   
     return setNotif;
+}
+
+export function useNotificationSWR() {
+    return useSWRPagination<PaginationResponse<INotifications,{total_unread: number}>>(`/v2/notification?per_page=15`,{
+        revalidateOnMount:false
+    });
 }

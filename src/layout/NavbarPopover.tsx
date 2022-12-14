@@ -15,6 +15,9 @@ import ListItemText from '@mui/material/ListItemText';
 import Link from '@design/components/Link';
 import { useRouter } from 'next/router';
 import Portal from '@mui/material/Portal';
+import Stack from '@mui/material/Stack';
+import IconButton from '@mui/material/IconButton';
+import { ArrowBack } from '@mui/icons-material';
 
 const Theme = [
   {
@@ -87,34 +90,41 @@ export function NavbarPopover() {
             </Tooltip>
             <Portal>
                 <Fade in={open}>
-                    <Box position='fixed' bgcolor='background.paper' m={0} ml={'0 !important'} px={2} py={1} pb={2} width='100%' left={0} top={63} height="calc(100vh - 63px)" overflow='auto' zIndex={1103}>
-                        <Typography variant='h5' sx={{mb:2}}>Portalnesia Menu</Typography>
+                    <Box position='fixed' bgcolor='background.paper' m={0} ml={'0 !important'} pb={2} width='100%' left={0} top={0} overflow='auto' height='100%' zIndex={1103}>
+                        <Stack position='fixed' top={0} left={0} width='100%' bgcolor='background.paper' direction="row" spacing={2} borderBottom={theme=>`2px solid ${theme.palette.divider}`} p={2} height={63} zIndex={1}>
+                            <IconButton onClick={handleOpen}>
+                                <ArrowBack />
+                            </IconButton>
+                            <Typography variant='h6' component='h1'>Portalnesia Menu</Typography>
+                        </Stack>
 
-                        <Box bgcolor='background.default' p={2} borderRadius={2}>
-                            <Grid container spacing={1}>
-                                {navbarMenu.sort((a,b)=>a.child ? 1 : -1).map((m)=>{
-                                    if(m.child) {
-                                        return m.child.map(c=>(
-                                            <Grid key={`${m.name}-${c.name}`} item xs={12} sm={6}>
-                                                <Link href={c.link} legacyBehavior passHref>
+                        <Box px={2} py={1} pt={'85px'}>
+                            <Box bgcolor='background.default' p={2} borderRadius={2} overflow='auto'>
+                                <Grid container spacing={1}>
+                                    {navbarMenu.sort((a,b)=>a.child ? 1 : -1).map((m)=>{
+                                        if(m.child) {
+                                            return m.child.map(c=>(
+                                                <Grid key={`${m.name}-${c.name}`} item xs={12} sm={6}>
+                                                    <Link href={c.link} legacyBehavior passHref>
+                                                        <MenuButton component='a' sx={{p:2}} className='no-underline'>
+                                                            <CustomListItemTextMobile primary={c.name} secondary={c.desc} />
+                                                        </MenuButton>
+                                                    </Link>
+                                                </Grid>
+                                            ))
+                                        }
+                                        return (
+                                            <Grid key={m.name} item xs={12} sm={6}>
+                                                <Link href={m.link} legacyBehavior passHref>
                                                     <MenuButton component='a' sx={{p:2}} className='no-underline'>
-                                                        <CustomListItemTextMobile primary={c.name} secondary={c.desc} />
+                                                        <CustomListItemTextMobile primary={m.name} secondary={m.desc} />
                                                     </MenuButton>
                                                 </Link>
                                             </Grid>
-                                        ))
-                                    }
-                                    return (
-                                        <Grid key={m.name} item xs={12} sm={6}>
-                                            <Link href={m.link} legacyBehavior passHref>
-                                                <MenuButton component='a' sx={{p:2}} className='no-underline'>
-                                                    <CustomListItemTextMobile primary={m.name} secondary={m.desc} />
-                                                </MenuButton>
-                                            </Link>
-                                        </Grid>
-                                    )
-                                })}
-                            </Grid>
+                                        )
+                                    })}
+                                </Grid>
+                            </Box>
                         </Box>
                     </Box>
                 </Fade>

@@ -223,7 +223,7 @@ function SmFooter() {
 export default function Footer() {
   
   return (
-    <BoxStyle>
+    <BoxStyle id='footer'>
       <Container>
         <Hidden smUp><XsFooter /></Hidden>
         <Hidden smDown><SmFooter /></Hidden>

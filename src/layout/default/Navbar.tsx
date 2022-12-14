@@ -30,6 +30,7 @@ import IconButton from "@mui/material/IconButton";
 import { ArrowBack } from "@mui/icons-material";
 import { useMousetrap } from "@hooks/hotkeys";
 import { portalUrl } from "@utils/main";
+import Notification from "@layout/notification/Notification";
 
 const HtmlMdDown = dynamic(()=>import('@design/components/TableContent').then(m=>m.HtmlMdDown),{ssr:false})
 
@@ -121,8 +122,8 @@ function NavbarMenuDesktop({data}: NavbarMenuDesktopProps) {
         return (
             <>
                 <Tooltip title={tooltip||name}>
-                    <MenuDesktop ref={anchorRef} className='no-underline' sx={{px:2}} childActive={open} onClick={handleOpen}>
-                        {icon && <Iconify icon={open && iconActive ? iconActive : icon} sx={{width:35,height:35,...(open ? {color:'customColor.linkIcon'} : {})}} />}
+                    <MenuDesktop ref={anchorRef} className='no-underline' sx={{px:2,width:{xs:80,md:70,lg:80}}} childActive={open} onClick={handleOpen}>
+                        {icon && <Iconify icon={open && iconActive ? iconActive : icon} sx={{width:{xs:35,md:25,lg:35},height:{xs:35,md:25,lg:35},...(open ? {color:'customColor.linkIcon'} : {})}} />}
                     </MenuDesktop>
                 </Tooltip>
                 <MenuPopover arrow={false} transformOrigin={undefined} open={open} onClose={handleOpen} anchorEl={anchorRef.current} paperSx={{py:1,px:2,pb:2,width:'60%',minWidth:800}} disableScrollLock>
@@ -155,8 +156,8 @@ function NavbarMenuDesktop({data}: NavbarMenuDesktopProps) {
         <Div sx={{height:'100%',position:'relative',display:'flex',justifyContent:'center',alignItems:'center'}}>
             <Link href={link} passHref legacyBehavior>
                 <Tooltip title={tooltip||name}>
-                    <MenuDesktop className='no-underline' active={isActive} component='a' sx={{px:2}}>
-                        {icon && <Iconify icon={isActive && iconActive ? iconActive : icon} sx={{width:35,height:35}} /> }
+                    <MenuDesktop className='no-underline' active={isActive} component='a' sx={{px:2,width:{xs:80,md:70,lg:80}}}>
+                        {icon && <Iconify icon={isActive && iconActive ? iconActive : icon} sx={{width:{xs:35,md:25,lg:35},height:{xs:35,md:25,lg:35}}} /> }
                     </MenuDesktop>
                 </Tooltip>
             </Link>
@@ -335,6 +336,7 @@ export default function DefaultNavbar({logo,tableContent}: NavbarProps) {
                                 <NavbarPopover />
                             </Hidden>
 
+                            <Notification />
                             <ThemePopover />
                             <AccountPopover />
                         </Stack>
