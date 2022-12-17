@@ -25,7 +25,7 @@ import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { useSelector } from '@redux/store';
-import { getDayJs, href, portalUrl } from '@utils/main';
+import { getDayJs, href } from '@utils/main';
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 export interface NotificationProps {
@@ -108,9 +108,11 @@ export default function Notification({}: NotificationProps) {
                                 </IconButton>
                                 <Typography variant='h6' component='h1'>Notifications</Typography>
                             </Stack>
-                            <Box pt={'85px'} pb={2}>
-                                <NotificationSections data={data} mutate={mutate} {...swr} />
-                            </Box>
+                            <Scrollbar sx={{maxHeight:'100vh'}}>
+                                <Box pt={'85px'} pb={2}>
+                                    <NotificationSections data={data} mutate={mutate} {...swr} />
+                                </Box>
+                            </Scrollbar>
                         </Box>
                     </Fade>
                 )}
@@ -147,11 +149,11 @@ function NotificationSections({data,error,isLoadingMore,isLoading,size,setSize}:
             {data && data?.data?.length > 0 ? (
                 <List>
                     {data?.data?.map(d=>(
-                        <Link href={getLink(d)} passHref legacyBehavior>
-                            <ListItemButton component='a' className='no-underline'>
+                        <Link key={`${d.message}-${d.id}`} href={getLink(d)} passHref legacyBehavior>
+                            <ListItemButton component='a' className='no-underline' selected={!Boolean(d?.read)}>
                                 <ListItemAvatar>
                                     <Avatar>
-                                        {d?.user?.picture ? <Image src={`${d.user.picture}&size=40&watermark=no`} alt={d.user.name} /> : d?.user?.name}
+                                        {d?.user?.picture ? <Image src={`${d.user.picture}&size=40&watermark=no`} alt={d.user.name} /> : 'ticket' in d ? d.ticket.name : d?.user?.name}
                                     </Avatar>
                                 </ListItemAvatar>
                                 <ListItemText>

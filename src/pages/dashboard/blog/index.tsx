@@ -31,6 +31,7 @@ import useNotification from "@design/components/Notification";
 import { BlogPagination } from "@model/pages";
 import { useMousetrap } from "@hooks/hotkeys";
 import Router from "next/router";
+import Breadcrumbs from "@comp/Breadcrumbs";
 
 const Backdrop = dynamic(()=>import("@design/components/Backdrop"));
 
@@ -79,6 +80,10 @@ export default function BlogDashIndex() {
     return (
         <Pages title="Blog - Dashboard" canonical={`/dashboard/blog`} noIndex>
             <DashboardLayout>
+                <Breadcrumbs title="Blog" routes={[{
+                    label:"Dashboard",
+                    link:"/dashboard"
+                }]} />
                 <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
                     <Stack direction='row' justifyContent='space-between'>
                         <Typography variant='h3' component='h1'>Blog</Typography>

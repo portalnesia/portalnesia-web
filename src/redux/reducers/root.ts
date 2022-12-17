@@ -10,7 +10,8 @@ const initialState: State={
     hotkeys:{
       disabled:false,
       dialog:undefined
-    }
+    },
+    report:undefined
 }
 
 const rootReducer: Reducer<State,ActionType> = (state = initialState, action) => {

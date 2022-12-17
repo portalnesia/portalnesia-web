@@ -32,6 +32,7 @@ import { QuizPagination } from "@model/quiz";
 import submitForm from "@utils/submit-form";
 import Recaptcha from "@design/components/Recaptcha";
 import { useMousetrap } from "@hooks/hotkeys";
+import Breadcrumbs from "@comp/Breadcrumbs";
 
 const TextField = dynamic(()=>import("@mui/material/TextField"));
 const Backdrop = dynamic(()=>import("@design/components/Backdrop"));
@@ -101,6 +102,10 @@ export default function QuizDashIndex() {
     return (
         <Pages title="Quiz - Dashboard" canonical={`/dashboard/quiz`} noIndex>
             <DashboardLayout>
+                <Breadcrumbs title="Quiz" routes={[{
+                    label:"Dashboard",
+                    link:"/dashboard"
+                }]} />
                 <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
                     <Stack direction='row' justifyContent='space-between'>
                         <Typography variant='h3' component='h1'>Quiz</Typography>

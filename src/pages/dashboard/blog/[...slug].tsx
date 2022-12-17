@@ -31,6 +31,7 @@ import PaperBlock from "@design/components/PaperBlock";
 import {arrayMove, SortableContainer,SortableElement,SortableHandle} from 'react-sortable-hoc'
 import IconButton from "@mui/material/IconButton";
 import { DragHandle, SortContainer } from "@comp/Sort";
+import Breadcrumbs from "@comp/Breadcrumbs";
 
 const SimpleMDE=dynamic(()=>import('@comp/SimpleMDE'),{ssr:false})
 const CKEditor=dynamic(()=>import('@comp/CKEditor'),{ssr:false})
@@ -264,6 +265,13 @@ export default function EditBlogPages({data,meta}: IPages<IBlogEdit>) {
     return (
         <Pages title={meta?.title} noIndex canonical={'slug' in data ? `/dashboard/blog/${data?.slug}` : '/dashboard/blog/new'}>
             <DashboardLayout>
+                <Breadcrumbs title={'slug' in data ? "Edit Blog" : "New Blog"} routes={[{
+                    label:"Dashboard",
+                    link:"/dashboard"
+                },{
+                    label:"Blog",
+                    link:"/dashboard/blog"
+                }]} />
                 <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={5}>
                     <Typography variant='h3' component='h1'>{'slug' in data ? "Edit Blog" : "New Blog"}</Typography>
                 </Box>

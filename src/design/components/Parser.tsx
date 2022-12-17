@@ -356,7 +356,8 @@ export function Markdown({source,skipHtml,preview,...other}: MarkdrownProps) {
       setHtml(html);
     }
   },[source,preview,skipHtml])
-  const finalHtml = React.useMemo(()=>{
+
+  const finalHtml: string|undefined = React.useMemo(()=>{
     if(preview) {
       const hhtm = convertToHtml(source,preview);
       return hhtm;
@@ -364,7 +365,7 @@ export function Markdown({source,skipHtml,preview,...other}: MarkdrownProps) {
     return html;
   },[preview,html,source])
 
-  if(!finalHtml) {
+  if(typeof finalHtml !== 'string') {
     return (
       <BoxPagination style={{width:50,height:50}} loading />
     )

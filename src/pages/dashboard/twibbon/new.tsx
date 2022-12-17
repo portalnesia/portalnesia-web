@@ -16,6 +16,7 @@ import Recaptcha from "@design/components/Recaptcha";
 import { AxiosRequestConfig } from "axios";
 import TextField from "@mui/material/TextField";
 import Textarea from "@design/components/Textarea";
+import Breadcrumbs from "@comp/Breadcrumbs";
 
 const Backdrop = dynamic(()=>import("@design/components/Backdrop"))
 
@@ -92,6 +93,13 @@ export default function NewTwibbonPage() {
     return (
         <Pages title="New Twibbon" noIndex canonical={`/dashboard/twibbon/new`}>
             <DashboardLayout>
+                <Breadcrumbs title={"New Twibbon"} routes={[{
+                    label:"Dashboard",
+                    link:"/dashboard"
+                },{
+                    label:"Twibbon",
+                    link:"/dashboard/twibbon"
+                }]} />
                 <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={5}>
                     <Typography variant='h3' component='h1'>New Twibbon</Typography>
                 </Box>

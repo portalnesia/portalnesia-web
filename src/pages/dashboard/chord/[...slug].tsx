@@ -28,6 +28,7 @@ import { Circular } from "@design/components/Loading";
 import Textarea from "@design/components/Textarea";
 import { FilterOptionsState } from "@mui/material/useAutocomplete";
 import Divider from "@mui/material/Divider";
+import Breadcrumbs from "@comp/Breadcrumbs";
 
 type IChordEdit = Pick<CopyPartial<ChordDetail,'link'|'slug'>,'title'|'artist'|'original'|'text'|'link'|'slug'|'publish'>
 const defaultText = {
@@ -248,6 +249,13 @@ export default function EditChordPages({data,meta}: IPages<IChordEdit>) {
     return (
         <Pages title={meta?.title} noIndex canonical={'slug' in data ? `/dashboard/chord/${data?.slug}` : '/dashboard/chord/new'}>
             <DashboardLayout>
+                <Breadcrumbs title={'slug' in data ? "Edit Chord" : "New Chord"} routes={[{
+                    label:"Dashboard",
+                    link:"/dashboard"
+                },{
+                    label:"Chord",
+                    link:"/dashboard/chord"
+                }]} />
                 <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={5}>
                     <Typography variant='h3' component='h1'>{'slug' in data ? "Edit Chord" : "New Chord"}</Typography>
                 </Box>

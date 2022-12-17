@@ -32,6 +32,7 @@ import Recaptcha from "@design/components/Recaptcha";
 import Textarea from "@design/components/Textarea"
 import { useMousetrap } from "@hooks/hotkeys";
 import Router from "next/router";
+import Breadcrumbs from "@comp/Breadcrumbs";
 
 const FormGroup = dynamic(()=>import("@mui/material/FormGroup"));
 const FormControlLabel = dynamic(()=>import("@mui/material/FormControlLabel"));
@@ -114,6 +115,10 @@ export default function TwibbonDashIndex() {
     return (
         <Pages title="Twibbon - Dashboard" canonical={`/dashboard/twibbon`} noIndex>
             <DashboardLayout>
+                <Breadcrumbs title="Twibbon" routes={[{
+                    label:"Dashboard",
+                    link:"/dashboard"
+                }]} />
                 <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={5}>
                     <Stack direction='row' justifyContent='space-between'>
                         <Typography variant='h3' component='h1'>Twibbon</Typography>

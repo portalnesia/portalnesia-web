@@ -21,6 +21,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Iconify from "@design/components/Iconify";
 import wrapper from "@redux/store";
 import { IPages } from "@type/general";
+import Breadcrumbs from "@comp/Breadcrumbs";
 
 export const getServerSideProps = wrapper<(PaginationResponse<ChordPagination|({artist:string,slug_artist: string})>)|{}>(async({fetchAPI,query,params})=>{
     const slug = params?.slug;
@@ -74,6 +75,14 @@ export default function ChordArtistPage({data:server,meta}: IPages<(PaginationRe
     return (
         <Pages title={`${meta?.title} - Chord`} canonical={`/chord/artist${typeof slug?.[0] === 'string' ? `/${slug[0]}` : ''}`}>
             <DefaultLayout>
+                <Breadcrumbs title={meta?.title||""} routes={[{
+                    label:"Chord",
+                    link:"/chord"
+                },...(typeof slug?.[0] === 'string' ? [{
+                    label:"Artist",
+                    link:"/chord/artist"
+                }] : [])]} />
+
                 <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
                     <Typography variant='h4' component='h1'>{meta?.title}</Typography>
                 </Box>

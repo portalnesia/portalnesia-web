@@ -7,7 +7,7 @@ import Box from '@mui/material/Box';
 import { CopyPartial } from '@type/general';
 
 export type CarouselProps = CopyPartial<NativeProps,'responsive'>
-const responsiveDefault = {
+export const responsiveDefault = {
     superLargeDesktop: {
         // the naming can be any, depends on you.
         breakpoint: { max: 4000, min: 3000 },
@@ -35,9 +35,39 @@ const responsiveDefault = {
         partialVisibilityGutter: 10
     }
 }
+
+export const responsiveContentDefault = {
+    superLargeDesktop: {
+        // the naming can be any, depends on you.
+        breakpoint: { max: 4000, min: 3000 },
+        items: 4,
+        partialVisibilityGutter: 10
+    },
+    desktop: {
+        breakpoint: { max: 3000, min: 1344 },
+        items: 3,
+        partialVisibilityGutter: 10
+    },
+    tabletLarge:{
+        breakpoint: { max: 1344, min: 784 },
+        items: 3,
+        partialVisibilityGutter: 10
+    },
+    tablet: {
+        breakpoint: { max: 784, min: 534 },
+        items: 2,
+        partialVisibilityGutter: 10
+    },
+    mobile: {
+        breakpoint: { max: 534, min: 0 },
+        items: 1,
+        partialVisibilityGutter: 10
+    }
+}
+
 const Carousel = forwardRef<Slider,CarouselProps>(({autoPlay,transitionDuration,arrows,infinite,children,responsive=responsiveDefault,...props},ref)=>{
     const autoplay = useMemo(()=>{
-        return autoPlay||isMobile;
+        return typeof autoPlay === 'boolean' ? autoPlay : isMobile;
     },[autoPlay])
 
     return (

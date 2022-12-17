@@ -1,7 +1,7 @@
 //import { useTheme } from '@mui/material/styles';
 import Link from 'next/link';
 import SvgIcon from '@mui/material/SvgIcon';
-import { Theme, useTheme } from "@mui/material/styles";
+import { Theme, useTheme,SxProps } from "@mui/material/styles";
 import { SystemCssProperties } from '@mui/system/styleFunctionSx';
 import {A} from '@design/components/Dom'
 
@@ -12,6 +12,7 @@ interface SvgProps {
 export interface LogoProps {
     href?:string|false
     svg?:SvgProps
+    sx?: SxProps<Theme>
 }
 
 function SvgLogo({size}: SvgProps) {
@@ -35,11 +36,11 @@ function SvgLogo({size}: SvgProps) {
   )
 }
 
-export default function Logo({href='/',svg}: LogoProps) {
+export default function Logo({href='/',svg,sx}: LogoProps) {
     // const theme = useTheme();
     if(typeof href==='boolean') return <SvgLogo />
     return (
-      <Link href={href} passHref legacyBehavior><A sx={{height:'100%',display:'inline-flex'}}>
+      <Link href={href} passHref legacyBehavior><A sx={{height:'100%',display:'inline-flex',...sx}}>
         <SvgLogo {...svg} />
       </A></Link>
     );

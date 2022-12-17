@@ -63,7 +63,7 @@ export default function HotKeys({atasKeymap,bawahKeymap,open,onClose}: HotKeysPr
                         <KeyTitle key='0'><Typography component='span'>{data.name}</Typography></KeyTitle>
                         <KeyCode key='1'>
                             {data.button.map((btn,i)=>(
-                                <React.Fragment key={`label-${data.name}-${btn}`}>
+                                <React.Fragment key={`label-${data.name}-${btn}-${i}`}>
                                     <KeyLabel><Typography component='span'>{btn}</Typography></KeyLabel>
                                     {(i+1 < data.button.length) ? (
                                         <KeyPlus><Typography component='span'>+</Typography></KeyPlus>
@@ -81,7 +81,7 @@ export default function HotKeys({atasKeymap,bawahKeymap,open,onClose}: HotKeysPr
                         <KeyTitle key='0'><Typography component='span'>{data.name}</Typography></KeyTitle>
                         <KeyCode key='1'>
                             {data.button.map((btn,i)=>(
-                                <React.Fragment key={`label-${data.name}-${btn}`}>
+                                <React.Fragment key={`label-${data.name}-${btn}-${i}`}>
                                     <KeyLabel><Typography component='span'>{btn}</Typography></KeyLabel>
                                     {(i+1 < data.button.length) ? (
                                         <KeyPlus><Typography component='span'>+</Typography></KeyPlus>

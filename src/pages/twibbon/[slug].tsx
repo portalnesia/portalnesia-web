@@ -20,8 +20,10 @@ import Button from "@comp/Button";
 import Croppie from "@comp/Croppie";
 import dynamic from "next/dynamic";
 import useNotification from "@design/components/Notification";
-import { ShareAction } from "@comp/Action";
+import { ReportAction, ShareAction } from "@comp/Action";
 import { staticUrl } from "@utils/main";
+import Breadcrumbs from "@comp/Breadcrumbs";
+import { getAnalytics, logEvent } from "@utils/firebase";
 
 const Backdrop = dynamic(()=>import("@design/components/Backdrop"))
 const Dialog = dynamic(()=>import("@design/components/Dialog"))
@@ -100,19 +102,43 @@ export default function TwibbonPages({data:twibbon,meta}: IPages<TwibbonDetail>)
         }
     },[setNotif])
 
+    React.useEffect(()=>{
+        let timeout = setTimeout(()=>{
+            const analytics = getAnalytics();
+            logEvent(analytics,"select_content",{
+                content_type:"twibbon",
+                item_id:`${twibbon.id}`
+            })
+        },5000)
+
+        return ()=>{
+            clearTimeout(timeout);
+        }
+    },[twibbon])
+
     return (
         <Pages title={meta?.title} desc={meta?.desc} canonical={`/twibbon/${data?.slug}`} image={meta?.image}>
             <DefaultLayout>
+                {data && <Breadcrumbs title={data.title} routes={[{
+                    label:"Twibbon",
+                    link:"/twibbon"
+                }]} />}
                 <SWRPages loading={!data&&!error} error={error}>
                     <Grid container spacing={4}>
                         <Grid item xs={12} md={4}>
                             <Sidebar id='twibbon-content'>
                                 <PaperBlock title="Twibbon Usage Guide"
                                     footer={
-                                        <Stack direction='row' justifyContent='space-between' alignItems='center' spacing={2}>
-                                            <Button color='inherit' outlined icon='add'>Create Twibbon</Button>
-                                            {data && <ShareAction campaign="twibbon" variant='button' posId={data.id} buttonProps={{outlined:true,color:'inherit'}} />}
-                                        </Stack>
+                                        <>
+                                            {data && (
+                                                <Stack mb={1} direction='row' justifyContent='space-between' alignItems='center' spacing={1}>
+                                                    <ShareAction campaign="twibbon" variant='button' posId={data.id} buttonProps={{outlined:true,color:'inherit',sx:{width:'100%'}}} />
+                                                    <ReportAction variant="button" buttonProps={{outlined:true,color:'inherit',sx:{width:'100%'}}} report={{type:"konten",information:{konten:{type:"twibbon",id:data.id}}}} />
+                                                </Stack>
+                                            )}
+                                            <Button icon='add' sx={{width:'100%'}}>Create Twibbon</Button>
+                                        </>
+                                        
                                     }
                                 >
                                     <List component="ol" sx={{listStyle:'numeric',listStylePosition:'inside'}}>

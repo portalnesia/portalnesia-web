@@ -25,7 +25,7 @@ export interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
     /**
      * Image url
      */
-    src: string;
+    src?: string;
     /**
      * If webp is true, default image type.
      */
@@ -71,7 +71,7 @@ function getPortalnesiaImagePng(img: string) {
  * Homepage: [Portalnesia](https://portalnesia.com)
  * 
  */
-const Image=(props: ImageProps)=>{
+const Image=React.forwardRef<HTMLImageElement,ImageProps>((props,ref)=>{
     const {webp,src,lazy=true,type,withPng,className,fancybox,dataFancybox='images',dataSrc,alt,onContextMenu: __,placeholder:_,blured:p,caption,...rest}=props
     const [anchorEl,setAnchorEl]=React.useState<[number,number]|null>(null)
     const [menu,setMenu]=React.useState(false);
@@ -118,6 +118,7 @@ const Image=(props: ImageProps)=>{
     },[fancybox,src,dataSrc])
 
     const webpSrc = React.useMemo(()=>{
+        if(!src) return undefined;
         if(/unsplash\.com/.test(src)) {
             return `${src}&fm=webp`
         }
@@ -125,19 +126,21 @@ const Image=(props: ImageProps)=>{
     },[src])
 
     const pngDataSrc = React.useMemo(()=>{
-        if(!/content\.portalnesia\.com/.test(dataSrc||src)) {
-            if(/unsplash\.com/.test(src)) return `${(dataSrc||src)}&fm=png`
+        if(!dataSrc&&!src) return (dataSrc||src||"");
+        if(!/content\.portalnesia\.com/.test(dataSrc||src||"")) {
+            if(/unsplash\.com/.test(src||"")) return `${(dataSrc||src)}&fm=png`
             return (dataSrc||src)
         }
-        return getPortalnesiaImagePng((dataSrc||src))
+        return getPortalnesiaImagePng((dataSrc||src||""))
     },[dataSrc,src])
 
     const pngSrc = React.useMemo(()=>{
-        if(!/content\.portalnesia\.com/.test(dataSrc||src)) {
-            if(/unsplash\.com/.test(src)) return `${(src)}&fm=png`
+        if(!src) return src;
+        if(!/content\.portalnesia\.com/.test(dataSrc||src||"")) {
+            if(/unsplash\.com/.test(src||"")) return `${(src)}&fm=png`
             return (src)
         }
-        return getPortalnesiaImagePng((src))
+        return getPortalnesiaImagePng((src||""))
     },[src,dataSrc])
     
     if(webp) {
@@ -151,7 +154,7 @@ const Image=(props: ImageProps)=>{
                             {lazy ? (
                                 <LazyImageStyle src={withPng ? pngSrc : src} className={`no-drag ${className ? ' '+className : ''}`} onContextMenu={onRightClick} {...(alt ? {alt:alt} : {})} {...rest} />
                             ) : (
-                                <ImageStyle src={withPng ? pngSrc : src} className={`no-drag ${className ? ' '+className : ''}`} onContextMenu={onRightClick} {...(alt ? {alt:alt} : {})} {...rest} />
+                                <ImageStyle ref={ref} src={withPng ? pngSrc : src} className={`no-drag ${className ? ' '+className : ''}`} onContextMenu={onRightClick} {...(alt ? {alt:alt} : {})} {...rest} />
                             )}
                         </picture>
                     </ButtonBase>
@@ -162,7 +165,7 @@ const Image=(props: ImageProps)=>{
                         {lazy ? (
                             <LazyImageStyle src={withPng ? pngSrc : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={(e: any)=>e.preventDefault()} {...(alt ? {alt:alt} : {})} {...rest} />
                         ) : (
-                            <ImageStyle src={withPng ? pngSrc : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={(e)=>e.preventDefault()} {...(alt ? {alt:alt} : {})} {...rest} />
+                            <ImageStyle ref={ref} src={withPng ? pngSrc : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={(e)=>e.preventDefault()} {...(alt ? {alt:alt} : {})} {...rest} />
                         )}
                     </picture>
                 )}
@@ -186,14 +189,14 @@ const Image=(props: ImageProps)=>{
                         {lazy ? (
                             <LazyImageStyle src={withPng ? `${src}&output=png` : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={onRightClick} {...(alt ? {alt:alt} : {})} {...rest} />
                         ) : (
-                            <ImageStyle src={withPng ? `${src}&output=png` : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={onRightClick} {...(alt ? {alt:alt} : {})} {...rest} />
+                            <ImageStyle ref={ref} src={withPng ? `${src}&output=png` : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={onRightClick} {...(alt ? {alt:alt} : {})} {...rest} />
                         )}
                         
                     </ButtonBase>
                 ) : lazy ? (
                     <LazyImageStyle src={withPng ? `${src}&output=png` : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={(e: any)=>e.preventDefault()} {...(alt ? {alt:alt} : {})} {...rest} />
                 ) : (
-                    <ImageStyle src={withPng ? `${src}&output=png` : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={(e)=>e.preventDefault()} {...(alt ? {alt:alt} : {})} {...rest} />
+                    <ImageStyle ref={ref} src={withPng ? `${src}&output=png` : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={(e)=>e.preventDefault()} {...(alt ? {alt:alt} : {})} {...rest} />
                 )}
                 <Menu
                     anchorReference="anchorPosition"
@@ -208,6 +211,6 @@ const Image=(props: ImageProps)=>{
             </>
         )
     }
-}
+})
 
 export default Image;

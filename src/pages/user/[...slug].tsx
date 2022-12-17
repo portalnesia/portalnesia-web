@@ -37,6 +37,7 @@ import Badge from "@mui/material/Badge";
 import ButtonBase from "@mui/material/ButtonBase";
 import { QuizPagination } from "@model/quiz";
 import { CustomTab, CustomTabs } from "@design/components/Tab";
+import { ReportAction } from "@comp/Action";
 
 const MenuPopover = dynamic(()=>import("@design/components/MenuPopover"));
 const ListItemIcon = dynamic(()=>import("@mui/material/ListItemIcon"));
@@ -114,7 +115,7 @@ const tabArr = [{
     link:"/twibbon"
 }]
 
-// TODO - QUIZ
+
 export default function UserPages({data:userData,meta}: IPages<IData>) {
     const router = useRouter();
     const username = router?.query?.slug?.[0];
@@ -270,7 +271,10 @@ export default function UserPages({data:userData,meta}: IPages<IData>) {
                                         {isMe ? (
                                             <Button sx={{width:'100%'}} outlined color='inherit' component="a" href={accountUrl('account')}>Edit profile</Button>
                                         ) : (
-                                            <Button sx={{width:'100%'}} outlined color='inherit' disabled={loading} loading={loading} onClick={handleFollow}>{data?.isFollowing || data?.isFollowPending ? `Unfollow` : 'Follow'}</Button>
+                                            <Stack direction='row' justifyContent='space-between' spacing={1}>
+                                                <Button sx={{width:'100%'}} color={data?.isFollowing || data?.isFollowPending ? 'error':'primary'} disabled={loading} loading={loading} onClick={handleFollow}>{data?.isFollowing || data?.isFollowPending ? `Unfollow` : 'Follow'}</Button>
+                                                {data && <ReportAction variant="button" buttonProps={{outlined:true,color:'inherit',sx:{width:'100%'}}} report={{type:"user",information:{user:data?.id}}} />}
+                                            </Stack>
                                         )}
                                         
                                     </Box>
@@ -446,7 +450,7 @@ function ChordPages({data:user}: SubcomProps){
                     )}
                     {(data) && (
                         <Grid sx={{mt:2}} key={'pagination'} item xs={12}>
-                            <Pagination page={page} onChange={setPage} count={data?.total_page} />
+                            <Pagination page={page} onChange={setPage} count={data?.total_page||1} />
                         </Grid>
                     )}
                 </Grid>
@@ -475,7 +479,7 @@ function BlogPages({data:user}: SubcomProps){
                     )}
                     {(data) && (
                         <Grid sx={{mt:2}} key={'pagination'} item xs={12}>
-                            <Pagination page={page} onChange={setPage} count={data?.total_page} />
+                            <Pagination page={page} onChange={setPage} count={data?.total_page||1} />
                         </Grid>
                     )}
                 </Grid>
@@ -504,7 +508,7 @@ function QuizPages({data:user}: SubcomProps){
                     )}
                     {(data) && (
                         <Grid sx={{mt:2}} key={'pagination'} item xs={12}>
-                            <Pagination page={page} onChange={setPage} count={data?.total_page} />
+                            <Pagination page={page} onChange={setPage} count={data?.total_page||1} />
                         </Grid>
                     )}
                 </Grid>
@@ -533,7 +537,7 @@ function TwibbonPages({data:user}: SubcomProps){
                     )}
                     {(data) && (
                         <Grid sx={{mt:2}} key={'pagination'} item xs={12}>
-                            <Pagination page={page} onChange={setPage} count={data?.total_page} />
+                            <Pagination page={page} onChange={setPage} count={data?.total_page||1} />
                         </Grid>
                     )}
                 </Grid>
@@ -657,7 +661,7 @@ function FollowPage({user,data:dataUser,type,mutate:userMutate}: SubcomProps & (
                     )}
                     {(data) && (
                         <Grid sx={{mt:2}} key={'pagination'} item xs={12}>
-                            <Pagination page={page} onChange={setPage} count={data?.total_page} />
+                            <Pagination page={page} onChange={setPage} count={data?.total_page||1} />
                         </Grid>
                     )}
                 </Grid>

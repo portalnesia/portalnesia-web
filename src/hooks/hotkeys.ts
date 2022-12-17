@@ -35,13 +35,17 @@ export function useHotKeys(register?: boolean) {
     
     const onDialogChange=useCallback((data: DialogActionType)=>()=>{
         setDialog(data)
-    },[]);
+    },[setDialog,disabled]);
 
     const keyboardAction=useCallback((e?: KeyboardEvent)=>{
         if(e?.preventDefault) e.preventDefault();
         if(dialog) setDialog(undefined)
         else setDialog('keyboard');
     },[dialog])
+
+    const feedbackAction = useCallback(()=>{
+        dispatch({type:"CUSTOM",payload:{report:{type:"feedback"}}})
+    },[])
 
     const profileAction=useCallback((e?: KeyboardEvent)=>{
         if(e?.preventDefault) e.preventDefault();
@@ -264,6 +268,7 @@ export function useHotKeys(register?: boolean) {
 
     const handlers: HandlersMap={
         KEYBOARD: keyboardAction,
+        SEND_FEEDBACK:feedbackAction,
         PROFILE: profileAction,
         CONTACT:contactAction,
         HOME:homeAction,

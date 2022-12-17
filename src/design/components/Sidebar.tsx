@@ -11,9 +11,10 @@ export interface SidebarProps {
     id: string,
     disabled?:boolean
     minimalScreen?: 'md'|'lg'
+    mutation?: any[]
 }
 
-export default function Sidebar({children,type='scroll',id,disabled,minimalScreen='md'}: SidebarProps) {
+export default function Sidebar({children,type='scroll',id,disabled,minimalScreen='md',mutation}: SidebarProps) {
     const isMd = useResponsive('up','md')
     const isLg = useResponsive('up','lg')
     const staticDynamic = React.useRef<HTMLDivElement>(null);
@@ -36,7 +37,7 @@ export default function Sidebar({children,type='scroll',id,disabled,minimalScree
             // IF SCROLL
             const idHeight = Number((document.getElementById(id)?.offsetHeight||0)) + padding;
             const dynOfs = (dynamic.current?.offsetHeight||0) + padding
-            console.log(dynOfs,window.outerHeight,idHeight)
+            //console.log(dynOfs,window.outerHeight,idHeight)
             if(type === 'scroll' && dynOfs > (window.outerHeight) && idHeight > dynOfs) {
                 const staticTop = Number(getOffset(staticEl.current).top),st=getScrollTop();
                 const idTop = Number(getOffset(document.getElementById(id)).top)

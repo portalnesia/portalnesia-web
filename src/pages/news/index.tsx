@@ -12,14 +12,47 @@ import type { PaginationResponse } from "@design/hooks/api";
 import CustomCard from "@design/components/Card";
 import { getDayJs, href } from "@utils/main";
 import Stack from "@mui/material/Stack";
+import Scrollbar from "@design/components/Scrollbar";
+import Carousel from "@comp/Carousel";
+import Breadcrumbs from "@comp/Breadcrumbs";
 
 export default function News() {
     const [page,setPage] = usePagination();
     const {data,error} = useSWR<PaginationResponse<NewsPagination>>(`/v2/news?page=${page}&per_page=24`);
+    const {data:recommendation,error:errRecommendation} = useSWR<NewsPagination[]>(`/v2/news/recommendation`);
 
     return (
         <Pages title="News" canonical="/news">
             <DefaultLayout>
+                <Breadcrumbs title="News" />
+
+                <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
+                    <Typography variant='h4' component='h1'>Recommendation</Typography>
+                </Box>
+        
+                <SWRPages loading={!recommendation&&!errRecommendation} error={error}>
+                    <Scrollbar>
+                        {recommendation && recommendation?.length > 0 ? (
+                            <Carousel>
+                                {recommendation.map(d=>(
+                                    <Box px={1} key={d.title}>
+                                        <CustomCard link={href(d.link)} title={d.title} image={`${d.image}&export=banner&size=300`}>
+                                            <Stack direction='row' justifyContent='space-between'>
+                                                <Typography variant='caption'>{d.source}</Typography>
+                                                <Typography variant='caption'>{getDayJs(d.created).time_ago().format}</Typography>
+                                            </Stack>
+                                        </CustomCard>
+                                    </Box>
+                                ))}
+                            </Carousel>
+                        ) : (
+                            <BoxPagination>
+                                <Typography>No data</Typography>
+                            </BoxPagination>
+                        )}
+                    </Scrollbar>
+                </SWRPages>
+
                 <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
                     <Typography variant='h4' component='h1'>Recent News</Typography>
                 </Box>

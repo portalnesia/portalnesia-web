@@ -10,7 +10,7 @@ import wrapper, { BackendError } from "@redux/store";
 import { IPages } from "@type/general";
 import { useRouter } from "next/router";
 import React from "react";
-import { ChordDetail } from "@model/chord";
+import { ChordDetail, ChordPagination } from "@model/chord";
 import dynamic from "next/dynamic";
 import Fab from "@mui/material/Fab";
 import Iconify from "@design/components/Iconify";
@@ -20,9 +20,21 @@ import MenuPopover from "@design/components/MenuPopover";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Button from "@comp/Button";
 import { Span } from "@design/components/Dom";
-import { portalUrl, staticUrl } from "@utils/main";
+import { href, portalUrl, staticUrl } from "@utils/main";
 import { ArticleJsonLd } from "next-seo";
 import Chord from '@comp/Chord'
+import { CombineAction } from "@comp/Action";
+import Comment from "@comp/Comment";
+import Sidebar from "@design/components/Sidebar";
+import PaperBlock from "@design/components/PaperBlock";
+import Stack from "@mui/material/Stack";
+import CustomCard from "@design/components/Card";
+import { BoxPagination } from "@design/components/Pagination";
+import Link from "@design/components/Link";
+import Divider from "@mui/material/Divider";
+import Breadcrumbs from "@comp/Breadcrumbs";
+import useAPI from "@design/hooks/api";
+import { getAnalytics, logEvent } from "@utils/firebase";
 
 export const getServerSideProps = wrapper<ChordDetail>(async({params,redirect,fetchAPI})=>{
     const slug = params?.slug;
@@ -52,12 +64,28 @@ export const getServerSideProps = wrapper<ChordDetail>(async({params,redirect,fe
     }
 })
 
+type IRecommendation = {
+    relateds: ChordPagination[];
+    recents: ChordPagination[];
+    populars: ChordPagination[];
+}
 
+const sidebarArr: {key: keyof IRecommendation,title: string}[] = [{
+    key: 'relateds',
+    title:"Recommendation"
+},{
+    key:"populars",
+    title:"Popular Chords"
+},{
+    key:'recents',
+    title:"Recent Chords"
+}]
 
 export default function ChordPage({data:chord,meta}: IPages<ChordDetail>) {
     const router = useRouter();
     const slug = router.query?.slug;
     const {data,error} = useSWR<ChordDetail>(`/v2/chord/${slug}`,{fallbackData:chord});
+    const {data:recommendation,error:errRecommendation} = useSWR<IRecommendation>(data ? `/v2/chord/recommendation/${data.id}` : null);
     const [transpose,setTranspose]=React.useState(0);
     const [fontsize,setFontsize]=React.useState(5);
     const [scrollSpeed,setScrollSpeed]=React.useState(0);
@@ -65,7 +93,9 @@ export default function ChordPage({data:chord,meta}: IPages<ChordDetail>) {
     const anchorEl = React.useRef(null)
     const scrollInterval = React.useRef<NodeJS.Timer>()
     const iframeRef = React.useRef<HTMLIFrameElement>();
+    const [liked,setLiked] = React.useState(!!chord.liked);
     const [disable,setDisable]=React.useState({t:{u:false,d:false},a:{u:false,d:true},f:{u:false,d:false}});
+    const {get} = useAPI();
 
     const handleTranspose=React.useCallback((type:'up'|'down'|'reset')=>()=>{
         let res: number;
@@ -188,7 +218,7 @@ export default function ChordPage({data:chord,meta}: IPages<ChordDetail>) {
         const onScroll=()=>{
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             const docHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-            const con=document.getElementById('chord-content');
+            const con=document.getElementById('chord-content-container');
             if(con) {
                 const conHeight = con?.clientHeight||con?.offsetHeight ;
                 const conTop=con?.offsetTop;
@@ -223,6 +253,25 @@ export default function ChordPage({data:chord,meta}: IPages<ChordDetail>) {
         }
     },[slug])
 
+    React.useEffect(()=>{
+        setLiked(!!data?.liked)
+    },[data])
+
+    React.useEffect(()=>{
+        let timeout = setTimeout(()=>{
+            get(`/v2/chord/${chord.slug}/update`).catch(()=>{})
+            const analytics = getAnalytics();
+            logEvent(analytics,"select_content",{
+                content_type:"chord",
+                item_id:`${chord.id}`
+            })
+        },5000)
+
+        return ()=>{
+            clearTimeout(timeout);
+        }
+    },[chord])
+
     return (
         <Pages title={meta?.title} desc={meta?.desc} canonical={`/chord/${data?.slug}`} image={meta?.image}>
             <ArticleJsonLd
@@ -240,18 +289,88 @@ export default function ChordPage({data:chord,meta}: IPages<ChordDetail>) {
                 description={adddesc(meta?.desc||"")}
             />
             <DefaultLayout>
+                {data && (
+                    <Breadcrumbs title={data.title} routes={[{
+                        label:"Chord",
+                        link:"/chord"
+                    },{
+                        label:data.artist,
+                        link:`/chord/artist/${data.slug_artist}`
+                    }]} />
+                )}
                 <SWRPages loading={!data&&!error} error={error}>
                     <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={5}>
                         <Typography variant='h3' component='h1'>{`Chord ${data?.title} - ${data?.artist}`}</Typography>
+                        {data && (
+                            <Box mt={1}>
+                                <CombineAction list={{
+                                    like:{
+                                        type:'chord',
+                                        posId:data.id,
+                                        liked:liked,
+                                        onChange:setLiked
+                                    },
+                                    share:{
+                                        campaign:"chord",
+                                        posId:data.id
+                                    },
+                                    donation:true,
+                                    report:{
+                                        report:{
+                                            type:"konten",
+                                            information:{
+                                                konten:{
+                                                    id:data.id,
+                                                    type:"chord"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }} />
+                            </Box>
+                        )}
                     </Box>
                     <Grid container spacing={4}>
                         <Grid item xs={12} md={8}>
                             <Box id='chord-content'>
-                                {data && <Chord template={data?.text} transpose={transpose} sx={{fontSize:fontsize+9}} />}
+                                {data && (
+                                    <>
+                                        <Box id='chord-content-container'>
+                                            <Chord template={data?.text} transpose={transpose} sx={{fontSize:fontsize+9}} />
+                                            
+                                            <Divider sx={{my:5}} />
+
+                                            <Box>
+                                                <Typography>Your chords aren't here? <Link href={`/chord?subject=Request%20Chord`}><Span sx={{color:'customColor.link'}}>request your chord</Span></Link> or <Link href={`/dashboard/chord/new`}><Span sx={{color:'customColor.link'}}>create a new one</Span></Link>.</Typography>
+                                            </Box>
+                                        </Box>
+                                        <Box mt={10}>
+                                            <Comment posId={data.id} type='chord' />
+                                        </Box>
+                                    </>
+                                )}
                             </Box>
                         </Grid>
                         <Grid item xs={12} md={4}>
-
+                            <Sidebar id='chord-content'>
+                                <Stack alignItems='flex-start' spacing={5} width='100%'>
+                                    {sidebarArr.map(arr=>(
+                                        <PaperBlock key={arr.key} title={arr.title} sx={{width:'100%'}} content={{sx:{px:2}}}>
+                                            <SWRPages loading={!recommendation&&!errRecommendation} error={errRecommendation}>
+                                                <Stack alignItems='flex-start' spacing={1}>
+                                                    {(recommendation && recommendation?.[arr.key]?.length) ? recommendation?.[arr.key]?.map(d=>(
+                                                        <CustomCard key={d.slug} link={href(d.link)} title={`${d.artist} - ${d.title}`} variant='outlined' />
+                                                    )) : (
+                                                        <BoxPagination>
+                                                            <Typography>No data</Typography>
+                                                        </BoxPagination>
+                                                    )}
+                                                </Stack>
+                                            </SWRPages>
+                                        </PaperBlock>
+                                    ))}
+                                </Stack>
+                            </Sidebar>
                         </Grid>
                     </Grid>
                 </SWRPages>

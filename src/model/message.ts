@@ -16,11 +16,13 @@ export type IRoom = {
 
 export type ISupportRoom = {
     id: string,
+    id_number:number,
     timestamp: Date,
     read: boolean,
     status: string,
     subject: string,
-    user: UserPagination,
+    user?: UserPagination,
+    userid?: number,
     ticket:{
         name:string,
         email: string
@@ -51,17 +53,19 @@ export type INotificationNotification = IRoom & ({
     message: string
 })
 
-export type IFollowNotification = {
+type IFollowNotification = {
     id: string
     type:"follow"
     message:string
     timestamp: Date
+    read: boolean
     user: UserPagination
 }
 
-export type ICommentNotification = Without<ICommentReply,'comment'> & {
+type ICommentNotification = Without<ICommentReply,'comment'> & {
     type:"comment"
     message:string
+    read: boolean
 }
 
 export type INotifications = ISupportNotification | INotificationNotification | IFollowNotification | ICommentNotification

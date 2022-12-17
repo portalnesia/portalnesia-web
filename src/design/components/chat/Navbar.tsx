@@ -4,48 +4,45 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
 import { NAVBAR_HEIGHT, DRAWER_WIDTH } from '@layout/navbar.config';
-import Iconify from '@design/components/Iconify';
 import ThemePopover from '@layout/ThemePopover';
 import AccountPopover from '@layout/AccountPopover';
 import Notification from '@layout/notification/Notification';
+import Logo from '@comp/Logo';
+import Typography from '@mui/material/Typography';
+import Link from '../Link';
+import { ReactElement, ReactNode } from 'react';
 
 const RootStyle = styled(AppBar)(({ theme }) => ({
     boxShadow: 'none',
     backdropFilter: 'blur(6px)',
     WebkitBackdropFilter: 'blur(6px)', // Fix on Mobile
-    backgroundColor: alpha(theme.palette.background.default, 0.72),
-    [theme.breakpoints.up('lg')]: {
-        width: `calc(100% - ${DRAWER_WIDTH + 1}px)`
-    }
+    backgroundColor: alpha(theme.palette.background.default, 0.72)
 }));
   
 const ToolbarStyle = styled(Toolbar)(({ theme }) => ({
     height: NAVBAR_HEIGHT,
-    [theme.breakpoints.up('lg')]: {
-        padding: theme.spacing(0, 5)
-    }
 }));
 
 export interface DashboardNavbarProps {
-    onOpenSidebar(): void
+  title?: string|false
+  children?: ReactElement
 };
 
-export default function DashboardNavbar({ onOpenSidebar }: DashboardNavbarProps) {
+export default function NavbarChat({title="Portalnesia",children}: DashboardNavbarProps) {
     return (
-      <RootStyle>
+      <RootStyle sx={{width:'100vw'}}>
         <ToolbarStyle>
-          <IconButton
-            onClick={onOpenSidebar}
-            sx={{ mr: 1, color: 'text.primary', display: { lg: 'none' } }}
-          >
-            <Iconify icon="eva:menu-2-fill" />
-          </IconButton>
-  
+          <Stack height={NAVBAR_HEIGHT} px={2} spacing={2} justifyContent='center' direction='row'>
+            <Box>
+              <Logo href='/' sx={{mt:1.5}} svg={{size:35}} />
+            </Box>
+            {typeof title === 'string' && <Link href="/"><Typography variant='h5'>{title}</Typography></Link>}
+          </Stack>
           <Box sx={{ flexGrow: 1 }} />
   
           <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }}>
+            {children}
             <Notification />
             <ThemePopover />
             <AccountPopover />

@@ -11,6 +11,8 @@ import SWRPages from "@comp/SWRPages";
 import { TwibbonPagination } from "@model/twibbon";
 import CustomCard from "@design/components/Card";
 import { getDayJs, href } from "@utils/main";
+import Stack from "@mui/material/Stack";
+import Breadcrumbs from "@comp/Breadcrumbs";
 
 export default function TwibbonIndex() {
     const [page,setPage] = usePagination(true);
@@ -19,6 +21,7 @@ export default function TwibbonIndex() {
     return (
         <Pages title="Twibbon" canonical="/twibbon">
             <DefaultLayout>
+                <Breadcrumbs title='Twibbon' />
                 <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
                     <Typography variant='h4' component='h1'>Twibbon</Typography>
                 </Box>
@@ -27,9 +30,11 @@ export default function TwibbonIndex() {
                     <Grid container spacing={2}>
                         {data && data?.data?.length > 0 ? data.data.map(d=>(
                             <Grid key={d.slug} item xs={12} sm={6} md={4} lg={3}>
-                                <CustomCard link={href(d.link)} title={d.title} image={`${d.image}&export=banner&size=300`} ellipsis={1}>
-                                    <Typography variant='caption' component='p'>{`By ${d.user.name}`}</Typography>
-                                    <Typography variant='caption' component='p'>{getDayJs(d.created).pn_format('minimal')}</Typography>
+                                <CustomCard link={href(d.link)} title={d.title} image={`${d.image}&export=banner&size=300`} ellipsis={2}>
+                                    <Stack direction='row' justifyContent='space-between'>
+                                        <Typography variant='caption' component='p'>{`By ${d.user.name}`}</Typography>
+                                        <Typography variant='caption' component='p'>{getDayJs(d.created).pn_format('minimal')}</Typography>
+                                    </Stack>
                                 </CustomCard>
                             </Grid>
                         )) : (

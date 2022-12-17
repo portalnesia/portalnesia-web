@@ -31,7 +31,7 @@ export function useSWRPagination<D extends PaginationResponse<any> = any>(path: 
         if((previousPageData && (!previousPageData.data?.length || index > previousPageData.total_page))) return null;
         const url = new URL(path,portalUrl());
         url.searchParams.set('page',String(index+1));
-        return `${path}?${url.searchParams.toString()}`
+        return `${url.pathname}?${url.searchParams.toString()}`
     },[path])
 
     const {data:dt,size,error,...swr} = nativeUseSWRInfinite<D,ApiError>(getKey,get,{

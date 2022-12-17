@@ -1,5 +1,3 @@
-import HotKeys from "@comp/HotKeys";
-import { useHotKeys } from "@hooks/hotkeys";
 import { NAVBAR_HEIGHT } from "@layout/navbar.config";
 import type { AlertProps } from "@mui/material/Alert";
 import Alert from "@mui/material/Alert";
@@ -21,7 +19,6 @@ export type DefaultLayoutProps = {
 export default function DefaultLayout({children,maxWidth,navbar,withoutContainer}: DefaultLayoutProps) {
     const [cookieMsg, setCookieMsg] = React.useState<({ severity: AlertProps['severity'], msg: string }) | undefined>(undefined);
     const [showCookieMsg, setShowCookieMsg] = React.useState(false);
-    const {atasKeyMap,bawahKeyMap,keysDialog,setKeysDialog} = useHotKeys(true)
 
     const handleCloseCookieNotification = React.useCallback(() => {
         setShowCookieMsg(false);
@@ -50,7 +47,6 @@ export default function DefaultLayout({children,maxWidth,navbar,withoutContainer
                 </Box>
             </Container>
             <Footer />
-            <HotKeys atasKeymap={atasKeyMap} bawahKeymap={bawahKeyMap} open={keysDialog==='keyboard'} onClose={setKeysDialog(undefined)} />
         </>
     )
 }

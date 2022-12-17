@@ -22,7 +22,10 @@ export function AppProvider({ children,locale }: AppProviderProps) {
             shape: { borderRadius: 8 },
             typography,
             shadows,
-            customShadows
+            customShadows,
+            zIndex:{
+                snackbar:2000
+            }
         }),
         [cookies_theme]
     );

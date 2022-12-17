@@ -36,12 +36,23 @@ const MENU_OPTIONS = (user?: IMe|null): IMenu[] => ([
     icon: 'gg:profile',
     target: undefined,
     href: `/user/${user?.username}?utm_source=portalnesia+web&utm_medium=header`
+  },{
+    label: "Likes",
+    icon: 'material-symbols:favorite-outline-rounded',
+    target: undefined,
+    href: `/likes?utm_source=portalnesia+web&utm_medium=header`
   }] : []),
   {
     label: "Contact",
-    icon: 'mdi:customer-service',
+    icon: 'material-symbols:perm-contact-calendar',
     target: undefined,
     href: `/contact?utm_source=portalnesia+web&utm_medium=header`
+  },
+  {
+    label: "Support",
+    icon: 'mdi:customer-service',
+    target: undefined,
+    href: `/support?utm_source=portalnesia+web&utm_medium=header`
   },
 ]);
 
@@ -64,6 +75,16 @@ export default function AccountPopover() {
   const handleClose = useCallback(() => {
     setOpen(false);
   },[]);
+
+  const handleFeedback = useCallback(()=>{
+    handleClose();
+    dispatch({type:"CUSTOM",payload:{report:{type:"feedback"}}})
+  },[dispatch,handleClose])
+
+  const handleKeyboard = useCallback(()=>{
+    handleClose();
+    dispatch({type:"CUSTOM",payload:{hotkeys:{disabled:false,dialog:'keyboard'}}})
+  },[dispatch,handleClose])
 
   useEffect(()=>{
     if(userRedux === undefined) {
@@ -134,7 +155,16 @@ export default function AccountPopover() {
           }
           return null;
         })}
-        
+
+        <MenuItem key='feedback' component='div' onClick={handleFeedback} sx={{typography:'body2',py:1,px:2.5}}>
+          <Iconify icon={"ic:outline-feedback"} sx={{mr:2,width:24,height:24}} />
+          Send Feedback
+        </MenuItem>
+
+        <MenuItem key='navigation' component='div' onClick={handleKeyboard} sx={{typography:'body2',py:1,px:2.5}}>
+          <Iconify icon={"material-symbols:keyboard-alt"} sx={{mr:2,width:24,height:24}} />
+          Navigation
+        </MenuItem>
 
         <Box sx={{ p: 2, pt: 1.5 }}>
           {user ? (

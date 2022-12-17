@@ -31,6 +31,7 @@ import dynamic from "next/dynamic";
 import useNotification from "@design/components/Notification";
 import { useMousetrap } from "@hooks/hotkeys";
 import Router from "next/router";
+import Breadcrumbs from "@comp/Breadcrumbs";
 
 const Backdrop = dynamic(()=>import("@design/components/Backdrop"));
 
@@ -79,6 +80,10 @@ export default function ChordDashIndex() {
     return (
         <Pages title="Chord - Dashboard" canonical={`/dashboard/chord`} noIndex>
             <DashboardLayout>
+                <Breadcrumbs title="Chord" routes={[{
+                    label:"Dashboard",
+                    link:"/dashboard"
+                }]} />
                 <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
                     <Stack direction='row' justifyContent='space-between'>
                         <Typography variant='h3' component='h1'>Chord</Typography>

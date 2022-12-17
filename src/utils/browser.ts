@@ -105,7 +105,6 @@ const funcs = {
 
 export type IBrowserInfo={
     cookieEnabled?: boolean,
-    mimeType?: MimeTypeArray[],
     platform?: string,
     screenWidth?: number,
     screenHeight?: number,
@@ -143,7 +142,6 @@ export default function getBrowserInfo() {
       ...(typeof browser==="object" ? {...browser} : {}),
       isBrowser:true,
       cookieEnabled: navigator.cookieEnabled,
-      mimeType: navigator.mimeTypes,
       platform: navigator.platform,
       screenWidth: screen.width,
       screenHeight: screen.height,

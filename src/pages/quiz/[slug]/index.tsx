@@ -21,7 +21,7 @@ import Stack from "@mui/material/Stack";
 import TextField from '@mui/material/TextField'
 import { copyTextBrowser } from "@portalnesia/utils";
 import useNotification from "@design/components/Notification";
-import { ShareAction } from "@comp/Action";
+import { ReportAction, ShareAction } from "@comp/Action";
 import submitForm from "@utils/submit-form";
 import useAPI, { ApiError, PaginationResponse } from "@design/hooks/api";
 import useTablePagination from "@design/hooks/TablePagination";
@@ -101,7 +101,6 @@ export default function QuizDetailPage({data:dataServer,meta}: IPages<Pick<QuizD
     const [dialog,setDialog]=React.useState<{redirect:number,announce: string,button: string}|undefined>(undefined)
     const [input,setInput]=React.useState("");
     const {page:pageResponse,rowsPerPage,onPageChange,...responsePage} = useTablePagination(1,10);
-    const slugRef = React.useRef<string>();
     const {data:response,error:errResponse} = useSWR<PaginationResponse<QuizResponsePagination>>(data && data?.public ? `/v2/quiz/${data.id}/response?page=${pageResponse}&per_page=${rowsPerPage}` : null);
 
     const handleRedirect = React.useCallback((question: number)=>()=>{
@@ -197,14 +196,6 @@ export default function QuizDetailPage({data:dataServer,meta}: IPages<Pick<QuizD
                     setDialog(undefined)
                     setLoading(true)
                     setDisable(false)
-                    if(slugRef.current !== slug) {
-                        slugRef.current=slug;
-                        const analytics = getAnalytics();
-                        logEvent(analytics,"select_content",{
-                            content_type:"quiz",
-                            item_id:`${dataServer.id_number}`
-                        })
-                    }
                     if(typeof questionQuery==='undefined') {
                         onPageChange({},0)
                         if(data===null) {
@@ -240,6 +231,20 @@ export default function QuizDetailPage({data:dataServer,meta}: IPages<Pick<QuizD
     const getNumber = React.useCallback((i:number)=>{
         return ((pageResponse-1)*rowsPerPage)+i+1
     },[pageResponse,rowsPerPage])
+
+    React.useEffect(()=>{
+        let timeout = setTimeout(()=>{
+            const analytics = getAnalytics();
+            logEvent(analytics,"select_content",{
+                content_type:"quiz",
+                item_id:`${dataServer.id_number}`
+            })
+        },5000)
+
+        return ()=>{
+            clearTimeout(timeout);
+        }
+    },[dataServer])
 
     return (
         <Pages title={meta?.title} desc={meta?.desc} canonical={`/quiz/${dataServer?.id}`} image={meta?.image}>
@@ -399,7 +404,15 @@ function CustomSidebar({data}: CustomSidebarProps) {
                             inputProps={{style:{cursor:"pointer"}}}
                         />
                         <Stack direction='row' spacing={1} width='100%'>
-                            {/* TODO - Add report */}
+                            <ReportAction buttonProps={{outlined:true,color:'inherit',sx:{width:'100%'}}} variant="button" report={{
+                                type:"konten",
+                                information:{
+                                    konten:{
+                                        type:"quiz",
+                                        id:data.id_number
+                                    }
+                                }
+                            }} />
                             <ShareAction campaign='quiz' posId={data?.id_number} variant="button" buttonProps={{outlined:true,color:'inherit',sx:{width:'100%'}}} />
                         </Stack>
                     </Stack>

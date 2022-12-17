@@ -29,7 +29,7 @@ export const EllipsisTypography = styled(NativeTypography,{
 }))
 
 const CustomBox = styled('div',{
-    shouldForwardProp:(prop:string)=>![''].includes(prop)
+    shouldForwardProp:(prop:string)=>!['childrenCard'].includes(prop)
 })<{childrenCard?: React.ReactNode,ellipsis?:number}>(({theme,childrenCard,ellipsis=2})=>({
     position:'relative',
     ...(childrenCard ? {

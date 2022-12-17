@@ -1,9 +1,9 @@
 import {logEvent} from 'firebase/analytics'
 import { getAnalytics } from '@utils/firebase'
 import { useDispatch, useSelector } from '@redux/store'
-import useAPI from '@design/hooks/api'
+import useAPI, { ApiError } from '@design/hooks/api'
 import useNotification from '@design/components/Notification'
-import { useState,MouseEvent, useMemo, useCallback, useRef } from 'react'
+import { useState,MouseEvent, useMemo, useCallback, useRef, Fragment } from 'react'
 import Tooltip from '@mui/material/Tooltip'
 import IconButton from '@mui/material/IconButton'
 import { Circular } from '@design/components/Loading'
@@ -14,6 +14,9 @@ import { copyTextBrowser } from '@portalnesia/utils'
 import MenuPopover from '@design/components/MenuPopover'
 import MenuItem from '@mui/material/MenuItem'
 import Stack from '@mui/material/Stack'
+import { ContentCommentType } from '@model/comment'
+import { IReport } from '@type/redux'
+import IconButtonActive from './IconButtonActive'
 
 export type LikeActionProps={
     /**
@@ -27,7 +30,7 @@ export type LikeActionProps={
     /**
      * Type of content
      */
-    type: 'twitter_thread'|'chord'|'news'|'blog',
+    type: 'thread'|'chord'|'news'|'blog',
     /**
      * Fire when component clicked. Change the 'liked' value
      */
@@ -46,7 +49,7 @@ export type LikeActionProps={
     const user=useSelector((state=>state.user))
     const {post,del}=useAPI()
     const setNotif=useNotification()
-    const handleClick=async()=>{
+    const handleClick=useCallback(async()=>{
         if(user===null) setNotif("Login to continue",true)
         else {
             setLoading(true)
@@ -54,20 +57,20 @@ export type LikeActionProps={
             try {
                 let res: {liked:boolean};
                 if(!props.liked) {
-                    const dt= await post<{liked: boolean}>(`/v1/likes/${props.type}/${props.posId}${url.search}`,null)
+                    const dt= await post<{liked: boolean}>(`/v2/likes/${props.type}/${props.posId}${url.search}`,null)
                     res = dt;
                 } else {
-                    const [dt] = await del(`/v1/likes/${props.type}/${props.posId}${url.search}`);
+                    const dt = await del<{liked: boolean}>(`/v2/likes/${props.type}/${props.posId}${url.search}`);
                     res = dt;
                 }
                 if(props.onChange) props.onChange(res.liked)
-            } catch {
-
+            } catch(e) {
+                if(e instanceof ApiError) setNotif(e.message,true)
             } finally {
                 setLoading(false)
             }
         }
-    }
+    },[props.onChange,post,del,props.liked,setNotif])
     return (
         <Tooltip title={props?.liked ? "Unlike" : "Like"}>
             <IconButton
@@ -82,7 +85,9 @@ export type LikeActionProps={
 }
 
 export type ReportActionType={
-
+    report: IReport
+    variant?:'button'|'icon'
+    buttonProps?: ButtonProps,
 }
 
 /**
@@ -92,23 +97,33 @@ export type ReportActionType={
  * Homepage: [Portalnesia](https://portalnesia.com)
  * 
  */
-export const ReportAction=(): JSX.Element=>{
-    //const dispatch=useDispatch();
+export const ReportAction=({report,variant='icon',buttonProps}: ReportActionType): JSX.Element=>{
+    const dispatch=useDispatch();
+    
+    const handleClick=useCallback((e?: MouseEvent<HTMLButtonElement>)=>{
+        if(e && typeof e.currentTarget.blur === 'function') e.currentTarget.blur();
+        setTimeout(()=>dispatch({type:'CUSTOM',payload:{report:report}}),500)
+    },[dispatch])
+
     useMousetrap('shift+r',(e)=>{
         if(e && typeof e?.preventDefault === 'function') e.preventDefault()
         if(e && typeof e?.returnValue!=='undefined') e.returnValue=false
         handleClick()
     })
-    const handleClick=(e?: MouseEvent<HTMLButtonElement>)=>{
-        if(e && typeof e.currentTarget.blur === 'function') e.currentTarget.blur();
-        //dispatch({type:'REPORT',payload:{type:'konten',url:window.location.href,endpoint:null}})
-    }
+
     return (
-        <Tooltip title="Report (Shift + R)">
-            <IconButton onClick={handleClick}>
-                <ReportProblem />
-            </IconButton>
-        </Tooltip>
+        <>
+            {variant==='icon' ? (
+                <Tooltip title="Report (Shift + R)">
+                    <IconButton onClick={handleClick}>
+                        <ReportProblem />
+                    </IconButton>
+                </Tooltip>
+            ) : (
+                <Button tooltip='Report (Shift + R)' onClick={handleClick} icon='share' {...buttonProps}>Report</Button>
+            )}
+        </>
+        
     );
 }
 
@@ -116,7 +131,7 @@ export type ShareActionProps={
     /**
      * UTM Campaign
      */
-    campaign: 'chord'|'news'|'twitter thread'|'blog'|'pages'|'events'|'quiz'|'media'|'twibbon'|string,
+    campaign: 'chord'|'news'|'thread'|'blog'|'pages'|'events'|'quiz'|'media'|'twibbon'|string,
     /**
      * Props for tooltip component
      */
@@ -163,7 +178,7 @@ export type ShareActionProps={
             const url = new URL(window.location.href)
             if(posId && process.env.NODE_ENV==='production') {
                 const firebase = getAnalytics();
-                post(`/v1/internal/shared${url.search}`,{type:shareType,posid:posId},{},{success_notif:false})
+                post(`/v2/internal/shared${url.search}`,{type:shareType,posid:posId},{},{success_notif:false})
                 logEvent(firebase,"share",{
                     method:campaign,
                     content_id:posId
@@ -189,7 +204,7 @@ export type ShareActionProps={
         const firebase = getAnalytics();
         const url = new URL(window.location.href)
         if(posId && process.env.NODE_ENV === 'production') {
-            post(`/v1/internal/shared${url.search}`,{type:shareType,posid:posId},{},{success_notif:false})
+            post(`/v2/internal/shared${url.search}`,{type:shareType,posid:posId},{},{success_notif:false})
             logEvent(firebase,"share",{
                 method:campaign,
                 content_id:posId
@@ -285,7 +300,7 @@ type CombineActionProps={
     list:{
         donation?: boolean,
         share?: ShareActionProps,
-        report?: boolean,
+        report?: ReportActionType,
         like?: LikeActionProps,
     },
 }
@@ -309,12 +324,12 @@ type CombineActionProps={
     return (
         <Stack direction='row' spacing={2} alignItems='center'>
             {Object.keys(props.list).map((key: string,i: number)=>(
-                <>
-                {key==='donation' && props.list.donation && <DonationAction />}
-                {key==='share' && typeof props.list.share !== 'undefined' && <ShareAction {...props.list.share}/>}
-                {key==='report' && typeof props.list.report !== 'undefined' && <ReportAction />}
-                {key==='like' && typeof props.list.like !== 'undefined' && <LikeAction {...props.list.like}/> }
-                </>
+                <Fragment key={key}>
+                    {key==='donation' && props.list.donation && <DonationAction  />}
+                    {key==='share' && typeof props.list.share !== 'undefined' && <ShareAction {...props.list.share}/>}
+                    {key==='report' && typeof props.list.report !== 'undefined' && <ReportAction {...props.list.report} />}
+                    {key==='like' && typeof props.list.like !== 'undefined' && <LikeAction {...props.list.like}/> }
+                </Fragment>
             ))}
         </Stack>
     )

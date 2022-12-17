@@ -19,8 +19,8 @@ import Recaptcha from '@design/components/Recaptcha'
 import ConfirmationDialog from '@design/components/ConfirmationDialog'
 import useNotification from '@design/components/Notification'
 import Divider from '@mui/material/Divider'
-import Pagination, { BoxPagination, usePagination } from '@design/components/Pagination'
-import useSWR from '@design/hooks/swr'
+import { BoxPagination } from '@design/components/Pagination'
+import { useSWRPagination } from '@design/hooks/swr'
 import SWRPages from './SWRPages'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
@@ -38,6 +38,8 @@ import Tooltip from '@mui/material/Tooltip'
 import Collapse from '@mui/material/Collapse'
 import { isMobile } from 'react-device-detect'
 import Portal from '@mui/material/Portal'
+import { getDayJs } from '@utils/main'
+import Button from './Button'
 
 const Backdrop = dynamic(()=>import("@design/components/Backdrop"));
 
@@ -51,18 +53,18 @@ export interface CommentProps {
      * Comment ID for notification
      */
     comment_id?: number
+    collapse?: boolean
 }
 
 type DeleteFunc = (id: Pick<ICommentReply,'id'|'comment'>,isReply?: boolean) => Promise<void>
 type SubmitFunc = (data: {message: string,name?:string,email?:string,reply_to?:number}) => Promise<void>
 
-export default function Comment({type,posId,comment_id}: CommentProps) {
+export default function Comment({type,posId,comment_id,collapse}: CommentProps) {
     const {post,del} = useAPI();
     const captchaRef = React.useRef<Recaptcha>(null);
     const confirmRef = React.useRef<ConfirmationDialog>(null);
     const setNotif = useNotification();
-    const [page,setPage] = usePagination(1);
-    const {data,error,mutate} = useSWR<PaginationResponse<IComment>>(`/v2/comments/${type}/${posId}?page=${page}${comment_id ? `&id=${comment_id}` : ''}`)
+    const {data,error,mutate,size,setSize,isLoadingMore} = useSWRPagination<PaginationResponse<IComment>>(`/v2/comments/${type}/${posId}?per_page=5${comment_id ? `&id=${comment_id}` : ''}`)
     const [loading,setLoading] = React.useState(false);
     const [delComment,setDelComment] = React.useState<Pick<ICommentReply,'id'|'comment'>>()
 
@@ -105,11 +107,21 @@ export default function Comment({type,posId,comment_id}: CommentProps) {
     },[type,posId,del,setNotif,mutate])
 
     return (
-        <PaperBlock title="Comments" content={{sx:{px:0}}}>
+        <PaperBlock title="Comments" content={{sx:{p:0,pb:'0!important'}}} collapse={collapse}>
             <CommentForm handleSubmit={onSubmitComment} />
             <Divider sx={{mt:2}} />
             <CommentTree data={data} error={error} onDelete={handleDelete} type={type} posId={posId} comment_id={comment_id} onSubmit={onSubmitComment} />
-            {(page === 1 && data && data?.data?.length > 0 || page !== 1 && data) && <Pagination page={page} onChange={setPage} count={data?.total_page||1} />}
+            
+            <Box width='100%'>
+                {data?.can_load && (
+                    <Box my={2} px={2} width='100%'>
+                        {isLoadingMore ? <BoxPagination loading maxHeight={55} /> : (
+                            <Button size='large' outlined color='inherit' sx={{width:'100%'}} onClick={()=>setSize(size+1)}>Load more</Button>
+                        )}
+                    </Box>
+                )}
+            </Box>
+
             <Backdrop open={loading} />
             <ConfirmationDialog ref={confirmRef} body={delComment ? (
                 <Typography>Delete comment <Span sx={{color:'customColor.link'}}>{truncate(delComment.comment,50)}</Span>?</Typography>
@@ -228,7 +240,7 @@ function CommentTree({data,error,...rest}: CommentTreeProps) {
         <Box>
             <SWRPages loading={!data && !error} error={error}>
                 {data && data?.data?.length > 0 ? (
-                    <List>
+                    <List sx={{pb:0,"& .comment":{":last-of-type":{borderBottom:'unset'}}}}>
                         {data?.data?.map(d=>(
                             <CommentSection data={d} key={`comment-${d.id}`} {...rest} />
                         ))}
@@ -252,9 +264,8 @@ type CommentSectionProps = CommentProps & {
 function CommentSection({data,onDelete,type,posId,comment_id,onSubmit}: CommentSectionProps) {
     const anchorEl = React.useRef<HTMLButtonElement>(null);
     const [open,setOpen] = React.useState(false);
-    const [page,setPage] = usePagination(1);
     const [showReplies,setShowReplies] = React.useState(false)
-    const {data:replies,error,mutate} = useSWR<IReply>(showReplies ? `/v2/comments/${type}/${posId}/${data.id}?page=${page}${comment_id ? `&id=${comment_id}` : ''}` : null,data?.replies ? {fallbackData:data?.replies} : undefined);
+    const {data:replies,error,mutate,size,setSize,isLoadingMore} = useSWRPagination<IReply>(showReplies ? `/v2/comments/${type}/${posId}/${data.id}${comment_id ? `?id=${comment_id}` : ''}` : null,data?.replies ? {fallbackData:[data?.replies]} : undefined);
 
     const handleDelete = React.useCallback(()=>{
         setOpen(false)
@@ -291,7 +302,7 @@ function CommentSection({data,onDelete,type,posId,comment_id,onSubmit}: CommentS
     },[])
 
     return (
-        <Box borderBottom={t=>`1px solid ${t.palette.divider}`} position='relative'>
+        <Box className='comment' borderBottom={t=>`1px solid ${t.palette.divider}`} position='relative'>
             <ListItem sx={{alignItems:"flex-start"}}>
                 <ListItemAvatar>
                     <Avatar>
@@ -299,13 +310,17 @@ function CommentSection({data,onDelete,type,posId,comment_id,onSubmit}: CommentS
                     </Avatar>
                 </ListItemAvatar>
                 <ListItemText
+                    disableTypography
                     primary={
                         data.user?.username ? (
                             <Stack alignItems='flex-start'><Link href={`/user/${data.user.username}`}><Typography gutterBottom sx={{fontSize:16}}>{data?.user?.name}</Typography></Link></Stack>
                         ) : <Typography gutterBottom sx={{fontSize:16}}>{data?.user?.name}</Typography>
                     }
                     secondary={
-                        <Typography>{data.comment}</Typography>
+                        <>
+                            <Typography>{data.comment}</Typography>
+                            <Typography variant='caption' sx={{color:'text.disabled'}}>{getDayJs(data.timestamp).time_ago().format}</Typography>
+                        </>
                     }
                 />
                 <ListItemSecondaryAction>
@@ -331,7 +346,7 @@ function CommentSection({data,onDelete,type,posId,comment_id,onSubmit}: CommentS
                     <CommentForm handleSubmit={handleReplies} placeholder="Add replies..." />
                     <SWRPages loading={!replies && !error} error={error}>
                         {replies && replies?.data?.length > 0 ? (
-                            <List>
+                            <List sx={{"& .replies":{":last-of-type":{borderBottom:'unset'}}}}>
                                 {replies?.data?.map(d=>(
                                     <RepliesSection data={d} key={`replies-${data.id}-${d.id}`} onDelete={handleDeleteReply} />
                                 ))}
@@ -342,7 +357,16 @@ function CommentSection({data,onDelete,type,posId,comment_id,onSubmit}: CommentS
                                 <Typography>Comment now!</Typography>
                             </BoxPagination>
                         )}
-                        {(page === 1 && replies && replies?.data?.length > 0 || page !== 1 && replies) && <Box py={2}><Pagination page={page} onChange={setPage} count={replies?.total_page||1} /></Box>}
+
+                        <Box width='100%'>
+                            {replies?.can_load && (
+                                <Box my={2} px={2} width='100%'>
+                                    {isLoadingMore ? <BoxPagination loading maxHeight={55} /> : (
+                                        <Button size='large' outlined color='inherit' sx={{width:'100%'}} onClick={()=>setSize(size+1)}>Load more</Button>
+                                    )}
+                                </Box>
+                            )}
+                        </Box>
                     </SWRPages>
                 </Box>
             </Collapse>
@@ -381,20 +405,24 @@ function RepliesSection({data,onDelete}: RepliesSectionProps) {
 
     return (
         <>
-            <ListItem sx={{alignItems:"flex-start"}} divider>
+            <ListItem className='replies' sx={{alignItems:"flex-start"}} divider>
                 <ListItemAvatar>
                     <Avatar>
                         {data.user?.picture ? <Image src={`${data.user.picture}&watermark=no&size=40`} alt={data.user.name} /> : data.user.name }
                     </Avatar>
                 </ListItemAvatar>
                 <ListItemText
+                    disableTypography
                     primary={
                         data.user?.username ? (
                             <Stack alignItems='flex-start'><Link href={`/user/${data.user.username}`}><Typography gutterBottom sx={{fontSize:16}}>{data?.user?.name}</Typography></Link></Stack>
                         ) : <Typography gutterBottom sx={{fontSize:16}}>{data?.user?.name}</Typography>
                     }
                     secondary={
-                        <Typography>{data.comment}</Typography>
+                        <>
+                            <Typography>{data.comment}</Typography>
+                            <Typography variant='caption' sx={{color:'text.disabled'}}>{getDayJs(data.timestamp).time_ago().format}</Typography>
+                        </>
                     }
                 />
                 {(data.can_deleted) && (

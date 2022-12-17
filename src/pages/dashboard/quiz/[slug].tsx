@@ -48,6 +48,7 @@ import TableBody from "@mui/material/TableBody";
 import { TableSWRPages } from "@comp/SWRPages";
 import Link from "@design/components/Link";
 import TablePagination from "@mui/material/TablePagination";
+import Breadcrumbs from "@comp/Breadcrumbs";
 
 const Dialog = dynamic(()=>import("@design/components/Dialog"));
 const DialogActions = dynamic(()=>import("@design/components/DialogActions"));
@@ -380,6 +381,13 @@ export default function EditQuizPage({data,meta}: IPages<QuizDetailEditable>) {
     return (
         <Pages title={meta?.title} canonical={`/dashboard/quiz/${data?.id}`} noIndex>
             <DashboardLayout>
+             <Breadcrumbs title={"Edit Quiz"} routes={[{
+                    label:"Dashboard",
+                    link:"/dashboard"
+                },{
+                    label:"Quiz",
+                    link:"/dashboard/quiz"
+                }]} />
                 <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={5}>
                     <Stack direction='row' justifyContent='space-between'>
                         <Typography variant='h3' component='h1'>Edit Quiz</Typography>

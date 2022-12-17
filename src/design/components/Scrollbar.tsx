@@ -4,7 +4,7 @@ import { styled,SxProps,Theme } from '@mui/material/styles';
 import { alpha } from '@mui/system/colorManipulator';
 import Box from '@mui/material/Box';
 import {isMobile} from 'react-device-detect'
-import {ReactNode} from 'react'
+import {ReactNode, useEffect, useRef} from 'react'
 // ----------------------------------------------------------------------
 import 'simplebar-react/dist/simplebar.min.css'
 
@@ -40,13 +40,27 @@ const SimpleBarStyle = styled(SimpleBarReact)(({ theme }) => ({
 export interface ScrollbarProps extends SimpleBarReact.Props {
   children: ReactNode,
   sx?: SxProps<Theme>
+  onScroll?(e: Event): void
 }
 
-export default function Scrollbar({ children, sx, ...other }: ScrollbarProps) {
+export default function Scrollbar({ children, sx,onScroll, ...other }: ScrollbarProps) {
+  const scrollRef = useRef<HTMLElement>(null);
+
+  useEffect(()=>{
+    if(onScroll) {
+      scrollRef.current?.addEventListener('scroll',onScroll)
+    }
+
+    return ()=>{
+      if(onScroll) {
+        scrollRef.current?.removeEventListener('scroll',onScroll)
+      }
+    }
+  },[onScroll])
 
   if (isMobile) {
     return (
-      <Box sx={{ overflowX: 'auto', ...sx }} {...other}>
+      <Box ref={scrollRef} sx={{ overflowX: 'auto', ...sx }} {...other}>
         {children}
       </Box>
     );
@@ -54,7 +68,7 @@ export default function Scrollbar({ children, sx, ...other }: ScrollbarProps) {
 
   return (
     <RootStyle>
-      <SimpleBarStyle id='scrollbar' timeout={500} clickOnTrack={false} sx={sx} {...other}>
+      <SimpleBarStyle id='scrollbar' timeout={500} clickOnTrack={false} sx={sx} {...other} scrollableNodeProps={{ref:scrollRef}}>
         {children}
       </SimpleBarStyle>
     </RootStyle>
