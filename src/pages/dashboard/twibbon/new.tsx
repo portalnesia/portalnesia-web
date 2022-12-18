@@ -45,6 +45,7 @@ export default function NewTwibbonPage() {
         if(inputEl.current) inputEl.current.value = '';
     },[])
 
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     const handleSubmit = React.useCallback(submitForm((async()=>{
         try {
             if(!fileRef.current) return setNotif("You haven't selected an image",true);

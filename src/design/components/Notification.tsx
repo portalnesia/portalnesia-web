@@ -122,3 +122,4 @@ export const ContentMessage=forwardRef<HTMLDivElement,ContentMessageProps>(({id,
       </Card>
     );
 })
+ContentMessage.displayName = "ContentMessage";

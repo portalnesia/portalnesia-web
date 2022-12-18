@@ -35,17 +35,18 @@ export function useHotKeys(register?: boolean) {
     
     const onDialogChange=useCallback((data: DialogActionType)=>()=>{
         setDialog(data)
-    },[setDialog,disabled]);
+    },[setDialog]);
 
     const keyboardAction=useCallback((e?: KeyboardEvent)=>{
         if(e?.preventDefault) e.preventDefault();
         if(dialog) setDialog(undefined)
         else setDialog('keyboard');
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     },[dialog])
 
     const feedbackAction = useCallback(()=>{
         dispatch({type:"CUSTOM",payload:{report:{type:"feedback"}}})
-    },[])
+    },[dispatch])
 
     const profileAction=useCallback((e?: KeyboardEvent)=>{
         if(e?.preventDefault) e.preventDefault();
@@ -98,7 +99,7 @@ export function useHotKeys(register?: boolean) {
             }
         }
         return map;
-    },[]);
+    },[user]);
 
     const homeAction=useCallback((e?: KeyboardEvent)=>{
         if(e?.preventDefault) e.preventDefault();
@@ -186,12 +187,6 @@ export function useHotKeys(register?: boolean) {
                 custom:'gh',
                 button:['G','H']
             },
-            TRANSFORM_COORDINATE:{
-                name:'Transform Coordinate',
-                sequence:'g g t',
-                custom:'ggt',
-                button:['G','G','T']
-            },
             NEWS:{
                 name:'News',
                 sequence:'g n',
@@ -203,30 +198,6 @@ export function useHotKeys(register?: boolean) {
                 sequence:'g c',
                 custom:'gc',
                 button:['G','C']
-            },
-            QRCODE_GENERATOR:{
-                name:'QR Code Generator',
-                sequence:'g q c',
-                custom:'gqc',
-                button:['G','Q','C']
-            },
-            PARSE_HTML:{
-                name:'Parse HTML',
-                sequence:'g p h',
-                custom:'gph',
-                button:['G','P','H']
-            },
-            URL_SHORTENER:{
-                name:'URL Shortener',
-                sequence:'g u s',
-                custom:'gus',
-                button:['G','U','S']
-            },
-            DOWNLOADER:{
-                name:'Downloader',
-                sequence:'g d',
-                custom:'gd',
-                button:['G','D']
             },
             BLOG:{
                 name:'Blog',
@@ -240,6 +211,36 @@ export function useHotKeys(register?: boolean) {
                 custom:'gt',
                 button:['G','T']
             },
+            QUIZ:{
+                name:'Quiz',
+                sequence:'g q u',
+                custom:'gqy',
+                button:['G','Q','U']
+            },
+            URL_SHORTENER:{
+                name:'URL Shortener',
+                sequence:'g u s',
+                custom:'gus',
+                button:['G','U','S']
+            },
+            DOWNLOADER:{
+                name:'Downloader',
+                sequence:'g d',
+                custom:'gd',
+                button:['G','D']
+            },
+            QRCODE_GENERATOR:{
+                name:'QR Code Generator',
+                sequence:'g q c',
+                custom:'gqc',
+                button:['G','Q','C']
+            },
+            PARSE_HTML:{
+                name:'Parse HTML',
+                sequence:'g p h',
+                custom:'gph',
+                button:['G','P','H']
+            },
             RANDOM_NUMBER:{
                 name:'Random Number Generator',
                 sequence:'g r n',
@@ -252,11 +253,11 @@ export function useHotKeys(register?: boolean) {
                 custom:'gic',
                 button:['G','I','C']
             },
-            QUIZ:{
-                name:'Quiz',
-                sequence:'g q u',
-                custom:'gqy',
-                button:['G','Q','U']
+            TRANSFORM_COORDINATE:{
+                name:'Transform Coordinate',
+                sequence:'g g t',
+                custom:'ggt',
+                button:['G','G','T']
             }
         }
     },[])
@@ -266,7 +267,7 @@ export function useHotKeys(register?: boolean) {
         ...bawahKeyMap,
     }),[atasKeyMap,bawahKeyMap]);
 
-    const handlers: HandlersMap={
+    const handlers: HandlersMap= useMemo(()=>({
         KEYBOARD: keyboardAction,
         SEND_FEEDBACK:feedbackAction,
         PROFILE: profileAction,
@@ -284,7 +285,8 @@ export function useHotKeys(register?: boolean) {
         RANDOM_NUMBER:randomNumberAction,
         IMAGES_CHECKER:imagesCheckerAction,
         QUIZ:quizAction
-    }
+    }),[keyboardAction,feedbackAction,profileAction,contactAction,homeAction,transformCoodrinateAction,newsAction,chordAction,qrCodeAction,
+    parseHtmlAction,urlAction,downloaderAction,blogAction,twibbonAction,randomNumberAction,imagesCheckerAction,quizAction])
 
     useEffect(()=>{
         const mousetrap=require('mousetrap')

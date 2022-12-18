@@ -3,8 +3,8 @@ import SimpleBarReact from 'simplebar-react';
 import { styled,SxProps,Theme } from '@mui/material/styles';
 import { alpha } from '@mui/system/colorManipulator';
 import Box from '@mui/material/Box';
-import {isMobile} from 'react-device-detect'
-import {ReactNode, useEffect, useRef} from 'react'
+import {isMobile as nativeIsMobile} from 'react-device-detect'
+import {ReactNode, useEffect, useRef, useState} from 'react'
 // ----------------------------------------------------------------------
 import 'simplebar-react/dist/simplebar.min.css'
 
@@ -44,19 +44,25 @@ export interface ScrollbarProps extends SimpleBarReact.Props {
 }
 
 export default function Scrollbar({ children, sx,onScroll, ...other }: ScrollbarProps) {
+  const [isMobile,setIsMobile] = useState(false);
   const scrollRef = useRef<HTMLElement>(null);
 
   useEffect(()=>{
+    const ref = scrollRef.current;
     if(onScroll) {
-      scrollRef.current?.addEventListener('scroll',onScroll)
+      ref?.addEventListener('scroll',onScroll)
     }
 
     return ()=>{
       if(onScroll) {
-        scrollRef.current?.removeEventListener('scroll',onScroll)
+        ref?.removeEventListener('scroll',onScroll)
       }
     }
   },[onScroll])
+
+  useEffect(()=>{
+    setIsMobile(nativeIsMobile);
+  },[])
 
   if (isMobile) {
     return (

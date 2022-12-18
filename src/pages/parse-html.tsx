@@ -36,7 +36,7 @@ export default function ParseHTMLPages() {
         } finally {
             setLoading(false)
         }
-    },[value])
+    },[value,post,setNotif])
 
     return (
         <Pages title="Parse HTML" canonical="/parse-html">

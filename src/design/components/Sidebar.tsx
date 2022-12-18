@@ -27,6 +27,10 @@ export default function Sidebar({children,type='scroll',id,disabled,minimalScree
     },[minimalScreen,isMd,isLg])
 
     React.useEffect(()=>{
+        const dynamicRef = dynamic.current;
+        const staticRef = staticEl.current;
+        const staticDynamicRef = staticDynamic.current;
+        
         function getScrollTop() {
             return document?.documentElement?.scrollTop || document.body.scrollTop
         }
@@ -36,10 +40,10 @@ export default function Sidebar({children,type='scroll',id,disabled,minimalScree
         function onScroll() {
             // IF SCROLL
             const idHeight = Number((document.getElementById(id)?.offsetHeight||0)) + padding;
-            const dynOfs = (dynamic.current?.offsetHeight||0) + padding
+            const dynOfs = (dynamicRef?.offsetHeight||0) + padding
             //console.log(dynOfs,window.outerHeight,idHeight)
             if(type === 'scroll' && dynOfs > (window.outerHeight) && idHeight > dynOfs) {
-                const staticTop = Number(getOffset(staticEl.current).top),st=getScrollTop();
+                const staticTop = Number(getOffset(staticRef).top),st=getScrollTop();
                 const idTop = Number(getOffset(document.getElementById(id)).top)
 
                 if((st + padding >= staticTop)) {
@@ -64,20 +68,20 @@ export default function Sidebar({children,type='scroll',id,disabled,minimalScree
                         }
                     }
 
-                    if(dynamic.current) {
-                        dynamic.current.style.zIndex='1'
-                        dynamic.current.style.position='fixed';
-                        dynamic.current.style.top = `${t.toString()}px`
-                        dynamic.current.style.width = `${staticDynamic.current?.clientWidth}px`;
+                    if(dynamicRef) {
+                        dynamicRef.style.zIndex='1'
+                        dynamicRef.style.position='fixed';
+                        dynamicRef.style.top = `${t.toString()}px`
+                        dynamicRef.style.width = `${staticDynamicRef?.clientWidth}px`;
                     }
 
                 } else {
                     t = padding;
-                    if(dynamic.current) {
-                        dynamic.current.style.removeProperty('top')
-                        dynamic.current.style.removeProperty('width')
-                        dynamic.current.style.zIndex='1'
-                        dynamic.current.style.position='relative';
+                    if(dynamicRef) {
+                        dynamicRef.style.removeProperty('top')
+                        dynamicRef.style.removeProperty('width')
+                        dynamicRef.style.zIndex='1'
+                        dynamicRef.style.position='relative';
                     }
                 }
                 last=t;
@@ -85,11 +89,11 @@ export default function Sidebar({children,type='scroll',id,disabled,minimalScree
             }
             // FIXED
             else {
-                if(staticDynamic.current) {
-                    staticDynamic.current.style.zIndex='1';
-                    staticDynamic.current.style.position='sticky';
-                    staticDynamic.current.style.top = `${padding}px`
-                    staticDynamic.current.style.width = `${staticDynamic.current.clientWidth}px`;
+                if(staticDynamicRef) {
+                    staticDynamicRef.style.zIndex='1';
+                    staticDynamicRef.style.position='sticky';
+                    staticDynamicRef.style.top = `${padding}px`
+                    staticDynamicRef.style.width = `${staticDynamicRef.clientWidth}px`;
                 }
             }
         }
@@ -98,34 +102,34 @@ export default function Sidebar({children,type='scroll',id,disabled,minimalScree
             if(isActive) {
                 window.addEventListener('scroll',onScroll)
             } else {
-                if(dynamic.current) {
-                    dynamic.current.style.removeProperty('position');
-                    dynamic.current.style.removeProperty('z-index');
-                    dynamic.current.style.removeProperty('top')
-                    dynamic.current.style.removeProperty('width')
+                if(dynamicRef) {
+                    dynamicRef.style.removeProperty('position');
+                    dynamicRef.style.removeProperty('z-index');
+                    dynamicRef.style.removeProperty('top')
+                    dynamicRef.style.removeProperty('width')
                 }
-                if(staticDynamic.current) {
-                    staticDynamic.current.style.removeProperty('z-index');
-                    staticDynamic.current.style.removeProperty('position');
-                    staticDynamic.current.style.removeProperty('top')
-                    staticDynamic.current.style.removeProperty('width')
+                if(staticDynamicRef) {
+                    staticDynamicRef.style.removeProperty('z-index');
+                    staticDynamicRef.style.removeProperty('position');
+                    staticDynamicRef.style.removeProperty('top')
+                    staticDynamicRef.style.removeProperty('width')
                 }
             }
         }
         
 
         return ()=>{
-            if(dynamic.current) {
-                dynamic.current.style.removeProperty('position');
-                dynamic.current.style.removeProperty('z-index');
-                dynamic.current.style.removeProperty('top')
-                dynamic.current.style.removeProperty('width')
+            if(dynamicRef) {
+                dynamicRef.style.removeProperty('position');
+                dynamicRef.style.removeProperty('z-index');
+                dynamicRef.style.removeProperty('top')
+                dynamicRef.style.removeProperty('width')
             }
-            if(staticDynamic.current) {
-                staticDynamic.current.style.removeProperty('z-index');
-                staticDynamic.current.style.removeProperty('position');
-                staticDynamic.current.style.removeProperty('top')
-                staticDynamic.current.style.removeProperty('width')
+            if(staticDynamicRef) {
+                staticDynamicRef.style.removeProperty('z-index');
+                staticDynamicRef.style.removeProperty('position');
+                staticDynamicRef.style.removeProperty('top')
+                staticDynamicRef.style.removeProperty('width')
             }
             window.removeEventListener('scroll',onScroll)
         }

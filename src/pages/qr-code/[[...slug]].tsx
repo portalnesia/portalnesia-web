@@ -106,8 +106,8 @@ export default function QrCodePages() {
         })
     },[input])
 
-    const match = React.useCallback((path?: string) => {
-        return path ? path.indexOf(selected) > -1 : false
+    const match = React.useCallback((path: INavbar) => {
+        return path ? path.link.indexOf(selected) > -1 : false
       },[selected]);
 
     React.useEffect(()=>{

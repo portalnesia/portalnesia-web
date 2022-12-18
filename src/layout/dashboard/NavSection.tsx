@@ -1,6 +1,6 @@
-import { useState,useCallback,useMemo } from 'react';
-import {useRouter} from 'next/router'
-import Link, { LinkProps } from 'next/link'
+import { useState,useCallback,useMemo,MouseEvent, ComponentProps } from 'react';
+import Router from 'next/router'
+import Link from 'next/link'
 import { useTheme, styled, SxProps, Theme } from '@mui/material/styles';
 import { alpha } from '@mui/system/colorManipulator';
 import Iconify from '@design/components/Iconify';
@@ -51,14 +51,15 @@ export const ListItemIconStyle = styled(ListItemIcon)({
 
 export interface NavItemProps {
   item: INavbar,
-  active(path?: string): boolean
-  linkProps?: Partial<LinkProps>
+  active(path: INavbar): boolean
+  linkProps?: Partial<ComponentProps<typeof Link>>
   rootSx?: SxProps<Theme>
+  onClick?(e: MouseEvent<HTMLDivElement>): void
 };
 
-export function NavItem({ item, active,linkProps,rootSx }: NavItemProps) {
+export function NavItem({ item, active,linkProps,onClick,rootSx }: NavItemProps) {
   const theme = useTheme();
-  const isActiveRoot = active(item.link);
+  const isActiveRoot = active(item);
   const { name, link, icon, child,desc } = item;
   const [open, setOpen] = useState(isActiveRoot);
 
@@ -98,15 +99,16 @@ export function NavItem({ item, active,linkProps,rootSx }: NavItemProps) {
           />
         </ListItemStyle>
 
-        <Collapse in={open} timeout="auto" unmountOnExit>
+        <Collapse in={open} timeout="auto">
           <List component="div" disablePadding>
             {child.map((item) => {
               const { name, link } = item;
-              const isActiveSub = active(link);
+              const isActiveSub = active(item);
 
               return (
                 <Link key={item.link} href={link} passHref legacyBehavior {...linkProps}>
                   <ListItemStyle
+                    onClick={onClick}
                     component='a'
                     disableGutters
                     key={name}
@@ -147,6 +149,7 @@ export function NavItem({ item, active,linkProps,rootSx }: NavItemProps) {
   return (
     <Link href={link} passHref legacyBehavior {...linkProps}>
       <ListItemStyle
+        onClick={onClick}
         component='a'
         disableGutters
         sx={{
@@ -165,24 +168,25 @@ export function NavItem({ item, active,linkProps,rootSx }: NavItemProps) {
 export interface NavConfigProps extends BoxProps {
   navConfig: INavbar[]
   indexPath?: string
+  isActive?: (path: INavbar) => boolean
+  onClick?(e: MouseEvent<HTMLDivElement>): void
 };
 
-export default function NavSection({ navConfig,indexPath, ...other }: NavConfigProps) {
-  const router = useRouter();
-  const pathname = router.pathname
+export default function NavSection({ navConfig,indexPath,isActive,onClick, ...other }: NavConfigProps) {
 
-  const match = useCallback((path?: string) => {
-    const pathUrl = new URL(pathname,portalUrl());
-    const linkUrl = new URL((path||"/"),portalUrl());
+  const match = useCallback((path: INavbar) => {
+    if(isActive) return isActive(path);
+    const pathUrl = new URL(Router.asPath,portalUrl());
+    const linkUrl = new URL((path.link),portalUrl());
     const a = (linkUrl.pathname === (indexPath||'/') ? linkUrl.pathname === pathUrl.pathname : new RegExp((linkUrl.pathname||'/'),'i').test(pathUrl.pathname||'/'))
     return a;
-  },[pathname,indexPath]);
+  },[indexPath,isActive]);
 
   return (
     <Box {...other}>
       <List disablePadding>
         {navConfig.map((item) => (
-          <NavItem key={item.name} item={item} active={match} />
+          <NavItem key={item.name} item={item} active={match} onClick={onClick} />
         ))}
       </List>
     </Box>

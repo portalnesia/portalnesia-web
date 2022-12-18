@@ -24,6 +24,7 @@ import { ReportAction, ShareAction } from "@comp/Action";
 import { staticUrl } from "@utils/main";
 import Breadcrumbs from "@comp/Breadcrumbs";
 import { getAnalytics, logEvent } from "@utils/firebase";
+import Link from "@design/components/Link";
 
 const Backdrop = dynamic(()=>import("@design/components/Backdrop"))
 const Dialog = dynamic(()=>import("@design/components/Dialog"))
@@ -136,7 +137,7 @@ export default function TwibbonPages({data:twibbon,meta}: IPages<TwibbonDetail>)
                                                     <ReportAction variant="button" buttonProps={{outlined:true,color:'inherit',sx:{width:'100%'}}} report={{type:"konten",information:{konten:{type:"twibbon",id:data.id}}}} />
                                                 </Stack>
                                             )}
-                                            <Button icon='add' sx={{width:'100%'}}>Create Twibbon</Button>
+                                            <Link href="/dashboard/twibbon/new" passHref legacyBehavior><Button component='a' icon='add' sx={{width:'100%'}}>Create Twibbon</Button></Link>
                                         </>
                                         
                                     }

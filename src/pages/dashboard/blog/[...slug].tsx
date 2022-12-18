@@ -168,6 +168,7 @@ export default function EditBlogPages({data,meta}: IPages<IBlogEdit>) {
         setBrowser(true)
     },[])
 
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     const handleSubmit = React.useCallback(submitForm(async()=>{
         try {
             setLoading(true)
@@ -189,7 +190,7 @@ export default function EditBlogPages({data,meta}: IPages<IBlogEdit>) {
         } finally {
             setLoading(false)
         }
-    }),[input,slug,post,put,setNotif])
+    }),[input,data,slug,post,put,setNotif])
 
     const handleEditDialog=React.useCallback((type: string,i: number)=>{
         setSortI(i)
@@ -334,7 +335,7 @@ export default function EditBlogPages({data,meta}: IPages<IBlogEdit>) {
                                         <Box px={2} width='100%'>
                                             <Typography variant='h6' component='h6' gutterBottom>Post Thumbnail</Typography>
                                             {input?.image!==null && input?.image?.length > 0 && (
-                                                <Stack mb={2}><Image src={`${input?.image}&size=350&watermark=no`} dataSrc={`${input?.image}&watermark=no`} fancybox webp sx={{width:'100%',maxHeight:350,objectFit:'contain'}} /></Stack>
+                                                <Stack mb={2}><Image alt="Thumbnail" src={`${input?.image}&size=350&watermark=no`} dataSrc={`${input?.image}&watermark=no`} fancybox webp sx={{width:'100%',maxHeight:350,objectFit:'contain'}} /></Stack>
                                             )}
                                             <Stack direction='row' spacing={1}>
                                                 <Button outlined color='inherit' sx={{width:'100%'}} onClick={openFileManager}>{input?.image!==null && input?.image?.length > 0 ? "Change" : "Select"}</Button>
@@ -376,7 +377,7 @@ export default function EditBlogPages({data,meta}: IPages<IBlogEdit>) {
                                         <Divider sx={{width:'100%'}} />
 
                                         <Box px={2} width='100%'>
-                                            <Typography variant='body1'>Link: <a className="underline" href={href(urlLink)} target="_blank"><Span sx={{color:'customColor.link'}}>{slugHelper}</Span></a></Typography>
+                                            <Typography variant='body1'>Link: <a className="underline" href={href(urlLink)} target="_blank" rel="noopener noreferrer"><Span sx={{color:'customColor.link'}}>{slugHelper}</Span></a></Typography>
                                         </Box>
 
                                         {slug?.[0]!=='new' && (

@@ -253,6 +253,7 @@ export default function EditQuizPage({data,meta}: IPages<QuizDetailEditable>) {
         }
     },[question,choise,chois,answer])
 
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     const handlerAddQuestion=React.useCallback(submitForm(()=>{
         if(chois.length===0) setNotif('Choises cannot be empty',true);
         else if(chois.length < 2) setNotif('Must more than 1 choise',true)
@@ -324,7 +325,7 @@ export default function EditQuizPage({data,meta}: IPages<QuizDetailEditable>) {
 
     const onResponseOpen=React.useCallback(()=>{
         if(page!==1) onPageChange({},1)
-    },[onPageChange])
+    },[onPageChange,page])
 
     const handleSave=React.useCallback(async()=>{
         if(other.title.length === 0) setNotif('Title cannot be empty',true)
@@ -358,7 +359,7 @@ export default function EditQuizPage({data,meta}: IPages<QuizDetailEditable>) {
                 setLoading(false);
             }
         }
-    },[other,question,answer,choise,put,data])
+    },[other,question,answer,choise,put,data,setNotif])
 
     useMousetrap('shift+enter',(e)=>{
         onAddChoise()

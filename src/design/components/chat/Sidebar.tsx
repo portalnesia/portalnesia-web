@@ -104,4 +104,5 @@ const SidebarChat = forwardRef<HTMLDivElement,DashboardSidebarProps>(({ navbar,o
       </RootStyle>
     );
 })
+SidebarChat.displayName = "SidebarChat";
 export default SidebarChat;

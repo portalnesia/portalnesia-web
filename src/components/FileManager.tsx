@@ -164,7 +164,7 @@ export default function FileManager(props: BrowserProps) {
         try {
             await post(`/v2/unsplash/${dt.id}`,{},{},{success_notif:false});
         } catch {}
-    },[withUnsplash,onClose,onUnsplashSelected])
+    },[onClose,onUnsplashSelected,post])
 
     const handlePixabaySelect=React.useCallback(async(dt: PixabayTypes)=>{
         if(disabled !== null) return;
@@ -192,7 +192,7 @@ export default function FileManager(props: BrowserProps) {
             onClose();
             setDisabled(null)
         }
-    },[withPixabay,onPixabaySelected,onClose,post,disabled])
+    },[onPixabaySelected,onClose,post,disabled])
 
     const handleClick=React.useCallback((dt: IFiles,index: number)=>{
         if(selected === undefined || selected === 'upload') {
@@ -211,6 +211,7 @@ export default function FileManager(props: BrowserProps) {
     const handleServerType=React.useCallback((type: 'unsplash'|'pixabay'|'portalnesia')=>()=>{
         setPage({},1);
         setServerType(type)
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     },[])
 
     const handleTabChange = React.useCallback((key: string)=>()=>{
@@ -274,7 +275,6 @@ export default function FileManager(props: BrowserProps) {
     },[post,setNotif,mutate,disabled,serverType,handleTabChange])
 
     const handleDelete=React.useCallback(async()=>{
-        console.log(disabled,Boolean(!data),serverType,typeof selected)
         if(disabled !== null || !data || serverType !== 'portalnesia' || typeof selected !== 'object') return;
         try {
             const confirm = await confirmRef.current?.show();
@@ -290,7 +290,7 @@ export default function FileManager(props: BrowserProps) {
         } finally {
             setDisabled(null)
         }
-    },[del,disabled,mutate,serverType,selected,setNotif])
+    },[del,disabled,mutate,serverType,selected,setNotif,handleTabChange,data])
 
     React.useEffect(()=>{
         if(!open) {
@@ -302,6 +302,7 @@ export default function FileManager(props: BrowserProps) {
             setServerType('portalnesia')
             setTab(0);
         }
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     },[open])
 
     const handleSearch = React.useCallback((type: 'submit'|'remove'|'set')=>(e: any)=>{
@@ -379,7 +380,7 @@ export default function FileManager(props: BrowserProps) {
                             {dtUn && dtUn.data.length > 0 ? (
                                 <ImageList variant='masonry' cols={3} gap={4}>
                                     {dtUn?.data?.map((dt,i)=>(
-                                        <CardActionArea title={`Photo by ${dt?.user?.name}`} disabled={disabled !== null} onClick={()=>handleUnsplashSelect(dt)} sx={{p:0.5}}>
+                                        <CardActionArea key={dt.id} title={`Photo by ${dt?.user?.name}`} disabled={disabled !== null} onClick={()=>handleUnsplashSelect(dt)} sx={{p:0.5}}>
                                             <ImageListItem key={`unsplash-${i}`}>
                                                 <Image webp src={`${dt.url}&w=200&q=50&auto=compress&fit=crop`} alt={`Photo by ${dt.user.name}`} style={{width:'100%',height:'auto'}}/>
                                                 <ImageListItemBar
@@ -401,7 +402,7 @@ export default function FileManager(props: BrowserProps) {
                             {dtPix && dtPix.data.length > 0 ? (
                                 <ImageList variant='masonry' cols={3} gap={4}>
                                     {dtPix?.data?.map((dt,i)=>(
-                                        <CardActionArea title={`${dt.type} by ${dt.user}`} disabled={disabled !== null} onClick={()=>handlePixabaySelect(dt)} sx={{p:0.5}}>
+                                        <CardActionArea key={dt.id} title={`${dt.type} by ${dt.user}`} disabled={disabled !== null} onClick={()=>handlePixabaySelect(dt)} sx={{p:0.5}}>
                                             <ImageListItem key={`pixabay-${i}`}>
                                             
                                                 <Image src={`${dt.thumbs}`} alt={`Photo by ${dt.user}`} style={{width:'100%',height:'auto'}}/>
@@ -444,14 +445,14 @@ export default function FileManager(props: BrowserProps) {
                 )}
             </Dialog>
             <MenuPopover
-                open={openOption}
+                open={openOption && typeof selected === 'object'}
                 anchorEl={anchorEl.current}
                 onClose={()=>{setOpenOption(false),setTab(0)}}
                 sx={{ width: 220 }}
             >
                 {typeof selected === 'object' && (
                     <Box py={1}>
-                        <MenuItem onClick={()=>handleSelect(selected)}>
+                        <MenuItem onClick={(e)=>{e.currentTarget.blur(),handleSelect(selected)}}>
                             <ListItemIcon><AddPhotoIcon /></ListItemIcon>
                             <ListItemText>Use image</ListItemText>
                         </MenuItem>
@@ -503,7 +504,8 @@ function PortalnesiaFiles({data:dt,selected,index:i,onClick,onRightClick,disable
         if(withDelete && onDelete) onDelete();
     },[onDelete])
 
-    const handleSelect = React.useCallback(()=>{
+    const handleSelect = React.useCallback((e: React.MouseEvent<HTMLLIElement>)=>{
+        e.currentTarget.blur();
         if(typeof selected === 'object') onSelect(selected)
         handleContextClose()();
     },[onSelect,handleContextClose,selected])

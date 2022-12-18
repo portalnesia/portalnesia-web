@@ -103,7 +103,7 @@ export default function QuizResponsePage({data:response}: IPages<QuizResponseDet
                             <SWRPages loading={!data&&!error} error={error}>
                                 <List>
                                     {data && data?.result?.length > 0 ? data?.result?.map((dt,i)=>(
-                                        <ListItem isError={Boolean(dt?.answer && dt?.answer !== dt?.correct_answer)}>
+                                        <ListItem key={dt.question} isError={Boolean(dt?.answer && dt?.answer !== dt?.correct_answer)}>
                                             <ListItemText
                                                 primary={<Typography variant='body1'>{dt.answer ? `${dt?.answer}${dt?.answer !== dt?.correct_answer ? ` (${dt?.correct_answer})` : ''}` : 'Not yet answered'}</Typography>}
                                                 secondary={<Typography variant='body2'>{dt?.question}</Typography>}

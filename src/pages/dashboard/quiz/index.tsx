@@ -80,6 +80,7 @@ export default function QuizDashIndex() {
         }
     },[setNotif,del,mutate])
 
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     const handleNew = React.useCallback(submitForm(async()=>{
         try {
             setLoading(true)

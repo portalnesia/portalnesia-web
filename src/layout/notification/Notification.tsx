@@ -36,6 +36,7 @@ let alreadyMutate=false;
 export default function Notification({}: NotificationProps) {
     const user = useSelector(s=>s.user);
     const smDown = useResponsive('down','sm')
+    const appToken = useSelector(s=>s.appToken)
     const anchorRef = useRef(null);
     const [open, setOpen] = useState(false);
     const {mutate,data,...swr} = useNotificationSWR();
@@ -48,13 +49,13 @@ export default function Notification({}: NotificationProps) {
     },[]);
 
     useEffect(()=>{
-        if(user) {
+        if(user && appToken) {
             if(!alreadyMutate) {
                 alreadyMutate=true;
                 mutate();
             }
         }
-    }),[user]
+    }),[user,appToken]
 
     useEffect(()=>{
         if(smDown && open) {

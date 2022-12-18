@@ -118,6 +118,7 @@ async function checkUserCookie(portalid: string) {
             }
         })
         if(session) {
+            await session.user.initUserRoles();
             return session;
         }
     }

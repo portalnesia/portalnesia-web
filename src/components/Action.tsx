@@ -14,9 +14,7 @@ import { copyTextBrowser } from '@portalnesia/utils'
 import MenuPopover from '@design/components/MenuPopover'
 import MenuItem from '@mui/material/MenuItem'
 import Stack from '@mui/material/Stack'
-import { ContentCommentType } from '@model/comment'
 import { IReport } from '@type/redux'
-import IconButtonActive from './IconButtonActive'
 
 export type LikeActionProps={
     /**
@@ -44,7 +42,7 @@ export type LikeActionProps={
  * Homepage: [Portalnesia](https://portalnesia.com)
  * 
  */
- export const LikeAction=(props: LikeActionProps): JSX.Element=>{
+ export const LikeAction=({liked,posId,type,onChange}: LikeActionProps): JSX.Element=>{
     const [loading,setLoading]=useState(false)
     const user=useSelector((state=>state.user))
     const {post,del}=useAPI()
@@ -56,28 +54,28 @@ export type LikeActionProps={
             const url = new URL(window.location.href)
             try {
                 let res: {liked:boolean};
-                if(!props.liked) {
-                    const dt= await post<{liked: boolean}>(`/v2/likes/${props.type}/${props.posId}${url.search}`,null)
+                if(!liked) {
+                    const dt= await post<{liked: boolean}>(`/v2/likes/${type}/${posId}${url.search}`,null)
                     res = dt;
                 } else {
-                    const dt = await del<{liked: boolean}>(`/v2/likes/${props.type}/${props.posId}${url.search}`);
+                    const dt = await del<{liked: boolean}>(`/v2/likes/${type}/${posId}${url.search}`);
                     res = dt;
                 }
-                if(props.onChange) props.onChange(res.liked)
+                if(onChange) onChange(res.liked)
             } catch(e) {
                 if(e instanceof ApiError) setNotif(e.message,true)
             } finally {
                 setLoading(false)
             }
         }
-    },[props.onChange,post,del,props.liked,setNotif])
+    },[liked,type,posId,onChange,post,del,setNotif,user])
     return (
-        <Tooltip title={props?.liked ? "Unlike" : "Like"}>
+        <Tooltip title={liked ? "Unlike" : "Like"}>
             <IconButton
                 disabled={loading}
                 onClick={handleClick}
             >
-                {props?.liked ? <Favorite sx={{color:'error.main'}} /> : <FavoriteBorder />}
+                {liked ? <Favorite sx={{color:'error.main'}} /> : <FavoriteBorder />}
                 {loading && <Circular size={24} thickness={7} />}
             </IconButton>
         </Tooltip>
@@ -103,7 +101,7 @@ export const ReportAction=({report,variant='icon',buttonProps}: ReportActionType
     const handleClick=useCallback((e?: MouseEvent<HTMLButtonElement>)=>{
         if(e && typeof e.currentTarget.blur === 'function') e.currentTarget.blur();
         setTimeout(()=>dispatch({type:'CUSTOM',payload:{report:report}}),500)
-    },[dispatch])
+    },[dispatch,report])
 
     useMousetrap('shift+r',(e)=>{
         if(e && typeof e?.preventDefault === 'function') e.preventDefault()
@@ -246,7 +244,8 @@ export type ShareActionProps={
                 });
                 break;
     	}
-    },[posId,campaign,setNotif,handleOpenMenu,post,shareType])
+    },[posId,campaign,setNotif,post,shareType,handleCloseMenu])
+    
     return (
         <>
             {variant==='icon' ? (

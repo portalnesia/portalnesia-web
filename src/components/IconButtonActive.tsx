@@ -33,4 +33,5 @@ const IconButtonActive = forwardRef<HTMLButtonElement,IconButtonActiveProps>(({o
         </IconButton>
     )
 })
+IconButtonActive.displayName = "IconButtonActive";
 export default IconButtonActive

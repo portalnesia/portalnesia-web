@@ -61,6 +61,7 @@ export default function TransformCoordinate() {
     const openDialog=React.useCallback((type:'input'|'output')=>()=>{
         setDialog(type)
         setPage(undefined,1)
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     },[])
 
     const captchaRef=React.useRef<Recaptcha>(null)
@@ -85,12 +86,14 @@ export default function TransformCoordinate() {
         e.preventDefault();
         setPage(undefined,1);
         setQ(search)
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     },[search])
 
     const removeSearch=React.useCallback(()=>{
         setQ("")
         setSearch("")
         setPage(undefined,1)
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     },[])
 
     const handleDataClick=React.useCallback((type:'input'|'output',dt: IEpsg)=>()=>{
@@ -115,12 +118,12 @@ export default function TransformCoordinate() {
             })
             closeDialog()
         }
-    },[closeDialog])
+    },[closeDialog,srcEpsg,textEpsg])
 
     const handleCopy = React.useCallback((data: string)=>()=>{
         copyTextBrowser(data);
         setNotif('Text copied','default');
-    },[])
+    },[setNotif])
 
     return (
         <Pages title="Transform Coordinate - Geodata" canonical="/geodata/transform">
@@ -129,8 +132,8 @@ export default function TransformCoordinate() {
                     <Typography variant='h4' component='h1'>Transform Coordinate</Typography>
                 </Box>
                 <Box>
-                    <Typography paragraph>This on-line tool allows you to insert value pairs of geographic coordinates and transform them to different coordinate system or cartographic projection. You can insert value pairs to the text area labeled as "Input coordinate pairs" - also by using copy/paste even from MS Excell or similar programs. This tool accepts various input formats of value pairs - only what you need is to have one pair by a row. Please see examples in the input text area window.</Typography>
-                    <Typography paragraph>It is necessary to set appropriate input coordinate system and to set desired output coordinate system to which you want to transform the input coordinate pairs.</Typography>
+                    <Typography paragraph>{`This on-line tool allows you to insert value pairs of geographic coordinates and transform them to different coordinate system or cartographic projection. You can insert value pairs to the text area labeled as "Input coordinate pairs" - also by using copy/paste even from MS Excell or similar programs. This tool accepts various input formats of value pairs - only what you need is to have one pair by a row. Please see examples in the input text area window.`}</Typography>
+                    <Typography paragraph>{`It is necessary to set appropriate input coordinate system and to set desired output coordinate system to which you want to transform the input coordinate pairs.`}</Typography>
                 </Box>
 
                 <Divider sx={{my:3}} />
@@ -198,7 +201,7 @@ export default function TransformCoordinate() {
                     <Divider sx={{my:3}} />
 
                     <Box>
-                        <Typography><Span sx={{color:'error.main',fontWeight:'bold'}}>Beware!</Span> Inserted values pairs needs to be in order X-coordinate and then Y-coordinate. If you are inserting latitude/longitude values in decimal format, then the longitude should be first value of the pair (X-coordinate) and latitude the second value (Y-coordinate). Otherwise you can use choice "Switch XY" bellow the input text area window.</Typography>
+                        <Typography><Span sx={{color:'error.main',fontWeight:'bold'}}>Beware!</Span>{` Inserted values pairs needs to be in order X-coordinate and then Y-coordinate. If you are inserting latitude/longitude values in decimal format, then the longitude should be first value of the pair (X-coordinate) and latitude the second value (Y-coordinate). Otherwise you can use choice "Switch XY" bellow the input text area window.`}</Typography>
 
                         <Box mt={4} textAlign={'center'}>
                             <Button icon='submit' disabled={loading} loading={loading} type='submit'>Transform</Button>
@@ -238,7 +241,7 @@ export default function TransformCoordinate() {
                     {dialog && epsg && epsg?.data?.length > 0 ? (
                         <List>
                             {epsg?.data?.map(e=>(
-                                <ListItemButton sx={{px:3}} divider onClick={handleDataClick(dialog,e)}>
+                                <ListItemButton key={e.code} sx={{px:3}} divider onClick={handleDataClick(dialog,e)}>
                                     <ListItemText
                                         primary={<Typography sx={{fontSize:'1rem'}}>{e.code}</Typography>}
                                         secondary={

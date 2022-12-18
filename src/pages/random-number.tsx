@@ -79,7 +79,7 @@ export default function RandomNumberPages() {
                 });
             }
         }
-    },[value]);
+    },[value,error]);
 
     const handleReset=React.useCallback(()=>{
         setResult(0)
@@ -115,7 +115,7 @@ export default function RandomNumberPages() {
             const number=Math.floor(Math.random() * (+max+1 - +min)) + +min;
             setResult(number)
         }
-    },[value,setNotif,animation])
+    },[value,setNotif,animation,error])
 
     const handleFocus=React.useCallback((e: React.FocusEvent<HTMLInputElement|HTMLTextAreaElement>)=>{
         e.target.select();

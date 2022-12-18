@@ -124,16 +124,17 @@ export default function SupportPage({data:{support:supportServer}}: IPages<ISupp
         const itemUrl = new URL(item.link,portalUrl());
         
         return new RegExp((itemUrl.pathname||'/'),'i').test(linkUrl.pathname||'/')
-    },[supports])
+    },[])
 
     const selected = React.useMemo(()=>{
         if(supports) return supports?.data?.find(s=>s.id === slug?.[0])
         else if(supportServer) return supportServer;
         return undefined;
-    },[isActive,supports,slug,supportServer])
+    },[supports,slug,supportServer])
 
     const handleLoadmore = React.useCallback(()=>{
         setSize(size+1);
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     },[size]);
 
     React.useEffect(()=>{
@@ -295,6 +296,7 @@ function ChatComp({selected,img,setImg,mutateRoom}: ChatCompProps) {
 
     const handleLoadmore = React.useCallback(()=>{
         setSize(size+1);
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     },[size]);
 
     React.useEffect(()=>{
@@ -331,6 +333,7 @@ function ChatComp({selected,img,setImg,mutateRoom}: ChatCompProps) {
             else setNotif("Only support images",true);
         }
         if(inputEl.current) inputEl.current.value = '';
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     },[setNotif])
 
     const handleDrag=React.useCallback((enter: boolean)=>(e: React.DragEvent<HTMLElement>)=>{
@@ -345,7 +348,7 @@ function ChatComp({selected,img,setImg,mutateRoom}: ChatCompProps) {
 
     const handleMessageChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>)=>{
         setMessage(e.target.value)
-    },[handleImageChange])
+    },[])
 
     const handleDrop=React.useCallback((e: React.DragEvent<HTMLElement>)=>{
         e.preventDefault();
@@ -355,6 +358,7 @@ function ChatComp({selected,img,setImg,mutateRoom}: ChatCompProps) {
         handleImageChange(e);
     },[loading,handleImageChange])
 
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     const handleSend = React.useCallback(submitForm(async()=>{
         try {
             if(!fileRef.current && message?.match(/\S/) === null) return setNotif("Messages cannot be empty",true);

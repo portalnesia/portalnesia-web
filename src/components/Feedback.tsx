@@ -900,5 +900,6 @@ const Feedback = forwardRef<FeedbackClass,FeedbackProps>((props,ref)=>{
         <FeedbackClass ref={ref} enqueueSnackbar={enqueueSnackbar} closeSnackbar={closeSnackbar} user={user} {...props} />
     )
 })
+Feedback.displayName="Feedback";
 
 export default Feedback;

@@ -2,8 +2,6 @@ import React from 'react';
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 //import {GA_TRACKING_ID} from 'portal/utils/gtag'
 import { augmentDocumentWithEmotionCache } from './_app';
-import { staticUrl } from '@utils/main';
-import Script from 'next/script';
 
 class MyDocument extends Document {
   render() {
@@ -11,23 +9,19 @@ class MyDocument extends Document {
       <Html lang="en">
         <Head>
           <meta key='meta-2' httpEquiv='Content-Type' content='text/html; charset=utf-8' />
-          <link rel="icon" href="/favicon.ico" />
           {/* eslint-disable-next-line @next/next/no-page-custom-font */}
           <link rel="stylesheet" href='https://fonts.googleapis.com/css?family=Inter&display=swap' />
-          <link rel="icon" type="image/png" sizes="32x32" href={`${staticUrl('icon/favicon-32x32.png')}`} />
-          <link rel="icon" type="image/png" sizes="96x96" href={`${staticUrl('icon/favicon-96x96.png')}/`} />
-          <link rel="icon" type="image/png" sizes="16x16" href={`${staticUrl('icon/favicon-16x16.png')}`} />
-          <link rel="apple-touch-icon" sizes="57x57" href={`${staticUrl('icon/apple-icon-57x57.png')}`} />
-          <link rel="apple-touch-icon" sizes="60x60" href={`${staticUrl('icon/apple-icon-60x60.png')}`} />
-          <link rel="apple-touch-icon" sizes="72x72" href={`${staticUrl('icon/apple-icon-72x72.png')}`} />
-          <link rel="apple-touch-icon" sizes="76x76" href={`${staticUrl('icon/apple-icon-76x76.png')}`} />
-          <link rel="apple-touch-icon" sizes="114x114" href={`${staticUrl('icon/apple-icon-114x114.png')}`} />
-          <link rel="apple-touch-icon" sizes="120x120" href={`${staticUrl('icon/apple-icon-120x120.png')}`} />
-          <link rel="apple-touch-icon" sizes="144x144" href={`${staticUrl('icon/apple-icon-144x144.png')}`} />
-          <link rel="apple-touch-icon" sizes="152x152" href={`${staticUrl('icon/apple-icon-152x152.png')}`} />
-          <link rel="apple-touch-icon" sizes="180x180" href={`${staticUrl('icon/apple-icon-180x180.png')}`} />
-          <meta name="msapplication-TileImage" content={`${staticUrl('icon/ms-icon-144x144.png')}`} />
-          <link rel="manifest" href="/manifest.json"/>
+          
+          <link rel="apple-touch-icon" sizes="180x180" href="/icon/apple-touch-icon.png?v=2.0.0" />
+          <link rel="icon" type="image/png" sizes="32x32" href="/icon/favicon-32x32.png?v=2.0.0" />
+          <link rel="icon" type="image/png" sizes="16x16" href="/icon/favicon-16x16.png?v=2.0.0" />
+          <link rel="manifest" href="/site.webmanifest?v=2.0.0" />
+          <link rel="mask-icon" href="/icon/safari-pinned-tab.svg?v=2.0.0" color="#2f6f4e" />
+          <link rel="shortcut icon" href="/favicon.ico?v=2.0.0" />
+          <meta name="msapplication-TileColor" content="#2f6f4e" />
+          <meta name="msapplication-config" content="/browserconfig.xml?v=2.0.0" />
+          <meta name="theme-color" content="#2f6f4e" />
+
           {/* eslint-disable-next-line @next/next/no-css-tags */}
           <link className='higtlightjs-light' rel='stylesheet' href='/css/github.css' />
           {/* eslint-disable-next-line @next/next/no-css-tags */}

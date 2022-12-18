@@ -119,7 +119,6 @@ export default function EditChordPages({data,meta}: IPages<IChordEdit>) {
 
     const handleArtistChange=React.useCallback((_:any, newValue: string|null) => {
         if(slug?.[0]==='new') {
-            console.log(newValue)
             setCanChange(false)
             let val = ""
             if(typeof newValue === 'string') {
@@ -137,6 +136,7 @@ export default function EditChordPages({data,meta}: IPages<IChordEdit>) {
         }
     },[value,slug])
 
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     const handleSubmit = React.useCallback(submitForm(async()=>{
         try {
             setLoading(true)
@@ -158,7 +158,7 @@ export default function EditChordPages({data,meta}: IPages<IChordEdit>) {
         } finally {
             setLoading(false)
         }
-    }),[slug,post,put,setNotif,value,data])
+    }),[slug,post,data,put,setNotif,value,data])
 
     const handleInputArtistChange = React.useCallback((e:any,value:string,reason:AutocompleteInputChangeReason)=>{
         if(reason === 'input' && slug?.[0] === 'new' && !loadingRef.current) {
@@ -173,7 +173,6 @@ export default function EditChordPages({data,meta}: IPages<IChordEdit>) {
                             const artist = res?.data?.map(a=>a?.artist);
                             artist.forEach((a)=>{
                                 if(!option.includes(a)) {
-                                    console.log(a);
                                     newOptions = newOptions.concat(a);
                                 }
                             })
@@ -198,21 +197,23 @@ export default function EditChordPages({data,meta}: IPages<IChordEdit>) {
     },[filter])
 
     React.useEffect(()=>{
+        const editor = editorRef.current
+        const result = resultRef.current;
         const height = document.body.clientHeight-200;
         const maxRows = Math.ceil(height/19.5);
         setRows(maxRows)
-        if(editorRef.current && resultRef.current) resultRef.current.style.height=`${editorRef.current.clientHeight}px`
+        if(editor && result) result.style.height=`${editor.clientHeight}px`
         const onEditorScroll=()=>{
-            if(editorRef.current && resultRef.current) {
-                resultRef.current.style.height=`${editorRef.current.clientHeight}px`
-                const editorTop = editorRef.current.scrollTop,
-                editH=editorRef.current.scrollHeight,resuH=resultRef.current.scrollHeight;
-                resultRef.current.scrollTop=editorTop*(resuH/editH);
+            if(editor && result) {
+                result.style.height=`${editor.clientHeight}px`
+                const editorTop = editor.scrollTop,
+                editH=editor.scrollHeight,resuH=result.scrollHeight;
+                result.scrollTop=editorTop*(resuH/editH);
             }
         }
-        if(editorRef.current && resultRef.current) editorRef.current.addEventListener('scroll',onEditorScroll);
+        if(editor && result) editor.addEventListener('scroll',onEditorScroll);
         return ()=>{
-            if(editorRef.current && resultRef.current) editorRef.current.removeEventListener('scroll',onEditorScroll);
+            if(editor && result) editor.removeEventListener('scroll',onEditorScroll);
         }
     },[])
 
@@ -230,6 +231,7 @@ export default function EditChordPages({data,meta}: IPages<IChordEdit>) {
         } else {
             setLoadingArtist(false)
         }
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     }, [openArtist,slug,get]);
 
     const handleFullscreen = React.useCallback(()=>{
@@ -273,7 +275,7 @@ export default function EditChordPages({data,meta}: IPages<IChordEdit>) {
                                     </FormGroup>
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <a href={`/chord/${slug?.[0]}`} target="_blank"><Typography>{parseURL(portalUrl(`/chord/${slug[0]}`))}</Typography></a>
+                                    <a href={`/chord/${slug?.[0]}`} target="_blank" rel='noopener noreferrer'><Typography>{parseURL(portalUrl(`/chord/${slug[0]}`))}</Typography></a>
                                 </Grid>
                             </>
                         )}
@@ -350,7 +352,7 @@ export default function EditChordPages({data,meta}: IPages<IChordEdit>) {
 
                         <Grid container spacing={4}>
                             <Grid item xs={12} lg={6}>
-                                <Typography paragraph>use "#" to add comments</Typography>
+                                <Typography paragraph>use &quot;#&quot; to add comments</Typography>
                                 <Textarea
                                     inputRef={editorRef}
                                     InputProps={{

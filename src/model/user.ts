@@ -55,7 +55,7 @@ export type UserWebAuthn = {
 
 type FollowFn<D=void> = (user: User) => Promise<D>
 
-export type UserRolesType = "comment" | "pages" | "chord" | "blog" | "url" | "thread" | "support"
+export type UserRolesType = "comment" | "pages" | "chord" | "blog" | "url" | "thread" | "support" | "developer"
 
 export type UserAttribute = {
     id?: number
@@ -226,6 +226,30 @@ export class User extends Model<UserAttribute> {
             verify: this.verify,
             email: this.user_email
         }
+    }
+
+    async initUserRoles() {
+        this.userRoles = await this.getUserRoles({
+            where:{
+                [Op.or]:{
+                    superadmin:true,
+                    roles:{
+                        [Op.not]:null
+                    }
+                }
+            }
+        })
+    }
+
+    isAdmin(roles?: UserRolesType,superadmin=false,apps='portalnesia') {
+        if(!this.userRoles) return false;
+        const userRoles = (roles||superadmin) ? this.userRoles.filter(r=>{
+            return r.apps===apps && (
+                (typeof roles !== 'undefined' && r.roles === roles) || r.superadmin
+            )
+        }) : this.userRoles;
+
+        return userRoles.length > 0
     }
 }
 User.init({

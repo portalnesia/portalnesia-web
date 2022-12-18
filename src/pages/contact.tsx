@@ -44,6 +44,11 @@ const dataContact: IContact[] = [
         label:config.contact.facebook
     },
     {
+        icon:"uil:instagram",
+        link:"/ig",
+        label:config.contact.instagram
+    },
+    {
         icon:"mdi:twitter",
         link:"/tw",
         label:config.contact.twitter
@@ -80,6 +85,7 @@ export default function ContactPages() {
         })
     },[input]);
 
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     const handleSubmit=React.useCallback(submitForm(async()=>{
         try {
             setLoading(true)
@@ -197,7 +203,7 @@ export default function ContactPages() {
                 ) : (
                     <>
                         <Typography>Please check your email for message detail.</Typography>
-                        <Typography>If you don't see an email from us, please check your spam folder.</Typography>
+                        <Typography>If you don&apos;t see an email from us, please check your spam folder.</Typography>
                     </>
                 )}
             </Dialog>

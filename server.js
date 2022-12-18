@@ -35,10 +35,10 @@ const useDataProxy=(req,res,next)=>{
 
 const useApiProxy=(req,res,next)=>{
   const apiProxy = createProxyMiddleware({
-    target: 'https://api.portalnesia.com',
+    target: process.env.API_URL,
     changeOrigin: true,
     headers:{
-      host:'https://api.portalnesia.com'
+      host: process.env.NEXT_PUBLIC_API_URL
     },
     onProxyReq:function(proxy) {
       if(process.env.NODE_ENV === 'production') proxy.setHeader('X-Local-Ip',req.headers["cf-connecting-ip"]);

@@ -67,22 +67,24 @@ export default function CKEditor(props: EditorProps) {
     const [browser,setBrowser] = React.useState(false);
     const editorRef = React.useRef<PortalnesiaEditor>();
 
-    const data = React.useMemo(()=>dt,[]);
+    const data = React.useMemo(()=>{
+        return dt
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
+    },[]);
 
     const handleSelectedImage=React.useCallback((url: string)=>{
-        console.log("SELECTED IMAGE",dt);
         if(editorRef.current) {
             const editor = editorRef.current as unknown as EditorClass;
             editor.plugins.get<ImageManager>("ImageManager" as unknown as PluginInterface<ImageManager>).handleSelectedImage(url);
         }
     },[])
 
-    const handleUnsplashSelectedImage=React.useCallback((dt: UnsplashTypes)=>{
+    const handleUnsplashSelectedImage=React.useCallback((dataArg: UnsplashTypes)=>{
         if(editorRef.current) {
             const editor = editorRef.current as unknown as EditorClass;
-            const url = dt?.url;
-            const name = dt?.user?.name;
-            const href = dt?.user?.links?.html;
+            const url = dataArg?.url;
+            const name = dataArg?.user?.name;
+            const href = dataArg?.user?.links?.html;
             editor.plugins.get<ImageManager>("ImageManager" as unknown as PluginInterface<ImageManager>).handleSelectedImage(url,["Photo by ",{text:name,href:`${href}?utm_source=Portalnesia&utm_medium=referral`}," on ",{text:"Unsplash",href:"https://unsplash.com?utm_source=Portalnesia&utm_medium=referral"}]);
         }
     },[])

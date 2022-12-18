@@ -63,7 +63,7 @@ export default function SearchPages() {
                 {typeof q === 'string' ? (
                     <SWRPages loading={!data&&!error} error={error}>
                         {!data ? null : data.data.filter(t=>!['thread','quiz'].includes(t.type)).map((type)=>(
-                            <Box mb={5}>
+                            <Box key={type.type} mb={5}>
                                 <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
                                     <Stack direction='row' justifyContent='space-between' alignItems='center' spacing={2}>
                                         <Typography variant='h4' component='h2'>{ucwords(type.type)}</Typography>

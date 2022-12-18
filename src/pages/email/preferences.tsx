@@ -92,6 +92,7 @@ export default function EmailSubsPages({data}: IPages<IData>) {
     const {post} = useAPI();
     const captchaRef = React.useRef<Recaptcha>(null)
 
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     const handleSubmit = React.useCallback(submitForm(async()=>{
         try {
             setLoading(true);

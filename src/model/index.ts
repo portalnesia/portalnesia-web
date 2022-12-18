@@ -1,5 +1,5 @@
 import { Session, SubscribeEmail } from "./session"
-import User, { Follow } from "./user"
+import User, { Follow, UserRoles } from "./user"
 import dbOri,{DB} from './db'
 import './calendar'
 
@@ -17,6 +17,9 @@ export default async function getDatabase() {
 function initRelation() {
     User.belongsToMany(User.scope("active"),{through:Follow,foreignKey:"difollow",otherKey:"yangfollow",as:{singular:"follower",plural:"followers"}})
     User.belongsToMany(User.scope("active"),{through:Follow,foreignKey:"yangfollow",otherKey:"difollow",as:{singular:"following",plural:"followings"}})
+
+    UserRoles.belongsTo(User.scope("active"),{foreignKey:"userid",targetKey:"id",onDelete:"CASCADE"})
+    User.hasMany(UserRoles,{foreignKey:"userid",sourceKey:"id",onDelete:"CASCADE"})
 
     Session.belongsTo(User.scope("active"),{targetKey:'id',foreignKey:'userid',onDelete:"CASCADE"})
     SubscribeEmail.belongsTo(User.scope("active"),{targetKey:'id',foreignKey:'userid',onDelete:"CASCADE"})

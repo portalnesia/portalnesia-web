@@ -114,3 +114,13 @@ export const dashboardMenu: INavbar[] = [{
     link:"/dashboard/quiz?utm_source=portalnesia+web&utm_medium=navbar",
     icon: 'fluent:clipboard-task-list-ltr-20-regular',
 }]
+
+export const adminMenu: INavbar[] = [{
+    name:"Pages",
+    link:"/admin/pages?utm_source=portalnesia+web&utm_medium=navbar",
+    icon: 'material-symbols:library-books-outline',
+},{
+    name:"Blog",
+    link:"/admin/blog?utm_source=portalnesia+web&utm_medium=navbar",
+    icon: 'material-symbols:library-books-outline',
+}]

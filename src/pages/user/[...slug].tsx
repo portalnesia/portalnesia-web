@@ -54,17 +54,30 @@ type IData = UserDetail & ({
     chord: ChordPagination[]
     twibbon: TwibbonPagination[]
     blog: BlogPagination[]
-    // quiz
+    quiz: QuizPagination[]
 })
-export const getServerSideProps = wrapper<IData>(async({params,fetchAPI,redirect,session})=>{
+
+type IDataBackend = IData & {
+    refid?: string
+}
+
+export const getServerSideProps = wrapper<IDataBackend>(async({params,fetchAPI,redirect,session,query})=>{
     const username = params?.slug?.[0];
     const action = params?.slug?.[1];
+    const refQuery = query?.ref;
+    const refidQuery = query?.refid;
+    
     if(typeof username !== 'string') return redirect();
 
     if(typeof action === "string" && !['blog','chord','followers','following','friend-request','quiz','twibbon'].includes(action)) return redirect();
 
     try {
-        const user: IData = await fetchAPI<IData>(`/v2/user/${username}`);
+        let refid: string|undefined;
+        if(session && refQuery === 'notification' && session.user.user_login !== username && typeof refidQuery === 'string' && refidQuery.length > 0) {
+            refid = refidQuery;
+        }
+
+        const user: IData = await fetchAPI<IData>(`/v2/user/${username}${refid ? `?ref=notification&refid=${refid}` : ''}`);
         const isMe = Boolean(session && user?.id === session?.user?.id);
         if(action === 'friend-request' && (!isMe || !session?.user?.private)) return redirect();
 
@@ -81,7 +94,10 @@ export const getServerSideProps = wrapper<IData>(async({params,fetchAPI,redirect
 
         return {
             props:{
-                data:user,
+                data:{
+                    ...user,
+                    refid
+                },
                 meta:{
                     title,
                     desc,
@@ -116,12 +132,12 @@ const tabArr = [{
 }]
 
 
-export default function UserPages({data:userData,meta}: IPages<IData>) {
+export default function UserPages({data:{refid,...userData},meta}: IPages<IDataBackend>) {
     const router = useRouter();
     const username = router?.query?.slug?.[0];
     const action = router?.query?.slug?.[1];
     const user = useSelector(s=>s.user);
-    const {data,mutate} = useSWR<IData>(`/v2/user/${username}`,{fallbackData:userData});
+    const {data,mutate} = useSWR<IData>(`/v2/user/${username}${refid ? `?ref=notification&refid=${refid}` : ''}`,{fallbackData:userData});
     const isMe = React.useMemo(()=>Boolean(user && data && user?.id === data?.id),[user,data]);
     const tabValue = React.useMemo(()=>{
         if(typeof action !== 'string') return 0;
@@ -168,7 +184,7 @@ export default function UserPages({data:userData,meta}: IPages<IData>) {
                 setLoading(false)
             }
         }
-    },[data,user,post,setNotif,del])
+    },[data,user,post,setNotif,del,mutate])
 
     const downloadQR=React.useCallback(()=>{
         window?.open(staticUrl(`/download_qr/user/${data?.username}?token=${data?.token_qr}`))
@@ -235,7 +251,7 @@ export default function UserPages({data:userData,meta}: IPages<IData>) {
                                             </Stack>
                                         )}
                                         {data?.facebook && (
-                                            <a href={data?.facebook?.url} target='_blank' className="no-blank">
+                                            <a href={data?.facebook?.url} target='_blank' rel="noopener noreferrer" className="no-blank">
                                                 <Stack direction='row' spacing={1}>
                                                     <Iconify icon='uil:facebook' />
                                                     <Typography>{data?.facebook?.label}</Typography>
@@ -243,7 +259,7 @@ export default function UserPages({data:userData,meta}: IPages<IData>) {
                                             </a>
                                         )}
                                         {data?.twitter && (
-                                            <a href={href(data?.twitter?.url)} target='_blank' className="no-blank">
+                                            <a href={href(data?.twitter?.url)} target='_blank' rel="noopener noreferrer" className="no-blank">
                                                 <Stack direction='row' spacing={1}>
                                                     <Iconify icon='mdi:twitter' />
                                                     <Typography>{data?.twitter?.label}</Typography>
@@ -251,7 +267,7 @@ export default function UserPages({data:userData,meta}: IPages<IData>) {
                                             </a>
                                         )}
                                         {data?.telegram && (
-                                            <a href={data?.telegram?.url} target='_blank' className="no-blank">
+                                            <a href={data?.telegram?.url} target='_blank' rel="noopener noreferrer" className="no-blank">
                                                 <Stack direction='row' spacing={1}>
                                                     <Iconify icon='ic:sharp-telegram' />
                                                     <Typography>{data?.telegram?.label}</Typography>
@@ -259,7 +275,7 @@ export default function UserPages({data:userData,meta}: IPages<IData>) {
                                             </a>
                                         )}
                                         {data?.website && (
-                                            <a href={data?.website?.url} target='_blank' className="no-blank">
+                                            <a href={data?.website?.url} target='_blank' rel="noopener noreferrer" className="no-blank">
                                                 <Stack direction='row' spacing={1}>
                                                     <Iconify icon='ph:globe' />
                                                     <Typography>{data?.website?.label}</Typography>

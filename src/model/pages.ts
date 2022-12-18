@@ -47,6 +47,8 @@ export type BlogPagination = {
     publish: boolean,
     last_modified:IDate|null;
     user:UserPagination
+    block?: boolean
+    type?: string|null
 }
 
 export interface BlogDetail extends BlogPagination {

@@ -71,13 +71,12 @@ const Div = styled('div')(({theme})=>({
 }))
 
 const Img = styled(Image)(({theme})=>({
-    [theme.breakpoints.up('sm')]: {
-      maxWidth:400
-    },
-    [theme.breakpoints.down('sm')]: {
-      maxWidth:'80%'
-    },
-    height:'auto'
+  maxWidth:400,
+  [theme.breakpoints.down(400)]: {
+    maxWidth:'100%'
+  },
+  maxHeight:800,
+  objectFit:'cover'
 }))
 
 export function usePageContent(data?:any) {
@@ -262,6 +261,10 @@ const parseOption = (opt : {preview?:boolean}): HTMLReactParserOptions =>({
         return n?.type === 'tag' && n?.name === "div"
       });
       if(findChild) return domToReact(node?.children,parseOption(opt))
+      const parent = node?.parent;
+      if(parent?.type === 'tag' && parent?.name === "li") {
+        return <Typography paragraph variant='body1' component='span' sx={{textAlign:"justify"}}>{domToReact(node?.children,parseOption(opt))}</Typography>
+      }
       return <Typography paragraph variant='body1' component='p' sx={{textAlign:"justify"}}>{domToReact(node?.children,parseOption(opt))}</Typography>
     }
     // SCRIPT

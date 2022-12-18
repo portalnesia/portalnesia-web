@@ -13,7 +13,8 @@
         "deep":"https://go.portalnesia.com",
         "account":"https://accounts.portalnesia.com",
         "status": "https://status.portalnesia.com",
-        "short":"http://kakek.c1.biz"
+        "short":"http://kakek.c1.biz",
+        "datas":"https://datas.portalnesia.com"
     },
     "recaptcha":"6LdeqPYUAAAAAL-nPJZjgAE0gYD5DeyH7-i-_Hee",
     "firebase":{
@@ -29,6 +30,7 @@
     "contact":{
         "email":"support@portalnesia.com",
         "facebook":"Portalnesia",
+        "instagram":"portalnesia.id",
         "twitter":"@Portalnesia1",
         "line":"@540ytcnc",
         "telegram":"@portalnesia_bot"

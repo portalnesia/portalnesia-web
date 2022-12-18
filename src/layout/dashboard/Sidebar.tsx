@@ -7,7 +7,7 @@ import Drawer from '@mui/material/Drawer';
 import Typography from '@mui/material/Typography';
 import config from '@src/config';
 import { version } from '@src/version';
-import { dashboardMenu, DRAWER_WIDTH } from '@layout/navbar.config';
+import { dashboardMenu, adminMenu, DRAWER_WIDTH } from '@layout/navbar.config';
 import useResponsive from '@design/hooks/useResponsive';
 import Scrollbar from '@design/components/Scrollbar';
 import Logo from '@comp/Logo';
@@ -36,12 +36,21 @@ export interface DashboardSidebarProps {
     onCloseSidebar(): void,
     title?: string,
     subtitle?: string
+    adminPage?: boolean
 };
 
-export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, title, subtitle }: DashboardSidebarProps) {
+export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, title, subtitle, adminPage}: DashboardSidebarProps) {
     const router = useRouter();
     const pathname = router.pathname;
     const isDesktop = useResponsive('up', 'lg');
+
+    const indexPath = useMemo(()=>{
+      return adminPage ? "/admin" : "/dashboard"
+    },[adminPage])
+
+    const navConfig = useMemo(()=>{
+      return adminPage ? adminMenu : dashboardMenu;
+    },[adminPage])
 
     useEffect(() => {
         if (isOpenSidebar) {
@@ -77,7 +86,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, title,
             </Box>
           )}
     
-        <NavSection indexPath='/dashboard' navConfig={dashboardMenu} />
+        <NavSection indexPath={indexPath} navConfig={navConfig} />
     
         <Box sx={{ flexGrow: 1 }} />
     
@@ -101,7 +110,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, title,
             </FooterRoot>
           </Box>
         </Scrollbar>
-    ),[title,subtitle]);
+    ),[title,subtitle,indexPath,navConfig]);
 
     return (
         <RootStyle>

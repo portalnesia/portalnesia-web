@@ -69,6 +69,7 @@ export function Socket({onRef}: {onRef?:(ref: ISocket)=>void}) {
 }
 
 export function withSocket<P extends object>(Component: ComponentType<P>): FC<P & ({socket?: ISocket})> {
+    /* eslint-disable-next-line react/display-name */
     return (props: P)=>{
         const socket = useSocket();
 

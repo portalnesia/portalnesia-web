@@ -69,7 +69,7 @@ export default function LikesPages() {
 
                 <SWRPages loading={!data&&!error} error={error}>
                     {!data ? null : data.data.filter(t=>!['thread','quiz'].includes(t.type)).map((type)=>(
-                        <Box mb={5}>
+                        <Box mb={5} key={type.type}>
                             <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
                                 <Stack direction='row' justifyContent='space-between' alignItems='center' spacing={2}>
                                     <Typography variant='h4' component='h2'>{ucwords(type.type)}</Typography>
@@ -87,7 +87,7 @@ export default function LikesPages() {
                                     </Grid>
                                 ) : type.data.map(d=>{
                                     const title = 'artist' in d ? `${d.artist} - ${d.title}` : 'title' in d ? d.title : '';
-                                    const image = 'image' in d ? `${d.image}&export=banner&size=300` : 'picture' in d ? (d.picture ? `${d.picture}&watermark=no` : staticUrl('img/content?image=notfound.png&watermark=no')) : undefined;
+                                    const image = 'image' in d ? `${d.image}&export=banner&size=300` : undefined;
                                     return (
                                         <Grid key={`${type}-${d.id}`} item xs={12} sm={6} md={4} lg={3}>
                                             <CustomCard link={href(d.link)} title={title} {...(image ? {image}:{})} />

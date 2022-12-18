@@ -33,6 +33,7 @@ function parsePath(path?: string) {
     return path ? path.startsWith("/") ? path : `/${path}` : "/"
 }
 export function staticUrl(path?: string) {
+    path = (path && /^https?\:\/\/content\.portalnesia\.com/.test(path)) ? path.replace(/^https?\:\/\/content\.portalnesia\.com/,'') : path;
     return config.url.static + parsePath(path);
 }
 export function linkUrl(path?: string) {

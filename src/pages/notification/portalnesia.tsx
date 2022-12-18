@@ -46,6 +46,7 @@ export default function PortalnesiaNotification() {
 
     const handleLoadMore = React.useCallback(()=>{
         setSize(size+1);
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     },[size])
 
     return (

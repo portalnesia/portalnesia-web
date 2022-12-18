@@ -247,8 +247,8 @@ export default function DownloaderPages() {
                                         </div>
                                         <Grid container spacing={4} justifyContent='center'>
                                             {data?.data?.map((twitter,i)=>(
-                                                <Grid item xs={12}>
-                                                    <Box mb={3} textAlign='center' display='flex' alignItems='center' justifyContent='center'><Image webp dataSrc={twitter?.thumbnail} src={staticUrl(`img/url?size=300&image=${encodeURIComponent(twitter?.thumbnail)}`)} fancybox caption={data?.title} style={{width:'100%',maxWidth:250}} /></Box>
+                                                <Grid key={`twitter-${twitter.thumbnail}`} item xs={12}>
+                                                    <Box mb={3} textAlign='center' display='flex' alignItems='center' justifyContent='center'><Image alt={data?.title} webp dataSrc={twitter?.thumbnail} src={staticUrl(`img/url?size=300&image=${encodeURIComponent(twitter?.thumbnail)}`)} fancybox caption={data?.title} style={{width:'100%',maxWidth:250}} /></Box>
                                                     <Grid container spacing={4} justifyContent='center'>
                                                         {twitter?.media?.map((file,i)=>(
                                                             <Grid key={`twitter-${i}`} item xs={12} sm={6} md={4}>
@@ -263,7 +263,7 @@ export default function DownloaderPages() {
                                 ) : data?.type==='youtube' ? (
                                     <React.Fragment key='youtube'>
                                         <Grid key={`youtube-thumb`} item xs={12} md={6} lg={4}>
-                                            <Box textAlign='center' display='flex' alignItems='center' justifyContent='center'><Image webp dataSrc={data?.thumbnail} src={staticUrl(`img/url?size=300&image=${encodeURIComponent(data?.thumbnail)}`)} fancybox caption={data?.title} style={{width:'100%',maxWidth:250}} /></Box>
+                                            <Box textAlign='center' display='flex' alignItems='center' justifyContent='center'><Image alt={data?.title} webp dataSrc={data?.thumbnail} src={staticUrl(`img/url?size=300&image=${encodeURIComponent(data?.thumbnail)}`)} fancybox caption={data?.title} style={{width:'100%',maxWidth:250}} /></Box>
                                         </Grid>
                                         <Grid key={`youtube-title`} item xs={12}>
                                             <div style={{textAlign:'center'}}><Typography variant='h6' paragraph>{data?.title}</Typography></div>
@@ -286,7 +286,7 @@ export default function DownloaderPages() {
                                                 </Grid>
                                             ) : (
                                                 <div style={{margin:'20px auto',textAlign:'center'}}>
-                                                    <Typography variant="body2">Sorry, we couldn't find the download links for you.</Typography>
+                                                    <Typography variant="body2">Sorry, we couldn&apos;t find the download links for you.</Typography>
                                                 </div>
                                             )}
                                         </Grid>
@@ -294,7 +294,7 @@ export default function DownloaderPages() {
                                 ) : data?.type==='soundcloud' ? (
                                     <Grid key={`soundcloud`} item xs={12}>
                                         <Box textAlign='center' mb={2.5} display='flex' flexDirection='column' alignItems='center'>
-                                            <Image webp dataSrc={data?.thumbnail} src={staticUrl(`img/url?size=300&image=${encodeURIComponent(data?.thumbnail)}`)} fancybox caption={data?.title} style={{width:'100%',maxWidth:250,marginBottom:10}} />
+                                            <Image alt={data?.title} webp dataSrc={data?.thumbnail} src={staticUrl(`img/url?size=300&image=${encodeURIComponent(data?.thumbnail)}`)} fancybox caption={data?.title} style={{width:'100%',maxWidth:250,marginBottom:10}} />
                                             <Typography>{data?.title}</Typography>
                                             <Typography variant='body2'>{data?.description}</Typography>
                                         </Box>

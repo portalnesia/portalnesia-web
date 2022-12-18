@@ -44,7 +44,7 @@ export interface ButtonProps extends LoadingButtonProps {
  * 
  */
 const Button=React.forwardRef<HTMLButtonElement,ButtonProps>((props,ref)=>{
-    const {size="medium",loadingPosition: loadingPosisi,disabled=false,outlined=false,children,color='primary',variant="contained",tooltip,text,endIcon,icon,tooltipProps,loading,iconPosition='end',startIcon,...other}=props
+    const {size="medium",loadingPosition: loadingPosisi,disabled=false,outlined=false,children,color='primary',variant="contained",tooltip,text,endIcon,icon,tooltipProps,loading,iconPosition='end',startIcon,name='button',...other}=props
     const loadingPosition = loadingPosisi ? loadingPosisi : (icon) && children ? iconPosition : "center";
     const cusIcon = React.useMemo((): React.ReactNode|undefined=>{
         if(endIcon && iconPosition==='end') return endIcon;

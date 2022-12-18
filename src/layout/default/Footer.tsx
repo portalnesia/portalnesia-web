@@ -166,7 +166,7 @@ function XsFooter() {
           <Grid container spacing={4}>
             {footerMenu.map((f)=>(
               <Grid item key={f.header} xs={12} sm={isSmXsFooter}>
-                <Stack direction='column' justifyContent='center' spacing={0.5}>
+                <Stack direction='column' justifyContent='center' alignItems='flex-start' spacing={0.5}>
                   <Typography sx={{color:'text.secondary',fontSize:14,mb:1,borderBottom:t=>`1px solid ${t.palette.divider}`}}>{f.header}</Typography>
                   {f.child?.map((c)=>(
                     <MenuItem home sx={{color:'text.primary'}} spanSx={{fontSize:15}} key={c.name} data={c} />

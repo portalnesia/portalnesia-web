@@ -254,7 +254,7 @@ export default function Chord({template="",transpose=0,margin=true,...other}: Ch
 
     React.useEffect(()=>{
         setData(Kchord(template.replace(/&amp;/g, "\&"),transpose,margin))
-    },[template,transpose,theme])
+    },[template,transpose,theme,margin])
 
     return(
         <Div dangerouslySetInnerHTML={{__html:data}} {...other} />

@@ -73,7 +73,7 @@ export default function DragableFiles({id,label,handleChange:onChange,onChange:_
         setHover(false);
         if(disabled) return;
         if(onChange) onChange(e);
-    },[handleChange,label,disabled])
+    },[label,disabled,onChange])
 
     return (
         <Div>

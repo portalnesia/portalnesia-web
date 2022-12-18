@@ -44,6 +44,7 @@ export default function DashIndex() {
 
     const handleLoadmore = React.useCallback(()=>{
         setSize(size+1);
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     },[size])
 
     return (
@@ -87,10 +88,10 @@ export default function DashIndex() {
                                             {d.cards.length ? (
                                                 <Carousel>
                                                     {d.cards?.map(c=>(
-                                                        <Box px={1}>
+                                                        <Box key={c.title} px={1}>
                                                             <CustomCard title={c.title} link={href(c.link)} image={c.image ? `${c.image}&export=banner&size=300` : undefined}>
                                                                 {c.footer ? c.footer?.map(f=>(
-                                                                    <Typography variant='caption'>{f}</Typography>
+                                                                    <Typography key={f} variant='caption'>{f}</Typography>
                                                                 )) : undefined}
                                                             </CustomCard>
                                                         </Box>

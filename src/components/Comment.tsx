@@ -142,6 +142,7 @@ function CommentForm({handleSubmit,wrapper,placeholder="Add comments..."}: Comme
     const [loading,setLoading] = React.useState(false);
     const ref = React.useRef<HTMLTextAreaElement>(null)
 
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     const onSubmit = React.useCallback(submitForm(async()=>{
         try {
             setLoading(true)
@@ -281,7 +282,7 @@ function CommentSection({data,onDelete,type,posId,comment_id,onSubmit}: CommentS
                 mutate();
             }
         } catch{}
-    },[onDelete,mutate,data]);
+    },[onDelete,mutate]);
 
     const handleReplies = React.useCallback((dataArgs: {message: string,name?:string,email?:string})=>{
         return new Promise<void>(async(res,rej)=>{
@@ -299,6 +300,7 @@ function CommentSection({data,onDelete,type,posId,comment_id,onSubmit}: CommentS
         if(data.replies) {
             setShowReplies(true);
         }
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     },[])
 
     return (

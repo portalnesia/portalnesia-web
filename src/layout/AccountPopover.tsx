@@ -87,13 +87,14 @@ export default function AccountPopover() {
   },[dispatch,handleClose])
 
   useEffect(()=>{
-    if(userRedux === undefined) {
+    if(userRedux === undefined && appToken) {
       if(data !== undefined) {
         setUser(data);
         dispatch({type:"CUSTOM",payload:{user:data}});
       }
       else mutate();
     }
+  /* eslint-disable-next-line react-hooks/exhaustive-deps */
   },[data,appToken]);
 
   return (

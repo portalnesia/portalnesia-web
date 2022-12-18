@@ -71,11 +71,12 @@ export default function NewsPages({data:news,meta}: IPages<NewsDetail>) {
                 content_type:"news",
                 item_id:`${news.id}`
             })
-        },5000)
+        },10000)
 
         return ()=>{
             clearTimeout(timeout);
         }
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     },[news,slug])
 
     return (
@@ -100,7 +101,7 @@ export default function NewsPages({data:news,meta}: IPages<NewsDetail>) {
                     label:"News",
                     link:"/news"
                 }]} />}
-                <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={5}>
+                <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={0.5}>
                     <Typography variant='h3' component='h1'>{data?.title||news.title}</Typography>
                     {data && (
                         <Box mt={1}>
@@ -130,6 +131,9 @@ export default function NewsPages({data:news,meta}: IPages<NewsDetail>) {
                             }} />
                         </Box>
                     )}
+                </Box>
+                <Box mb={5}>
+                    <Typography>{`${getDayJs(data?.created).time_ago().format}`}</Typography>
                 </Box>
 
                 <SWRPages loading={!data&&!error} error={error}>

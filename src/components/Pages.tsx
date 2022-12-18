@@ -49,7 +49,7 @@ export interface PageProps {
 
 
 
-export default function Pages({children,title,desc,keyword,canonical,image,noIndex=false,withoutShowTop}: PageProps) {
+export default function Pages({children,title,desc,keyword,canonical:canonicalProps,image,noIndex=false,withoutShowTop}: PageProps) {
     const router = useRouter()
     const { adBlock } = useInit();
     const dispatch = useDispatch();
@@ -63,6 +63,7 @@ export default function Pages({children,title,desc,keyword,canonical,image,noInd
     const [loading,setLoading] = useState<'report'>();
     const pushAlready = useRef(false);
     const {mutate:mutateNotification} = useNotificationSWR();
+    const canonical = useMemo(()=>portalUrl(canonicalProps),[canonicalProps])
     
     const header = useMemo(()=>{
         return {
@@ -186,7 +187,7 @@ export default function Pages({children,title,desc,keyword,canonical,image,noInd
         }
 
         if(process.env.NODE_ENV === 'production') {
-            if(!pushAlready.current) {
+            if(!pushAlready.current && appToken) {
                 pushAlready.current = true;
                 isSupported().then(supported=>{
                     if(supported) {
@@ -197,7 +198,8 @@ export default function Pages({children,title,desc,keyword,canonical,image,noInd
                 }).catch(()=>{})
             }
         }
-    },[post])
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
+    },[post,appToken])
 
     return (
         <div>
@@ -224,7 +226,7 @@ export default function Pages({children,title,desc,keyword,canonical,image,noInd
                     content:theme.palette.background.paper
                 }]}
                 openGraph={{
-                    url: portalUrl(canonical),
+                    url: canonical,
                     title: header.title,
                     description: header.desc,
                     images: [

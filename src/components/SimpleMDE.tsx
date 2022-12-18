@@ -72,10 +72,10 @@ export default function Simple(props: SimpleMDEProps) {
     const editor = React.useRef<any>()
     const [browser,setBrowser] = React.useState(false)
 
-    const handleChange=(text: string)=>{
+    const handleChange=React.useCallback((text: string)=>{
         const result=image === false ? text.replace(/(\[\!\[|\!\[)/g,"[") : text;
         if(onChange) onChange(result);
-    }
+    },[image,onChange])
 
     const handleSelectedImage=React.useCallback((url: string)=>{
         if(editor.current) editor.current?.drawImages(url);
@@ -146,7 +146,7 @@ export default function Simple(props: SimpleMDEProps) {
             }];
         }
         return opt;
-    },[])
+    },[image,openBrowserImage])
     
     return(
         <Div>

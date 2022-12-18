@@ -90,7 +90,7 @@ export default function QuizDetailPage({data:dataServer,meta}: IPages<Pick<QuizD
     const router = useRouter();
     const slug = router.query?.slug;
     const questionQuery = router.query?.question;
-    const user = useSelector(s=>s.user);
+    const {user,appToken} = useSelector(s=>({user:s.user,appToken:s.appToken}));
     const {post}=useAPI();
     const setNotif = useNotification();
     const [data,setData]=React.useState<QuizDetail|null>(null)
@@ -102,10 +102,11 @@ export default function QuizDetailPage({data:dataServer,meta}: IPages<Pick<QuizD
     const [input,setInput]=React.useState("");
     const {page:pageResponse,rowsPerPage,onPageChange,...responsePage} = useTablePagination(1,10);
     const {data:response,error:errResponse} = useSWR<PaginationResponse<QuizResponsePagination>>(data && data?.public ? `/v2/quiz/${data.id}/response?page=${pageResponse}&per_page=${rowsPerPage}` : null);
+    const [ready,setReady] = React.useState(false)
 
     const handleRedirect = React.useCallback((question: number)=>()=>{
-        setLoading(true)
-        setDisable(true)
+        //setLoading(true)
+        //setDisable(true)
         Router.replace(`/quiz/${slug}${question!==0 ? `?question=${question}` : ''}`,undefined,{shallow:true,scroll:true});
     },[slug])
 
@@ -125,6 +126,8 @@ export default function QuizDetailPage({data:dataServer,meta}: IPages<Pick<QuizD
 
             const res = await post<AnswerResponse>(`/v2/quiz/${slug}${question ? `/${question}`:''}`,data,undefined,{success_notif:false});
             
+            setInput("");
+
             if(typeof res.question !== 'undefined') setQuestion(res.question)
             
             if(typeof res.choise !== 'undefined') setChoise(res.choise)
@@ -164,13 +167,16 @@ export default function QuizDetailPage({data:dataServer,meta}: IPages<Pick<QuizD
             const res = await post(`/v2/quiz/answer/${slug}`,query,undefined,{success_notif:false});
             setData(res);
             if(res?.my_name!==null) setInput(res.my_name)
+            setReady(true);
         } catch(e) {
-            if(e instanceof ApiError) setNotif(e.message,true)
+            //if(e instanceof ApiError) setNotif(e.message,true)
         } finally {
             setLoading(false)
+            loadingCache = false;
         }
-    },[post,setNotif,slug])
+    },[post,slug])
 
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     const handleStart = React.useCallback(submitForm(()=>{
         if(!data) return;
         submitAnswer({name:input},undefined,()=>{
@@ -181,6 +187,7 @@ export default function QuizDetailPage({data:dataServer,meta}: IPages<Pick<QuizD
         })
     }),[submitAnswer,input,data])
 
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     const handleAnswer=React.useCallback(submitForm(()=>{
         if(typeof questionQuery !== 'string') return;
         if(input?.length<1) setNotif("You have not given an answer",true)
@@ -188,34 +195,8 @@ export default function QuizDetailPage({data:dataServer,meta}: IPages<Pick<QuizD
     }),[input,submitAnswer,questionQuery])
 
     React.useEffect(()=>{
-        async function init() {
-            if(typeof slug === "string" && !loadingCache) {
-                try {
-                    loadingCache=true;
-                    setInput("");
-                    setDialog(undefined)
-                    setLoading(true)
-                    setDisable(false)
-                    if(typeof questionQuery==='undefined') {
-                        onPageChange({},0)
-                        if(data===null) {
-                            await initData()
-                        } else {
-                            setInput(data?.my_name||"")
-                        }
-                    }
-                } catch{}
-                finally {
-                    setLoading(false)
-                    loadingCache=false;
-                }
-            }
-        }
-        init();
-    },[slug,questionQuery,initData,dataServer])
-
-    React.useEffect(()=>{
         if(questionQuery) router.replace(`/quiz/${slug}`,undefined,{shallow:true});
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     },[])
 
     const valueLinear=React.useMemo(()=>{
@@ -226,13 +207,14 @@ export default function QuizDetailPage({data:dataServer,meta}: IPages<Pick<QuizD
         } else {
             return Math.round((data?.progress||0)/(data?.total_question||0))
         }
-    },[questionQuery,data?.total_question])
+    },[questionQuery,data])
 
     const getNumber = React.useCallback((i:number)=>{
         return ((pageResponse-1)*rowsPerPage)+i+1
     },[pageResponse,rowsPerPage])
 
     React.useEffect(()=>{
+
         let timeout = setTimeout(()=>{
             const analytics = getAnalytics();
             logEvent(analytics,"select_content",{
@@ -243,8 +225,26 @@ export default function QuizDetailPage({data:dataServer,meta}: IPages<Pick<QuizD
 
         return ()=>{
             clearTimeout(timeout);
+            loadingCache=false;
+            setReady(false);
         }
     },[dataServer])
+
+    React.useEffect(()=>{
+        setDialog(undefined)
+        setDisable(false)
+
+        async function init() {
+            try {
+                if(appToken && typeof questionQuery==='undefined' && !loadingCache && !ready) {
+                    loadingCache = true;
+                    onPageChange({},0)
+                    await initData()
+                }
+            } catch {}
+        }
+        init();
+    },[questionQuery,ready,initData,onPageChange,appToken])
 
     return (
         <Pages title={meta?.title} desc={meta?.desc} canonical={`/quiz/${dataServer?.id}`} image={meta?.image}>

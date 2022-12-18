@@ -4,7 +4,7 @@ import NativeAccordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { ASummary } from '@design/components/TableContent'
-import { INavItems, ListItemIconStyle, ListItemStyle, NavItem } from '@layout/dashboard/NavSection'
+import { ListItemIconStyle, ListItemStyle, NavItem } from '@layout/dashboard/NavSection'
 import Portal from '@mui/material/Portal'
 import Link from '@design/components/Link'
 import { styled, SxProps, Theme, useTheme } from '@mui/material/styles';
@@ -15,13 +15,14 @@ import Typography from '@mui/material/Typography';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Router from 'next/router';
+import { INavbar } from '@layout/navbar.config';
 
 export interface SubnavProps {
-    items: INavItems[]
+    items: INavbar[]
     linkProps?: Partial<ComponentProps<typeof Link>>
     onExpand?: (expand: boolean)=>void
     rootSx?: SxProps<Theme>
-    active(path?: string): boolean
+    active(path: INavbar): boolean
     title: string
 }
 
@@ -49,17 +50,18 @@ const CustomBox = styled(Box,{shouldForwardProp:prop=>prop!=='scrolled'})<{scrol
 
 export function SubnavMobile({items:content,linkProps,active}: SubnavProps) {
     const [scrolled,setScrolled] = useState(false);
+
     const value = useMemo(()=>{
-        const index = content.findIndex(c=>active(c.path));
+        const index = content.findIndex(c=>active(c));
         return index;
     },[active,content])
 
     const onChange = useCallback((_: any,value: number)=>{
         const selected = content?.[value];
         if(selected) {
-            Router.push(selected.path,undefined,{shallow:linkProps?.shallow,scroll:linkProps?.scroll});
+            Router.push(selected.link,undefined,{shallow:linkProps?.shallow,scroll:linkProps?.scroll});
         }
-    },[content])
+    },[content,linkProps?.shallow,linkProps?.scroll])
 
     useEffect(()=>{
         function onScroll() {
@@ -80,7 +82,7 @@ export function SubnavMobile({items:content,linkProps,active}: SubnavProps) {
             <CustomBox scrolled={scrolled}>
                 <CustomTabs variant='scrollable' value={value} onChange={onChange}>
                     {content.map(c=>(
-                        <Tab key={c.title} label={c.title} />
+                        <Tab key={c.name} label={c.name} />
                     ))}
                 </CustomTabs>
             </CustomBox>
@@ -124,20 +126,19 @@ export function BackupSubnavMobile({title,items:content,onExpand,linkProps,rootS
                     <div>
                         <List component="ol" sx={{listStyle:'numeric',listStylePosition:'inside'}}>
                             {content.map((dt,i)=>(
-                                <Link href={dt.path} passHref legacyBehavior {...linkProps}>
+                                <Link key={dt.name} href={dt.link} passHref legacyBehavior {...linkProps}>
                                     <ListItemStyle
                                         component='a'
                                         disableGutters
                                         onClick={handleClick}
                                         sx={{
-                                          ...(active(dt.path) && activeRootStyle),
+                                          ...(active(dt) && activeRootStyle),
                                           ...rootSx
                                         }}
-                                        {...(dt.new_tab ? {target:'_blank'} : {})}
                                         
                                     >
                                         {dt.icon && <ListItemIconStyle>{dt.icon}</ListItemIconStyle>}
-                                        <ListItemText disableTypography primary={dt.title} />
+                                        <ListItemText disableTypography primary={dt.name} />
                                     </ListItemStyle>
                                 </Link>
                             ))}
@@ -158,7 +159,7 @@ export function Subnav({title,items:content,onExpand:_a,...rest}: SubnavProps) {
             </Box>
             <List disablePadding>
                 {content.map(n=>(
-                    <NavItem key={n.title} item={n} {...rest} />
+                    <NavItem key={n.name} item={n} {...rest} />
                 ))}
             </List>
         </Box>

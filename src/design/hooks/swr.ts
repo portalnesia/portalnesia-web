@@ -25,14 +25,15 @@ export default function useSWR<D=any>(path: string|null,config:SWRConfiguration<
 
 export function useSWRPagination<D extends PaginationResponse<any> = any>(path: string|null,options?: SWRInfiniteConfiguration<D,ApiError>) {
     const {get} = useAPI();
+    const appToken = useSelector<State['appToken']>(s=>s.appToken);
 
     const getKey = useCallback((index: number,previousPageData: PaginationResponse<D>|null)=>{
-        if(!path) return null;
-        if((previousPageData && (!previousPageData.data?.length || index > previousPageData.total_page))) return null;
+        if(!path || !appToken) return null;
+        if((previousPageData && (!previousPageData.data?.length || !previousPageData.can_load))) return null;
         const url = new URL(path,portalUrl());
         url.searchParams.set('page',String(index+1));
         return `${url.pathname}?${url.searchParams.toString()}`
-    },[path])
+    },[path,appToken])
 
     const {data:dt,size,error,...swr} = nativeUseSWRInfinite<D,ApiError>(getKey,get,{
         initialSize:1,

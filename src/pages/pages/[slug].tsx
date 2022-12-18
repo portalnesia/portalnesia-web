@@ -19,7 +19,7 @@ import Sidebar from "@design/components/Sidebar";
 import PaperBlock from "@design/components/PaperBlock";
 import Hidden from "@mui/material/Hidden";
 import { ArticleJsonLd } from "next-seo";
-import { portalUrl, staticUrl } from "@utils/main";
+import { getDayJs, portalUrl, staticUrl } from "@utils/main";
 import { CombineAction } from "@comp/Action";
 import useAPI from "@design/hooks/api";
 import { getAnalytics, logEvent } from "@utils/firebase";
@@ -67,11 +67,12 @@ export default function BlogPages({data:pages,meta}: IPages<PagesDetail>) {
                 content_type:"pages",
                 item_id:`${pages.id}`
             })
-        },5000)
+        },10000)
 
         return ()=>{
             clearTimeout(timeout);
         }
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     },[pages])
     
     return (
@@ -90,7 +91,7 @@ export default function BlogPages({data:pages,meta}: IPages<PagesDetail>) {
             />
             <DefaultLayout navbar={{tableContent:data}}>
                 <SWRPages loading={!data&&!error} error={error}>
-                    <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={5}>
+                    <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={0.5}>
                         <Typography variant='h3' component='h1'>{data?.title||pages.title}</Typography>
                         {data && (
                             <Box mt={1}>
@@ -115,6 +116,10 @@ export default function BlogPages({data:pages,meta}: IPages<PagesDetail>) {
                             </Box>
                         )}
                     </Box>
+                    <Box mb={5}>
+                        <Typography>{`Last modified: ${getDayJs(data?.last_modified||data?.created).time_ago().format}`}</Typography>
+                    </Box>
+                    
                     <Grid container spacing={2} justifyContent='center'>
                         <Grid item xs={12} md={content.length > 0 ? 8 : 10}>
                             <Box key='page-content' id='page-content'>

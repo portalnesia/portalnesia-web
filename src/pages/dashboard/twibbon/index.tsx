@@ -80,6 +80,7 @@ export default function TwibbonDashIndex() {
         }
     },[setNotif,del,mutate])
 
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     const handleEdit = React.useCallback(submitForm(async()=>{
         try {
             if(!dialog) return;
@@ -106,7 +107,7 @@ export default function TwibbonDashIndex() {
         } else {
             setDialog(undefined)
         }
-    },[dialog])
+    },[])
 
     useMousetrap(['+','shift+='],()=>{
         Router.push(`/dashboard/twibbon/new`);
@@ -130,7 +131,7 @@ export default function TwibbonDashIndex() {
                     <SWRPages loading={!data&&!error} error={error}>
                         <List>
                             {(data && data?.data?.length > 0) ? data?.data?.map(d=>(
-                                <ListItem>
+                                <ListItem key={d.slug}>
                                     <ListItemAvatar>
                                         <Avatar>
                                             <Image src={d.image} alt={d.title} />

@@ -106,12 +106,12 @@ export default function UrlPages() {
                     <Box mb={5}>
                         <Grid container spacing={4} justifyContent={{xs:'center',md:'space-between'}}>
                             <Grid item xs={12} md={8}>
-                                <Typography variant='body1'>Short URL: <a className="underline" target="_blank" href={result.short_url}><Span sx={{color:'customColor.link'}}>{result.short_url}</Span></a></Typography>
+                                <Typography variant='body1'>Short URL: <a className="underline" target="_blank" href={result.short_url} rel='noopener noreferrer'><Span sx={{color:'customColor.link'}}>{result.short_url}</Span></a></Typography>
                                 <Typography variant='body1'>Long URL: {result.long_url}</Typography>
                                 <Typography variant='body1'><a className="underline" href='#' onClick={downloadQR(result)}><Span sx={{fontWeight:'bold'}}>DOWNLOAD QR CODE</Span></a></Typography>
                             </Grid>
                             <Grid item xs={12} md={4}>
-                                <Image fancybox src={staticUrl(result.custom)} alt={`Qr Code`} sx={{maxWidth:150,width:'100%'}} dataFancybox={`Generated ${result.custom}`} />
+                                <Image fancybox src={staticUrl(`/qr/url/${result.custom}`)} alt={`Qr Code`} sx={{maxWidth:150,width:'100%'}} dataFancybox={`Generated ${result.custom}`} />
                             </Grid>
                         </Grid>
                     </Box>
@@ -245,7 +245,7 @@ function UrlLibrary({getMutate}: UrlLibraryProps) {
                             {data && data?.data.length > 0 ? data?.data.map((d,i)=>(
                                 <TableRow key={`data-${d.custom}`}>
                                     <TableCell>{getNumber(i)}</TableCell>
-                                    <TableCell><a className="underline" href={d?.short_url} target="_blank"><Span sx={{fontWeight:'bold',color:'customColor.link'}}>{parseURL(d.short_url)}</Span></a></TableCell>
+                                    <TableCell><a className="underline" href={d?.short_url} target="_blank" rel="noopener noreferrer"><Span sx={{fontWeight:'bold',color:'customColor.link'}}>{parseURL(d.short_url)}</Span></a></TableCell>
                                     <TableCell>{truncate(isURL(d?.long_url) ? parseURL(d?.long_url) : d?.long_url,50)}</TableCell>
                                     <TableCell>{getDayJs(d.created).pn_format('minimal')}</TableCell>
                                     <TableCell align="right">{d?.click}</TableCell>

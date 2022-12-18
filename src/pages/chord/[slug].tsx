@@ -20,7 +20,7 @@ import MenuPopover from "@design/components/MenuPopover";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Button from "@comp/Button";
 import { Span } from "@design/components/Dom";
-import { href, portalUrl, staticUrl } from "@utils/main";
+import { getDayJs, href, portalUrl, staticUrl } from "@utils/main";
 import { ArticleJsonLd } from "next-seo";
 import Chord from '@comp/Chord'
 import { CombineAction } from "@comp/Action";
@@ -251,7 +251,7 @@ export default function ChordPage({data:chord,meta}: IPages<ChordDetail>) {
             }
             if(scrollInterval.current) clearInterval(scrollInterval.current)
         }
-    },[slug])
+    },[slug,handleAutoScroll]);
 
     React.useEffect(()=>{
         setLiked(!!data?.liked)
@@ -265,11 +265,12 @@ export default function ChordPage({data:chord,meta}: IPages<ChordDetail>) {
                 content_type:"chord",
                 item_id:`${chord.id}`
             })
-        },5000)
+        },10000)
 
         return ()=>{
             clearTimeout(timeout);
         }
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     },[chord])
 
     return (
@@ -299,7 +300,7 @@ export default function ChordPage({data:chord,meta}: IPages<ChordDetail>) {
                     }]} />
                 )}
                 <SWRPages loading={!data&&!error} error={error}>
-                    <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={5}>
+                    <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={0.5}>
                         <Typography variant='h3' component='h1'>{`Chord ${data?.title} - ${data?.artist}`}</Typography>
                         {data && (
                             <Box mt={1}>
@@ -330,6 +331,10 @@ export default function ChordPage({data:chord,meta}: IPages<ChordDetail>) {
                             </Box>
                         )}
                     </Box>
+                    <Box mb={5}>
+                        <Typography>{`Last modified: ${getDayJs(data?.last_modified||data?.created).time_ago().format}`}</Typography>
+                    </Box>
+
                     <Grid container spacing={4}>
                         <Grid item xs={12} md={8}>
                             <Box id='chord-content'>
@@ -341,7 +346,7 @@ export default function ChordPage({data:chord,meta}: IPages<ChordDetail>) {
                                             <Divider sx={{my:5}} />
 
                                             <Box>
-                                                <Typography>Your chords aren't here? <Link href={`/chord?subject=Request%20Chord`}><Span sx={{color:'customColor.link'}}>request your chord</Span></Link> or <Link href={`/dashboard/chord/new`}><Span sx={{color:'customColor.link'}}>create a new one</Span></Link>.</Typography>
+                                                <Typography>Your chords aren&apos;t here? <Link href={`/contact?subject=Request%20Chord`}><Span sx={{color:'customColor.link'}}>request your chord</Span></Link> or <Link href={`/dashboard/chord/new`}><Span sx={{color:'customColor.link'}}>create a new one</Span></Link>.</Typography>
                                             </Box>
                                         </Box>
                                         <Box mt={10}>

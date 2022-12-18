@@ -1,7 +1,7 @@
 import React from "react";
 import DefaultLayout from "@layout/default";
 import wrapper from "@redux/store";
-import { createToken, portalUrl, verifyToken } from "@utils/main";
+import { createToken, portalUrl, staticUrl, verifyToken } from "@utils/main";
 import { IPages } from "@type/general";
 import Pages from "@comp/Pages";
 import Box from "@mui/material/Box";
@@ -45,7 +45,7 @@ export const getServerSideProps = wrapper<IData>(async({params,redirect,query,se
             meta:{
                 title: event.text||"",
                 desc: event.full_text ? event.full_text : (event.text||undefined),
-                image: portalUrl(`line/cover/${event.id}`)
+                image: event.photo ? staticUrl(`calendar-cover/${event.id}`) : staticUrl(`img?image=notfound.png&export=twibbon`)
             }
         }
     }

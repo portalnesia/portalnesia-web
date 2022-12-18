@@ -28,7 +28,13 @@ const selectArr: ('recent'|'popular')[] = ['recent','popular']
 export default function News() {
     const router = useRouter();
     const query = router.query
-    const [order,setOrder] = React.useState<'recent'|'popular'>('recent');
+    const orderQuery = query?.order;
+    
+    const order = React.useMemo(()=>{
+        if(typeof orderQuery === 'string' && ['recent','popular'].includes(orderQuery.toLowerCase())) return orderQuery.toLowerCase();
+        return 'recent';
+    },[orderQuery])
+
     const [page,setPage] = usePagination();
     const {data,error} = useSWR<PaginationResponse<ChordPagination>>(`/v2/chord?page=${page}&per_page=24&order=${order}`);
     const {data:recommendation,error:errRecommendation} = useSWR<ChordPagination[]>(`/v2/chord/recommendation`);
@@ -40,12 +46,6 @@ export default function News() {
         router.push({pathname:'/chord',query:{order}},`/chord?order=${order}`,{shallow:true,scroll:true});
     /* eslint-disable-next-line react-hooks/exhaustive-deps */
     },[])
-
-    React.useEffect(()=>{
-        if(typeof query?.order === 'string') {
-            if(['recent','popular'].includes(query.order)) setOrder(query.order as 'recent'|'popular');
-        }
-    },[query])
 
     return (
         <Pages title="Chord" canonical="/chord">
