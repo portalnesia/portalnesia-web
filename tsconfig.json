@@ -1,73 +1,31 @@
 {
   "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
-    "esModuleInterop": true,
-    "jsx": "preserve",
-    "moduleResolution": "node",
-    "lib": [
-      "dom",
-      "ESNext",
-      "DOM.Iterable",
-    ],
-    "module": "esnext",
-    "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true,
-    "noEmitOnError": true,
-    //"removeComments": false,
-    "noImplicitAny": false,
-    "noImplicitThis": true,
-    "strictNullChecks": false,
     "skipLibCheck": true,
-    "target": "esnext",
-    "noEmit": true,
-    "baseUrl": ".",
-    "isolatedModules": true,
+    "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "paths": {
-      "portal/components/*": [
-        "components/*"
-      ],
-      "portal/pages/*": [
-        "pages/*"
-      ],
-      "portal/redux/*": [
-        "redux/*"
-      ],
-      "portal/styles/*": [
-        "styles/*"
-      ],
-      "portal/theme/*": [
-        "theme/*"
-      ],
-      "portal/utils/*": [
-        "utils/*"
-      ],
-      "portal/types/*": [
-        "type/*"
-      ],
-      "portal/*": [
-        "*"
-      ],
-      "portal/components": [
-        "components/index"
-      ],
-      "portal/utils": [
-        "utils/index"
-      ],
-      "portal/types": [
-        "type/index"
-      ]
-    },
-    "strict": false,
-    "incremental": true
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "paths":{
+      "@utils*":["./src/utils*"],
+      "@comp*":["./src/components*"],
+      "@design*":["./src/design*"],
+      "@layout*": ["./src/layout*"],
+      "@model*": ["./src/model*"],
+      "@type*": ["./src/types*"],
+      "@redux*": ["./src/redux*"],
+      "@hooks*": ["./src/hooks*"],
+      "@src*": ["./src*"]
+    }
   },
-  "exclude": [
-    "node_modules"
-  ],
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.js",
-    "**/*.jsx"
-  ]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
 }

@@ -3,18 +3,16 @@ const express = require('express')
 const next = require('next')
 const cors = require('cors')
 const dev = process.env.NODE_ENV !== 'production'
-const port = process.env.NODE_ENV === 'production' ? 3000 : 3503;
 const hostn = "localhost";
 const app = next({ dev })
 const handle = app.getRequestHandler()
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const helmet=require('helmet')
 const canvasProxy = require('html2canvas-proxy');
-const path = require('path');
 
 const corsOrigin = [/\.portalnesia\.com$/,"https://portalnesia.com"];
 
-const useExampleProxy=(req,res,next)=>{
+const useDataProxy=(req,res,next)=>{
   const exampleProxy=createProxyMiddleware({
     target: 'https://datas.portalnesia.com',
     changeOrigin: true,
@@ -22,28 +20,68 @@ const useExampleProxy=(req,res,next)=>{
       host:'https://datas.portalnesia.com'
     },
     onProxyReq:function(proxy) {
-      proxy.setHeader('X-Local-Ip',req.headers["cf-connecting-ip"]);
-    }
+      if(process.env.NODE_ENV === 'production') proxy.setHeader('X-Local-Ip',req.headers["cf-connecting-ip"]);
+    },
+    onProxyRes:function(proxy) {
+      const type = proxy.headers['content-type'];
+      if(typeof type === 'string' && (type.startsWith('image') || type.startsWith('audio') || type.startsWith('video'))) {
+        proxy.headers['Cache-Control'] = 'public, max-age=86400';
+      }
+    },
+    logLevel:'error',
   });
   return exampleProxy(req,res,next);
 }
 
 const useApiProxy=(req,res,next)=>{
   const apiProxy = createProxyMiddleware({
-    target: 'https://api.portalnesia.com',
+    target: process.env.API_URL,
     changeOrigin: true,
     headers:{
-      host:'https://api.portalnesia.com'
+      host: process.env.NEXT_PUBLIC_API_URL
     },
     onProxyReq:function(proxy) {
-      proxy.setHeader('X-Local-Ip',req.headers["cf-connecting-ip"]);
+      if(process.env.NODE_ENV === 'production') proxy.setHeader('X-Local-Ip',req.headers["cf-connecting-ip"]);
     },
+    followRedirects:true,
+    logLevel:'error',
+  });
+  return apiProxy(req,res,next);
+}
+
+const useContentProxy=(req,res,next) => {
+  const apiProxy=createProxyMiddleware({
+    target: 'https://content.portalnesia.com',
+    changeOrigin: true,
+    pathRewrite:{
+      '^/content': `/`,
+    },
+    headers:{
+      host:'https://content.portalnesia.com'
+    },
+    onProxyRes:function(proxy) {
+      const type = proxy.headers['content-type'];
+      if(typeof type === 'string' && (type.startsWith('image') || type.startsWith('audio') || type.startsWith('video'))) {
+        proxy.headers['Cache-Control'] = 'public, max-age=86400';
+      }
+    },
+    logLevel:'error',
     followRedirects:true
   });
   return apiProxy(req,res,next);
 }
 
+const accountRedirect=(path)=>(req,res)=>{
+  const url = new URL(req.url,'https://accounts.portalnesia.com');
+  url.pathname = path;
+  url.searchParams.set('utm_source','portalnesia web')
+  url.searchParams.set('utm_medium','redirect')
+  url.searchParams.set('utm_campaign','v5')
+  res.redirect(301,url.toString());
+}
+
 app.prepare().then(() => {
+    const port = process.env.PORT;
     const server = express()
 
     server.use('/canvas-proxy', canvasProxy());
@@ -64,27 +102,24 @@ app.prepare().then(() => {
     }));
     server.use(helmet.xssFilter());
 
-    //server.use('/design/*/edit/*',exampleProxy);
-    //server.use('/user/*/resume',exampleProxy)
-    server.use('/user/*/photo_profile',useExampleProxy)
-    server.use('/email/preview/*',useExampleProxy);
+    server.use('/user/*/photo_profile',useDataProxy)
+    server.use('/email/preview/*',useDataProxy);
     server.get('/sitemap.xml', useApiProxy);
     server.use('/news/feed', useApiProxy);
     server.use('/blog/feed', useApiProxy);
     server.use('/chord/feed', useApiProxy);
-    server.use('/content', useExampleProxy);
-    server.use('/telegram/oauth', useExampleProxy);
-    server.use('/line', useExampleProxy);
-    server.use('/print', useExampleProxy);
+    server.use('/content', useContentProxy);
+    server.use('/telegram/oauth', useDataProxy);
+    server.use('/line', useDataProxy);
+    server.use('/print', useDataProxy);
     //server.use('/file-manager/images', exampleProxy);
-    server.use('/media/embed', useExampleProxy);
+    server.use('/media/embed', useDataProxy);
     
-    server.use('/login', useExampleProxy);
-    server.use('/logout', useExampleProxy);
-    server.use('/authentication', useExampleProxy);
-    server.use('/active', useExampleProxy);
-    server.use('/forgot', useExampleProxy);
-    server.use('/unlock', useExampleProxy);
+    server.use('/login', accountRedirect('/login'));
+    server.use('/logout', accountRedirect('/logout'));
+    server.use('/active', accountRedirect('active'));
+    server.use('/forgot', accountRedirect('/forgot'));
+    server.use('/unlock', accountRedirect('/unlock'));
 
     server.get('/ln',(req,res)=>{
       res.writeHead(302,{Location: "https://line.me/R/ti/p/%40540ytcnc"});
@@ -111,7 +146,11 @@ app.prepare().then(() => {
       const slug = req.params.slug;
       let url = 'https://accounts.portalnesia.com';
       if(slug) url += '/'+slug;
-      res.redirect(301,url);
+      const new_url = new URL(url);
+      new_url.searchParams.set('utm_source','portalnesia web')
+      new_url.searchParams.set('utm_medium','redirect')
+      new_url.searchParams.set('utm_campaign','v5')
+      res.redirect(301,new_url.toString());
     })
 
     server.use(express.json());

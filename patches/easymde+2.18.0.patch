@@ -1,0 +1,53 @@
+diff --git a/node_modules/easymde/src/js/easymde.js b/node_modules/easymde/src/js/easymde.js
+index 93b3cde..2c70c84 100644
+--- a/node_modules/easymde/src/js/easymde.js
++++ b/node_modules/easymde/src/js/easymde.js
+@@ -839,17 +839,21 @@ function drawLink(editor) {
+  * Action for drawing an img.
+  * @param {EasyMDE} editor
+  */
+-function drawImage(editor) {
++function drawImage(editor,urlRequest,caption) {
+     var options = editor.options;
+-    var url = 'https://';
+-    if (options.promptURLs) {
+-        var result = prompt(options.promptTexts.image, url);
++    var url = urlRequest||'https://';
++    if (options.promptURLs && typeof urlRequest === 'undefined') {
++        var result = prompt(options.promptTexts.image, 'https');
+         if (!result) {
+             return false;
+         }
+         url = escapePromptURL(result);
+     }
+-    _toggleLink(editor, 'image', options.insertTexts.image, url);
++    var insertTexts = options.insertTexts.image;
++    if(typeof caption === 'string') {
++        insertTexts = ['<figure class="image image_resized"><img src="','#url#" /><figcaption>'+ caption +'</figcaption></figure>',]
++    }
++    _toggleLink(editor, 'image', insertTexts, url);
+ }
+ 
+ /**
+@@ -2963,6 +2967,9 @@ EasyMDE.prototype.drawLink = function () {
+ EasyMDE.prototype.drawImage = function () {
+     drawImage(this);
+ };
++EasyMDE.prototype.drawImages = function (url,caption) {
++    drawImage(this,url,caption);
++};
+ EasyMDE.prototype.drawUploadedImage = function () {
+     drawUploadedImage(this);
+ };
+diff --git a/node_modules/easymde/types/easymde.d.ts b/node_modules/easymde/types/easymde.d.ts
+index c8ca578..a46fa51 100644
+--- a/node_modules/easymde/types/easymde.d.ts
++++ b/node_modules/easymde/types/easymde.d.ts
+@@ -276,6 +276,7 @@ declare class EasyMDE {
+     static cleanBlock: (editor: EasyMDE) => void;
+     static drawLink: (editor: EasyMDE) => void;
+     static drawImage: (editor: EasyMDE) => void;
++    static drawImages:(editor: EasyMDE,url?:string,caption?:string) => void;
+     static drawUploadedImage: (editor: EasyMDE) => void;
+     static drawTable: (editor: EasyMDE) => void;
+     static drawHorizontalRule: (editor: EasyMDE) => void;
