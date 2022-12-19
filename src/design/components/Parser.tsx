@@ -6,7 +6,7 @@ import {Circular as Loading} from '@design/components/Loading'
 import clx from 'classnames'
 import Link from 'next/link'
 import {slugFormat} from '@portalnesia/utils'
-import type {SxProps,Theme,} from '@mui/material'
+import type {SxProps,Theme} from '@mui/material/styles'
 import {convertToHtml} from '@utils/marked'
 import DOMPurify from 'dompurify'
 import hljs from 'highlight.js'
@@ -22,7 +22,7 @@ import { portalUrl, staticUrl } from '@utils/main'
 import Scrollbar from './Scrollbar'
 import { handlePageContent } from './TableContent'
 import { BoxPagination } from './Pagination'
-import { FacebookEmbed, InstagramEmbed, TikTokEmbed, TwitterEmbed } from 'react-social-media-embed';
+import SocialEmbed from '@comp/SocialEmbed'
 
 export const editorStyles=(theme: Theme)=>({
   '& pre code':{
@@ -123,9 +123,7 @@ const parseOption = (opt : {preview?:boolean}): HTMLReactParserOptions =>({
       }
 
       if(node?.attribs?.class === "fb-post" && typeof node?.attribs?.['data-href'] === "string") {
-        <Box display='flex' justifyContent='center' my={3}>
-          <FacebookEmbed url={node?.attribs?.['data-href']} width={500} />
-        </Box>
+        <SocialEmbed type="facebook" url={node?.attribs?.['data-href']} />
       }
     }
     if(node?.type==='tag'&&node?.name==='center'){
@@ -175,11 +173,11 @@ const parseOption = (opt : {preview?:boolean}): HTMLReactParserOptions =>({
           return (
             <Box display='flex' justifyContent='center'my={3}>
               {parentClass === "twitter-tweet" ? (
-                <TwitterEmbed url={href} width={500} />
+                <SocialEmbed type="twitter" url={href} width={500} />
               ) : parentClass === "instagram-media" ? (
-                <InstagramEmbed url={href} width={500} />
+                <SocialEmbed type="instagram" url={href} width={500} />
               ) : parentClass === "tiktok-embed" ? (
-                <TikTokEmbed url={href} width={500} />
+                <SocialEmbed type="tiktok" url={href} width={500} />
               ) : null}
             </Box>
           )
