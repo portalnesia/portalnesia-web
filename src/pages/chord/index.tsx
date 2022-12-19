@@ -75,7 +75,7 @@ export default function News() {
                     </Scrollbar>
                 </SWRPages>
                 
-                <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
+                <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} mt={7} pb={0.5} mb={2}>
                     <Box sx={{display:"flex",flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
                         <Typography variant='h4' component='h1'>{order === 'recent' ? `Recent Chord` : 'Popular Chord'}</Typography>
                         <Button disabled={!data&&!error} ref={orderRef} color='inherit' text onClick={()=>setDOrder(true)} endIcon={<Iconify icon='fe:list-order' />}>{order}</Button>

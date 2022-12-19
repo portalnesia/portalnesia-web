@@ -350,7 +350,7 @@ export default function ChordPage({data:chord,meta}: IPages<ChordDetail>) {
                                             </Box>
                                         </Box>
                                         <Box mt={10}>
-                                            <Comment posId={data.id} type='chord' />
+                                            <Comment posId={data.id} type='chord' collapse={false} />
                                         </Box>
                                     </>
                                 )}

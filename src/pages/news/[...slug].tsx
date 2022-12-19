@@ -26,6 +26,9 @@ import { BoxPagination } from "@design/components/Pagination";
 import Breadcrumbs from "@comp/Breadcrumbs";
 import useAPI from "@design/hooks/api";
 import { getAnalytics, logEvent } from "@utils/firebase";
+import Button from "@comp/Button";
+import Link from "@design/components/Link";
+import Divider from "@mui/material/Divider";
 
 export const getServerSideProps = wrapper<NewsDetail>(async({params,redirect,fetchAPI})=>{
     const slug = params?.slug;
@@ -144,8 +147,14 @@ export default function NewsPages({data:news,meta}: IPages<NewsDetail>) {
                                     <>
                                         <Parser html={data?.text} />
 
+                                        <Divider sx={{mt:5,mb:3}} />
+
+                                        <Box textAlign='right'>
+                                            <Link href={data?.source_link} passHref legacyBehavior><Button component='a' className="no-blank" target='_blank' rel="nofollow noopener noreferrer" outlined color='inherit'>Artikel Asli</Button></Link>
+                                        </Box>
+
                                         <Box mt={10}>
-                                            <Comment posId={data.id} type='news' />
+                                            <Comment posId={data.id} type='news' collapse={false} />
                                         </Box>
                                     </>
                                 )}

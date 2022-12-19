@@ -22,6 +22,7 @@ import { portalUrl, staticUrl } from '@utils/main'
 import Scrollbar from './Scrollbar'
 import { handlePageContent } from './TableContent'
 import { BoxPagination } from './Pagination'
+import { FacebookEmbed, InstagramEmbed, TikTokEmbed, TwitterEmbed } from 'react-social-media-embed';
 
 export const editorStyles=(theme: Theme)=>({
   '& pre code':{
@@ -120,9 +121,20 @@ const parseOption = (opt : {preview?:boolean}): HTMLReactParserOptions =>({
       if(/table\-responsive/.test(node?.attribs?.class||"")) {
         return domToReact(node?.children,parseOption(opt)) as any;
       }
+
+      if(node?.attribs?.class === "fb-post" && typeof node?.attribs?.['data-href'] === "string") {
+        <Box display='flex' justifyContent='center' my={3}>
+          <FacebookEmbed url={node?.attribs?.['data-href']} width={500} />
+        </Box>
+      }
     }
     if(node?.type==='tag'&&node?.name==='center'){
       return domToReact(node?.children,parseOption(opt)) as any;
+    }
+    // BLOCKQUOTE (SOCIAL)
+    if(node?.type === 'tag' && node?.name === 'blockquote') {
+      const bqClass = node?.attribs?.class;
+      if(['instagram-media','twitter-tweet','tiktok-embed'].includes(bqClass||"")) return domToReact(node?.children,parseOption(opt));
     }
     // A LINK
     if(node?.type==='tag'&&node?.name==='a'){
@@ -157,6 +169,20 @@ const parseOption = (opt : {preview?:boolean}): HTMLReactParserOptions =>({
             const hreff=href?.replace(/^https:\/\/portalnesia\.com\/?/,"/");
             return <Link href={hreff} passHref legacyBehavior><a {...other}>{domToReact(node?.children,parseOption(opt))}</a></Link>
           }
+        } else {
+          const parentClass = parent?.attribs?.class;
+          const href = node?.attribs?.href
+          return (
+            <Box display='flex' justifyContent='center'my={3}>
+              {parentClass === "twitter-tweet" ? (
+                <TwitterEmbed url={href} width={500} />
+              ) : parentClass === "instagram-media" ? (
+                <InstagramEmbed url={href} width={500} />
+              ) : parentClass === "tiktok-embed" ? (
+                <TikTokEmbed url={href} width={500} />
+              ) : null}
+            </Box>
+          )
         }
       }
     }
@@ -268,11 +294,12 @@ const parseOption = (opt : {preview?:boolean}): HTMLReactParserOptions =>({
       return <Typography paragraph variant='body1' component='p' sx={{textAlign:"justify"}}>{domToReact(node?.children,parseOption(opt))}</Typography>
     }
     // SCRIPT
-    if(node?.type==='tag'&&node?.name==='script') {
-      const src = node?.attribs?.src;
+    if(node?.type === "script" && node?.name==='script') {
+      /*const src = node?.attribs?.src;
       if(src) {
         return <Script src={src} strategy='lazyOnload' />
-      }
+      }*/
+      return <></>;
     }
 
     if(node?.type==='tag' && ['h1','h2','h3','h4','h5','h6'].includes(node?.name)) {

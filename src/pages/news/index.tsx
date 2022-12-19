@@ -53,7 +53,7 @@ export default function News() {
                     </Scrollbar>
                 </SWRPages>
 
-                <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
+                <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} mt={7} pb={0.5} mb={2}>
                     <Typography variant='h4' component='h1'>Recent News</Typography>
                 </Box>
                 <SWRPages loading={!data&&!error} error={error}>

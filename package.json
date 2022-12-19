@@ -95,6 +95,7 @@
     "react-multi-carousel": "^2.8.2",
     "react-redux": "^8.0.5",
     "react-simplemde-editor": "^5.2.0",
+    "react-social-media-embed": "^2.2.10",
     "react-sortable-hoc": "^2.0.0",
     "react-telegram-auth": "^1.0.3",
     "redux": "^4.2.0",
