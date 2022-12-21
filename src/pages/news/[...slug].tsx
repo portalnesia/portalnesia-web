@@ -76,6 +76,8 @@ export default function NewsPages({data:news,meta}: IPages<NewsDetail>) {
             })
         },10000)
 
+        setLiked(!!news.liked)
+
         return ()=>{
             clearTimeout(timeout);
         }

@@ -501,7 +501,7 @@ export default function EditQuizPage({data,meta}: IPages<QuizDetailEditable>) {
 
                                     <Stack px={2} direction='row' spacing={2} justifyContent='space-between' width="100%">
                                         <Button tooltip='Ctrl + S' disabled={loading} loading={loading} sx={{width:'100%'}} icon='save' onClick={handleSave}>Save</Button>
-                                        {isPublished && <Button outlined color='inherit' tooltip='Shift + R' disabled={loading} sx={{width:'100%'}} onClick={()=>openDialog('response',0)}>Response</Button>}
+                                        {isPublished && <Button outlined color='inherit' tooltip='Shift + R' disabled={loading} sx={{width:'100%'}} onClick={openDialog('response',0)}>Response</Button>}
                                     </Stack>
                                 </Stack>
                             </PaperBlock>
