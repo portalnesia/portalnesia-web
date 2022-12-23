@@ -72,10 +72,6 @@ export default function BlogPages({data:blog,meta}: IPages<BlogDetail>) {
     const {get} = useAPI();
 
     React.useEffect(()=>{
-        setLiked(!!data?.liked)
-    },[data])
-
-    React.useEffect(()=>{
         let timeout = setTimeout(()=>{
             get(`/v2/blog/${blog.slug}/update`).catch(()=>{})
             const analytics = getAnalytics();
@@ -84,6 +80,8 @@ export default function BlogPages({data:blog,meta}: IPages<BlogDetail>) {
                 item_id:`${blog.id}`
             })
         },10000)
+
+        setLiked(!!blog.liked)
 
         return ()=>{
             clearTimeout(timeout);

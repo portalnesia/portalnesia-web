@@ -1,0 +1,13 @@
+diff --git a/node_modules/react-twitter-embed/dist/components/TwitterTweetEmbed.d.ts b/node_modules/react-twitter-embed/dist/components/TwitterTweetEmbed.d.ts
+index 60b2573..8065ee4 100644
+--- a/node_modules/react-twitter-embed/dist/components/TwitterTweetEmbed.d.ts
++++ b/node_modules/react-twitter-embed/dist/components/TwitterTweetEmbed.d.ts
+@@ -11,7 +11,7 @@ export interface TwitterTweetEmbedProps {
+     /**
+      * Tweet id that needs to be shown
+      */
+-    tweetId: string;
++    tweetId?: string;
+     /**
+      * Additional options to pass to twitter widget plugin
+      */

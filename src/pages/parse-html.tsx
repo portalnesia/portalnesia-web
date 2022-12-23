@@ -70,6 +70,7 @@ export default function ParseHTMLPages() {
                     </Stack>
                 </form>
             </DefaultLayout>
+            <Recaptcha ref={captchaRef} />
         </Pages>
     )
 }

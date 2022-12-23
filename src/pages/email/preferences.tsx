@@ -39,7 +39,7 @@ export const getServerSideProps = wrapper<IData>(async({resolvedUrl,redirect,que
 
     if(token?.login && !session) return redirect(accountUrl(`login?redirect=${encodeURIComponent(portalUrl(resolvedUrl))}`));
     
-    if(token?.login && session?.user?.id !== token.userid) return redirect();
+    if(token?.login && session?.user?.id != token.userid) return redirect();
 
     const not_jenis=['komentar','birthday','feature'];
     const not_type=['comment','birthday','feature'];

@@ -254,10 +254,6 @@ export default function ChordPage({data:chord,meta}: IPages<ChordDetail>) {
     },[slug,handleAutoScroll]);
 
     React.useEffect(()=>{
-        setLiked(!!data?.liked)
-    },[data])
-
-    React.useEffect(()=>{
         let timeout = setTimeout(()=>{
             get(`/v2/chord/${chord.slug}/update`).catch(()=>{})
             const analytics = getAnalytics();
@@ -266,6 +262,8 @@ export default function ChordPage({data:chord,meta}: IPages<ChordDetail>) {
                 item_id:`${chord.id}`
             })
         },10000)
+
+        setLiked(!!chord.liked)
 
         return ()=>{
             clearTimeout(timeout);
@@ -350,7 +348,7 @@ export default function ChordPage({data:chord,meta}: IPages<ChordDetail>) {
                                             </Box>
                                         </Box>
                                         <Box mt={10}>
-                                            <Comment posId={data.id} type='chord' />
+                                            <Comment posId={data.id} type='chord' collapse={false} />
                                         </Box>
                                     </>
                                 )}

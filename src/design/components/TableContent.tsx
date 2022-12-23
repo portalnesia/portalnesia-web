@@ -211,6 +211,7 @@ export function HtmlMdDown(props: Args) {
     setTimeout(()=>handlePageContent(id)(e),500)
   },[])
 
+  if(content.length <= 0) return null;
   return (
     <Hidden mdUp>
       <Accordion disableGutters square expanded={expand} onChange={handleChange}>
