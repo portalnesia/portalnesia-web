@@ -1,16 +1,13 @@
 import { CombineAction } from '@comp/Action';
 import Button from '@comp/Button';
 import Pages from '@comp/Pages';
-import Developer from '@design/components/Developer';
 import Link from '@design/components/Link';
 import PaperBlock from '@design/components/PaperBlock';
 import { Parser, usePageContent } from '@design/components/Parser';
 import Sidebar from '@design/components/Sidebar';
 import useTableContent, { HtmlMdUp } from '@design/components/TableContent';
 import { useDeveloperMenu } from '@hooks/developer';
-import DashboardLayout from '@layout/dashboard';
-import DefaultLayout from '@layout/default';
-import { Subnav } from '@layout/default/Subnav';
+import DeveloperLayout from '@layout/developer';
 import { ArrowBack, ArrowForward, Edit } from '@mui/icons-material';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -25,7 +22,6 @@ import splitMarkdown from '@utils/split-markdown';
 import axios from 'axios';
 import { marked } from 'marked';
 import { ArticleJsonLd } from 'next-seo';
-import { useRouter } from 'next/router';
 import React from 'react';
 
 type MetaMarkdown = {
@@ -52,7 +48,7 @@ export const getServerSideProps = wrapper<IData>(async({redirect,params,session}
     if(!session || !session.user.isAdmin('developer')) return redirect();
 
     const slugg = slug.join("-");
-    const github = `https://raw.githubusercontent.com/portalnesia/portalnesia/main/docs/api/v1/${slugg}.md`
+    const github = `https://raw.githubusercontent.com/portalnesia/portalnesia-web/main/docs/api/v2/${slugg}.md`
     try {
         const r = await axios.get(github);
         if(!r?.data) return redirect();
@@ -126,9 +122,9 @@ export default function DeveloperDocs({data,meta}: IPages<IData>) {
     },[data.id,menu]);
 
     return (
-        <Pages title={meta?.title} desc={meta?.desc} noIndex image={meta?.image} canonical={`/developer/${data?.slug}`} keyword={data?.keywords?.join(", ")}>
+        <Pages title={meta?.title} desc={meta?.desc} noIndex image={meta?.image} canonical={`/developer/docs/${data?.slug}`} keyword={data?.keywords?.join(", ")}>
             <ArticleJsonLd
-                url={portalUrl(`/developer/${data?.slug}`)}
+                url={portalUrl(`/developer/docs/${data?.slug}`)}
                 title={meta?.title || ""}
                 datePublished={data?.published || ""}
                 dateModified={data?.modified}
@@ -140,68 +136,66 @@ export default function DeveloperDocs({data,meta}: IPages<IData>) {
                 images={meta?.image ? [meta?.image] : [""]}
             />
 
-            <DefaultLayout>
-                <Developer>
-                    <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={0.5}>
-                        <Stack direction='row' justifyContent='space-between' spacing={1}>
-                            <Typography variant='h3' component='h1'>{data?.title}</Typography>
-                            <CombineAction list={{
-                                share:{campaign:'developer'}
-                            }} />
-                        </Stack>
-                    </Box>
-                    <Box mb={5}>
-                        <Typography>{`Last modified: ${getDayJs(data.modified).time_ago().format}`}</Typography>
-                    </Box>
+            <DeveloperLayout>
+                <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={0.5}>
+                    <Stack direction='row' justifyContent='space-between' spacing={1}>
+                        <Typography variant='h3' component='h1'>{data?.title}</Typography>
+                        <CombineAction list={{
+                            share:{campaign:'developer'}
+                        }} />
+                    </Stack>
+                </Box>
+                <Box mb={5}>
+                    <Typography>{`Last modified: ${getDayJs(data.modified).time_ago().format}`}</Typography>
+                </Box>
 
-                    <Grid container spacing={2} justifyContent='center'>
-                        <Grid item xs={12} md={content.length > 0 ? 8 : 10}>
-                            <Box id="page-content">
-                                <Parser html={data.html} />
+                <Grid container spacing={2} justifyContent='center'>
+                    <Grid item xs={12} md={content.length > 0 ? 8 : 10}>
+                        <Box id="page-content">
+                            <Parser html={data.html} />
 
-                                <Box mt={10}>
-                                    <Button outlined color='inherit' className='no-blank' target='_blank' rel='nofollow noopener noreferrer' component='a' href={`https://github.com/portalnesia/portalnesia/edit/main/docs/api/v1/${data?.github_slug}.md`} endIcon={<Edit />}>Edit this page</Button>
-                                </Box>
-                                <Box mt={2}>
-                                    <Grid container spacing={1} alignItems='center' justifyContent='space-between'>
-                                        {prev !== null && (
-                                            <Grid item xs={12} sm={6}>
-                                                <Link href={prev?.link} passHref legacyBehavior><Button className='no-blank no-underline' component='a' startIcon={<ArrowBack />} variant='outlined' size='large' sx={{textAlign:'unset'}}>
-                                                <div>
-                                                    <Typography color='text.secondary' sx={{fontSize:13}}>Previous</Typography>
-                                                    <Typography>{prev?.name}</Typography>
-                                                </div>
-                                                </Button></Link>
-                                            </Grid>
-                                        )}
-                                        {next !== null && (
-                                            <Grid item xs={12} sm={!prev ? 12 : 6} sx={{textAlign:'right'}}>
-                                                <Link href={next?.link} passHref legacyBehavior><Button className='no-blank no-underline' component='a' endIcon={<ArrowForward />} variant='outlined' size='large' sx={{textAlign:'unset'}}>
-                                                <div>
-                                                    <Typography color='text.secondary' sx={{fontSize:13}}>Next</Typography>
-                                                    <Typography>{next?.name}</Typography>
-                                                </div>
-                                                </Button></Link>
-                                            </Grid>
-                                        )}
-                                    </Grid>
-                                </Box>
+                            <Box mt={10}>
+                                <Button outlined color='inherit' className='no-blank' target='_blank' rel='nofollow noopener noreferrer' component='a' href={`https://github.com/portalnesia/portalnesia-web/edit/main/docs/api/v2/${data?.github_slug}.md`} endIcon={<Edit />}>Edit this page</Button>
                             </Box>
-                        </Grid>
-                        {content.length > 0 && (
-                            <Hidden mdDown>
-                                <Grid item xs={12} md={4}>
-                                    <Sidebar id='page-content'>
-                                        <PaperBlock title="Table of Content">
-                                            <HtmlMdUp data={data} />
-                                        </PaperBlock>
-                                    </Sidebar>
+                            <Box mt={2}>
+                                <Grid container spacing={1} alignItems='center' justifyContent='space-between'>
+                                    {prev !== null && (
+                                        <Grid item xs={12} sm={6}>
+                                            <Link href={prev?.link} passHref legacyBehavior><Button className='no-blank no-underline' component='a' startIcon={<ArrowBack />} variant='outlined' size='large' sx={{textAlign:'unset'}}>
+                                            <div>
+                                                <Typography color='text.secondary' sx={{fontSize:13}}>Previous</Typography>
+                                                <Typography>{prev?.name}</Typography>
+                                            </div>
+                                            </Button></Link>
+                                        </Grid>
+                                    )}
+                                    {next !== null && (
+                                        <Grid item xs={12} sm={!prev ? 12 : 6} sx={{textAlign:'right'}}>
+                                            <Link href={next?.link} passHref legacyBehavior><Button className='no-blank no-underline' component='a' endIcon={<ArrowForward />} variant='outlined' size='large' sx={{textAlign:'unset'}}>
+                                            <div>
+                                                <Typography color='text.secondary' sx={{fontSize:13}}>Next</Typography>
+                                                <Typography>{next?.name}</Typography>
+                                            </div>
+                                            </Button></Link>
+                                        </Grid>
+                                    )}
                                 </Grid>
-                            </Hidden>
-                        )}
+                            </Box>
+                        </Box>
                     </Grid>
-                </Developer>
-            </DefaultLayout>
+                    {content.length > 0 && (
+                        <Hidden mdDown>
+                            <Grid item xs={12} md={4}>
+                                <Sidebar id='page-content'>
+                                    <PaperBlock title="Table of Content">
+                                        <HtmlMdUp data={data} />
+                                    </PaperBlock>
+                                </Sidebar>
+                            </Grid>
+                        </Hidden>
+                    )}
+                </Grid>
+            </DeveloperLayout>
         </Pages>
     )
 }

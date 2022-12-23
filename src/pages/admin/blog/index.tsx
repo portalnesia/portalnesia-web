@@ -13,7 +13,7 @@ import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 import Stack from "@mui/material/Stack";
 import { BoxPagination } from "@design/components/Pagination";
-import useAPI, { ApiError, PaginationResponse } from "@design/hooks/api";
+import { PaginationResponse } from "@design/hooks/api";
 import useTablePagination from "@design/hooks/TablePagination";
 import { TableSWRPages } from "@comp/SWRPages";
 import Link from "@design/components/Link";
@@ -21,19 +21,12 @@ import { Span } from "@design/components/Dom";
 import Label from "@design/components/Label";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
-import { Delete, Edit } from "@mui/icons-material";
+import { Edit } from "@mui/icons-material";
 import TablePagination from "@mui/material/TablePagination";
-import Button from "@comp/Button";
 import ConfirmationDialog from "@design/components/ConfirmationDialog";
-import dynamic from "next/dynamic";
-import useNotification from "@design/components/Notification";
 import { BlogPagination } from "@model/pages";
-import { useMousetrap } from "@hooks/hotkeys";
-import Router from "next/router";
 import Breadcrumbs from "@comp/Breadcrumbs";
 import Grid from "@mui/material/Grid";
-
-const Backdrop = dynamic(()=>import("@design/components/Backdrop"));
 
 export const getServerSideProps = wrapper(async({redirect,session,resolvedUrl})=>{
     if(!session || !session.user.isAdmin('blog')) return redirect(); 
@@ -46,12 +39,7 @@ export const getServerSideProps = wrapper(async({redirect,session,resolvedUrl})=
 
 export default function BlogAdminIndex() {
     const {page,rowsPerPage,...tablePagination} = useTablePagination(true,10);
-    const {data,error,mutate} = useSWR<PaginationResponse<BlogPagination>>(`/v2/blog/admin?page=${page}&per_page=${rowsPerPage}`);
-    const confirmRef = React.useRef<ConfirmationDialog>(null)
-    const [delBlog,setDelete] = React.useState<BlogPagination>();
-    const [loading,setLoading] = React.useState(false);
-    const setNotif = useNotification();
-    const {del} = useAPI();
+    const {data,error} = useSWR<PaginationResponse<BlogPagination>>(`/v2/blog/admin?page=${page}&per_page=${rowsPerPage}`);
 
     const getNumber = React.useCallback((i:number)=>{
         return ((page-1)*rowsPerPage)+i+1
@@ -129,10 +117,6 @@ export default function BlogAdminIndex() {
                     <TablePagination page={page-1} rowsPerPage={rowsPerPage} count={data?.total||0} {...tablePagination} />
                 </Box>
             </DashboardLayout>
-            <ConfirmationDialog ref={confirmRef} body={delBlog ? (
-                <Typography>Delete pages <Span sx={{color:'customColor.link'}}>{delBlog.title}</Span>?</Typography>
-            ) : undefined} />
-            <Backdrop open={loading} />
         </Pages>
     )
 }

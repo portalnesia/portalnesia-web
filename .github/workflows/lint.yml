@@ -1,0 +1,43 @@
+name: Next Lint
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths: 'src/**'
+  push:
+    branches:
+      - main
+    paths: 'src/**'
+
+jobs:
+  frontend-lint:
+    runs-on: ubuntu-18.04
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    env:
+      NODE_ENV: test
+      PORT: 3000
+      NEXT_PUBLIC_API_URL: https://api.portalnesia.com
+      NEXT_PUBLIC_URL: http://localhost:3000
+      INTERNAL_SERVER_SECRET: ${{secrets.AUTH_PN_INTERNAL_SECRET}}
+      SECRET: ${{secrets.CRYPTO_SECRET}}
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+      - name: Install Dependencies
+        run: |
+          npm config set legacy-peer-deps true
+          npm ci
+          npm run patch
+      - name: Run Lint
+        run: npm run lint

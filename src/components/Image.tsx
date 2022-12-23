@@ -83,6 +83,13 @@ const Image=React.forwardRef<HTMLImageElement,ImageProps>((props,ref)=>{
         setMenu(!menu)
         setAnchorEl([event.clientX - 2,event.clientY - 4]);
     },[menu])
+
+    const onNonFancuboxRightClick: React.MouseEventHandler<HTMLImageElement> = React.useCallback((event: React.MouseEvent<HTMLImageElement>)=>{
+        //if(process.env.NODE_ENV === "production") {
+            event.stopPropagation()
+            event.preventDefault()
+        //}
+    },[])
     
     const onClose=React.useCallback(()=>{
         setMenu(false)
@@ -163,9 +170,9 @@ const Image=React.forwardRef<HTMLImageElement,ImageProps>((props,ref)=>{
                         {!withPng && <source type='image/webp' srcSet={webpSrc}/> }
                         <source type={withPng ? 'image/png' : 'image/jpeg'} srcSet={withPng ? pngSrc : src}/>
                         {lazy ? (
-                            <LazyImageStyle src={withPng ? pngSrc : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={(e: any)=>e.preventDefault()} {...(alt ? {alt:alt} : {})} {...rest} />
+                            <LazyImageStyle src={withPng ? pngSrc : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={onNonFancuboxRightClick} {...(alt ? {alt:alt} : {})} {...rest} />
                         ) : (
-                            <ImageStyle ref={ref} src={withPng ? pngSrc : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={(e)=>e.preventDefault()} {...(alt ? {alt:alt} : {})} {...rest} />
+                            <ImageStyle ref={ref} src={withPng ? pngSrc : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={onNonFancuboxRightClick} {...(alt ? {alt:alt} : {})} {...rest} />
                         )}
                     </picture>
                 )}
@@ -194,9 +201,9 @@ const Image=React.forwardRef<HTMLImageElement,ImageProps>((props,ref)=>{
                         
                     </ButtonBase>
                 ) : lazy ? (
-                    <LazyImageStyle src={withPng ? `${src}&output=png` : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={(e: any)=>e.preventDefault()} {...(alt ? {alt:alt} : {})} {...rest} />
+                    <LazyImageStyle src={withPng ? `${src}&output=png` : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={onNonFancuboxRightClick} {...(alt ? {alt:alt} : {})} {...rest} />
                 ) : (
-                    <ImageStyle ref={ref} src={withPng ? `${src}&output=png` : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={(e)=>e.preventDefault()} {...(alt ? {alt:alt} : {})} {...rest} />
+                    <ImageStyle ref={ref} src={withPng ? `${src}&output=png` : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={onNonFancuboxRightClick} {...(alt ? {alt:alt} : {})} {...rest} />
                 )}
                 <Menu
                     anchorReference="anchorPosition"

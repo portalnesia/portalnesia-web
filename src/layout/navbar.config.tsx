@@ -116,6 +116,14 @@ export const dashboardMenu: INavbar[] = [{
 }]
 
 export const adminMenu: INavbar[] = [{
+    name:"Logs",
+    link:"/admin/logs?utm_source=portalnesia+web&utm_medium=navbar",
+    icon: 'icon-park-outline:log',
+},{
+    name:"Calendar",
+    link:"/admin/calendar?utm_source=portalnesia+web&utm_medium=navbar",
+    icon: 'material-symbols:calendar-month',
+},{
     name:"Pages",
     link:"/admin/pages?utm_source=portalnesia+web&utm_medium=navbar",
     icon: 'material-symbols:library-books-outline',
