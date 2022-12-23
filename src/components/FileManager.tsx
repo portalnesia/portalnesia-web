@@ -494,7 +494,7 @@ function PortalnesiaFiles({data:dt,selected,index:i,onClick,onRightClick,disable
         e.stopPropagation()
         e.preventDefault()
         setOpen(true)
-        setAnchorEl([e.clientX - 2,e.clientY - 4]);
+        setAnchorEl([e.clientX + 20,e.clientY - 4]);
         if(onRightClick) onRightClick(dt,i)
     },[onRightClick,dt,i])
 

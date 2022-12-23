@@ -12,9 +12,9 @@ export type AppsPagination = {
 
 type SecuritySchema = keyof typeof schema;
 
-type BaseAppsDetail = {
+export type AppsDetail = {
+    id: string,
     name: string,
-    client_id: string,
     redirect_uri: string[]|null,
     grant_types: string[]|null,
     origin: string[]|null,
@@ -22,15 +22,11 @@ type BaseAppsDetail = {
     publish: boolean,
     website: string|null,
     description: string|null,
-    id: string,
     icon: string|null,
     terms_url: string|null,
     privacy_url: string|null
+    test_users: UserPagination[]
 }
-export type AppsDetail<test=void> = test extends void ? BaseAppsDetail : 
-    BaseAppsDetail & {
-        test_users: UserPagination[]
-    }
 
 export type IScopes = {
     id: string,

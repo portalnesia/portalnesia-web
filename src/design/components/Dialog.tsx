@@ -30,6 +30,7 @@ export interface DialogProps extends Props {
    * DialogActions children
    */
   actions?: DialogActionsProps['children']
+  actionsProps?: DialogActionsProps
   sticky?:boolean
 }
 
@@ -39,7 +40,7 @@ export interface DialogProps extends Props {
  * 
  * Homepage: [Portalnesia](https://portalnesia.com)
  */
-export default function Dialog({handleClose,loading,onClose:_,fullScreen,maxWidth="sm",children,title,titleWithClose=true,content,actions,sticky=true,...other}: DialogProps) {
+export default function Dialog({handleClose,loading,onClose:_,fullScreen,maxWidth="sm",children,title,titleWithClose=true,content,actions,sticky=true,actionsProps,...other}: DialogProps) {
     const theme = useTheme();
     const isDark = theme.palette.mode === "dark"
     const sm = useResponsive('down','sm')
@@ -74,7 +75,7 @@ export default function Dialog({handleClose,loading,onClose:_,fullScreen,maxWidt
           {children}
         </DialogContent>
         {actions && (
-          <DialogActions fixed={isFullscreen}>
+          <DialogActions fixed={isFullscreen} {...actionsProps}>
             {actions}
           </DialogActions>
         )}

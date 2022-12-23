@@ -1,6 +1,40 @@
 import db from "./db";
 import { DataTypes, Model } from "sequelize";
 
+export const SAPTAWARA = [
+    "Redite",
+    "Soma",
+    "Anggara",
+    "Buddha",
+    "Wrespati",
+    "Sukra",
+    "Saniscara"
+]
+
+export const PANCAWARA = [
+    "Umanis",
+    "Paing",
+    "Pon",
+    "Wage",
+    "Kliwon"
+]
+
+export const WUKU = ['sinta','landep','ukir','kulantir','tolu','gumbreg','wariga','warigadian','julungwangi','sungsang','dungulan','kuningan','langkir','medangsia','pujut','pahang','krulut','merakih','tambir','medangkungan','matal','uye','menail','prangbakat','bala','ugu','wayang','kelawu','dukut','watugunung'];
+
+export type CalendarDetail = {
+    id: number
+    type: 'tilem'|'purnama'|'sasih'|'wuku'|'other'
+    bali?: boolean
+    text: string|null
+    full_text: string|null
+    date: Date
+    date_bali: string|null
+    image: string|null
+    public: boolean
+    group: boolean
+    publish?: boolean
+}
+
 export type CalendarAttribute = {
     id?: number
     jenis?:'tilem'|'purname'|'other'

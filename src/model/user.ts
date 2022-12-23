@@ -55,7 +55,7 @@ export type UserWebAuthn = {
 
 type FollowFn<D=void> = (user: User) => Promise<D>
 
-export type UserRolesType = "comment" | "pages" | "chord" | "blog" | "url" | "thread" | "support" | "developer"
+export type UserRolesType = "comment" | "pages" | "chord" | "blog" | "url" | "thread" | "support" | "event" | "developer"
 
 export type UserAttribute = {
     id?: number

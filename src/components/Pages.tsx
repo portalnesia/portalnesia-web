@@ -21,7 +21,7 @@ import Slide from '@mui/material/Slide';
 import { useHotKeys } from '@hooks/hotkeys';
 import HotKeys from './HotKeys';
 import { IReport } from '@type/redux';
-import { IData } from '@comp/Feedback';
+import type { IData } from '@comp/Feedback';
 import Recaptcha from '@design/components/Recaptcha';
 import useAPI, { ApiError } from '@design/hooks/api';
 import useNotification, { ContentMessage, useNotificationSWR } from '@design/components/Notification';
@@ -276,7 +276,7 @@ export default function Pages({children,title,desc,keyword,canonical:canonicalPr
             <Portal>
                 <Slide direction='left' in={report!==undefined} unmountOnExit>
                     <Box>
-                        <Feedback title={report?.type === 'feedback' ? 'Send Feedback' : 'Send Report'} placeholder={report?.type === 'feedback' ? "Have feedback? We'd love to hear it, but please don't share sensitive information. Have questions? try support.":undefined} onCancel={handleCloseFeecback} onSend={handleReport(report)} disabled={loading==='report'} required={['konten','komentar','user'].includes(report?.type||"")} />
+                        <Feedback title={report?.type === 'feedback' ? 'Send Feedback' : 'Send Report'} placeholder={report?.type === 'feedback' ? "Tell us how we can improve our product":undefined} onCancel={handleCloseFeecback} onSend={handleReport(report)} disabled={loading==='report'} required={['konten','komentar','user'].includes(report?.type||"")} />
                     </Box>
                 </Slide>
             </Portal>
