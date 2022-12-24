@@ -2,7 +2,7 @@ import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 're
 import { useTheme } from '@mui/material/styles';
 import config from '@src/config';
 import { NextSeo, SiteLinksSearchBoxJsonLd, CorporateContactJsonLd } from 'next-seo';
-import Router, { useRouter } from 'next/router';
+import Router from 'next/router';
 import { portalUrl, staticUrl } from '@utils/main';
 import { useDispatch, useSelector } from '@redux/store';
 import SplashScreen from '@design/components/Splashscreen';
@@ -16,8 +16,6 @@ import Zoom from '@mui/material/Zoom';
 import { Socket } from './Socket';
 import Script from 'next/script';
 import Portal from '@mui/material/Portal';
-import Box from '@mui/material/Box';
-import Slide from '@mui/material/Slide';
 import { useHotKeys } from '@hooks/hotkeys';
 import HotKeys from './HotKeys';
 import { IReport } from '@type/redux';
@@ -50,7 +48,6 @@ export interface PageProps {
 
 
 export default function Pages({children,title,desc,keyword,canonical:canonicalProps,image,noIndex=false,withoutShowTop}: PageProps) {
-    const router = useRouter()
     const { adBlock } = useInit();
     const dispatch = useDispatch();
     const {appToken,report} = useSelector(s=>({appToken:s.appToken,report:s.report}));
@@ -201,6 +198,22 @@ export default function Pages({children,title,desc,keyword,canonical:canonicalPr
     /* eslint-disable-next-line react-hooks/exhaustive-deps */
     },[post,appToken])
 
+    const onWidgetLoad = useCallback(()=>{
+        setTimeout(()=>{
+            const widget = document.getElementById('arc-widget-container');
+            if(widget) {
+                widget.setAttribute('data-arc-widget-portalnesia','');
+            }
+        },2000)
+    },[])
+
+    useEffect(()=>{
+        const widget = document.getElementById('arc-widget-container');
+        if(widget) {
+            widget.setAttribute('data-arc-widget-portalnesia','');
+        }
+    },[canonicalProps])
+
     return (
         <div>
             {!appToken ? (
@@ -270,15 +283,11 @@ export default function Pages({children,title,desc,keyword,canonical:canonicalPr
                     <KeyboardArrowUp fontSize='large' />
                 </Fab>
             </Zoom>
-            {process.env.NODE_ENV==='production' ? <Script key='arcio' strategy="lazyOnload" src="https://arc.io/widget.min.js#3kw38brn" /> : null}
+            {process.env.NODE_ENV==='production' ? <Script key='arcio' strategy="lazyOnload" onLoad={onWidgetLoad} src="https://arc.io/widget.min.js#3kw38brn" /> : null}
             {process.env.NODE_ENV==='production' ? <Script key="instatus" strategy="lazyOnload" src="https://portalnesia.instatus.com/widget/script.js" /> : null}
 
             <Portal>
-                <Slide direction='left' in={report!==undefined} unmountOnExit>
-                    <Box>
-                        <Feedback title={report?.type === 'feedback' ? 'Send Feedback' : 'Send Report'} placeholder={report?.type === 'feedback' ? "Tell us how we can improve our product":undefined} onCancel={handleCloseFeecback} onSend={handleReport(report)} disabled={loading==='report'} required={['konten','komentar','user'].includes(report?.type||"")} />
-                    </Box>
-                </Slide>
+                <Feedback open={report!==undefined} title={report?.type === 'feedback' ? 'Send Feedback' : 'Send Report'} placeholder={report?.type === 'feedback' ? "Tell us how we can improve our product":undefined} onCancel={handleCloseFeecback} onSend={handleReport(report)} disabled={loading==='report'} required={['konten','komentar','user'].includes(report?.type||"")} />
             </Portal>
             <HotKeys atasKeymap={atasKeyMap} bawahKeymap={bawahKeyMap} open={keysDialog==='keyboard'} onClose={setKeysDialog(undefined)} />
             <Recaptcha ref={captchaRef} />

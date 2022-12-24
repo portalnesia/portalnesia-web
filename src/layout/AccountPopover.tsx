@@ -123,63 +123,65 @@ export default function AccountPopover() {
         sx={{ width: 220 }}
         disableScrollLock
       >
-        <Box sx={{ my: 1.5, px: 2.5 }}>
-          <Typography variant="subtitle1" noWrap>
-            {user ? user?.name : "Guest"}
-          </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {user ? `@${user?.username}` : '@portalnesia'}
-          </Typography>
-        </Box>
+        <Box py={1}>
+          <Box sx={{ pb: 1.5, px: 2.5 }}>
+            <Typography variant="subtitle1" noWrap>
+              {user ? user?.name : "Guest"}
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
+              {user ? `@${user?.username}` : '@portalnesia'}
+            </Typography>
+          </Box>
 
-        <Divider sx={{ my: 1 }} />
-        
-        {!pathname.startsWith("/dashboard") && user ? (
-          <Link key={'dashboard'} href={"/dashboard?utm_source=portalnesia+web&utm_medium=header"} passHref legacyBehavior>
-            <MenuItem component='a' onClick={handleClose} sx={{typography:'body2',py:1,px:2.5}}>
-              <Iconify icon={"material-symbols:dashboard-rounded"} sx={{mr:2,width:24,height:24}} />
-              Dashboard
-            </MenuItem>
-          </Link>
-        ) : null}
-
-        {MENU_OPTIONS(user).map(m=>{
-          if(m.href) {
-            return (
-              <Link key={m.label} href={m.href} passHref legacyBehavior>
-                <MenuItem component='a' onClick={handleClose} sx={{typography:'body2',py:1,px:2.5}}>
-                  <Iconify icon={m.icon} sx={{mr:2,width:24,height:24}} />
-                  {m.label}
-                </MenuItem>
-              </Link>
-            )
-          }
-          return null;
-        })}
-
-        <MenuItem key='feedback' component='div' onClick={handleFeedback} sx={{typography:'body2',py:1,px:2.5}}>
-          <Iconify icon={"ic:outline-feedback"} sx={{mr:2,width:24,height:24}} />
-          Send Feedback
-        </MenuItem>
-
-        <MenuItem key='navigation' component='div' onClick={handleKeyboard} sx={{typography:'body2',py:1,px:2.5}}>
-          <Iconify icon={"material-symbols:keyboard-alt"} sx={{mr:2,width:24,height:24}} />
-          Navigation
-        </MenuItem>
-
-        <Box sx={{ p: 2, pt: 1.5 }}>
-          {user ? (
-            <Button href={accountUrl("logout?utm_source=portalnesia+web&utm_medium=header")} fullWidth color="inherit" variant="outlined">
-              Logout
-            </Button>
-          ) : (
-            <>
-              <Button href={accountUrl("login?utm_source=portalnesia+web&utm_medium=header")} fullWidth color="inherit" variant="outlined">
-                Login / Register
-              </Button>
-            </>
-          )}
+          <Divider sx={{ my: 1 }} />
           
+          {!pathname.startsWith("/dashboard") && user ? (
+            <Link key={'dashboard'} href={"/dashboard?utm_source=portalnesia+web&utm_medium=header"} passHref legacyBehavior>
+              <MenuItem component='a' onClick={handleClose} sx={{typography:'body2',py:1,px:2.5}}>
+                <Iconify icon={"material-symbols:dashboard-rounded"} sx={{mr:2,width:24,height:24}} />
+                Dashboard
+              </MenuItem>
+            </Link>
+          ) : null}
+
+          {MENU_OPTIONS(user).map(m=>{
+            if(m.href) {
+              return (
+                <Link key={m.label} href={m.href} passHref legacyBehavior>
+                  <MenuItem component='a' onClick={handleClose} sx={{typography:'body2',py:1,px:2.5}}>
+                    <Iconify icon={m.icon} sx={{mr:2,width:24,height:24}} />
+                    {m.label}
+                  </MenuItem>
+                </Link>
+              )
+            }
+            return null;
+          })}
+
+          <MenuItem key='feedback' component='div' onClick={handleFeedback} sx={{typography:'body2',py:1,px:2.5}}>
+            <Iconify icon={"ic:outline-feedback"} sx={{mr:2,width:24,height:24}} />
+            Send Feedback
+          </MenuItem>
+
+          <MenuItem key='navigation' component='div' onClick={handleKeyboard} sx={{typography:'body2',py:1,px:2.5}}>
+            <Iconify icon={"material-symbols:keyboard-alt"} sx={{mr:2,width:24,height:24}} />
+            Navigation
+          </MenuItem>
+
+          <Box sx={{ p: 2, pt: 1.5 }}>
+            {user ? (
+              <Button href={accountUrl("logout?utm_source=portalnesia+web&utm_medium=header")} fullWidth color="inherit" variant="outlined">
+                Logout
+              </Button>
+            ) : (
+              <>
+                <Button href={accountUrl("login?utm_source=portalnesia+web&utm_medium=header")} fullWidth color="inherit" variant="outlined">
+                  Login / Register
+                </Button>
+              </>
+            )}
+            
+          </Box>
         </Box>
       </MenuPopover>
     </>

@@ -15,6 +15,8 @@ import NavSection from './NavSection';
 import { FooterChild, FooterMenu, FooterRoot, MenuItem } from '@layout/default/Footer';
 import { generalFooter } from '@layout/footer.config';
 import Stack from '@mui/material/Stack';
+import SwipeableDrawer from '@mui/material/SwipeableDrawer';
+import { isIOS } from 'react-device-detect';
 
 const RootStyle = styled('div')(({ theme }) => ({
     [theme.breakpoints.up('lg')]: {
@@ -115,15 +117,19 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar, title,
     return (
         <RootStyle>
             {!isDesktop && (
-                <Drawer
+                <SwipeableDrawer
                     open={isOpenSidebar}
                     onClose={onCloseSidebar}
+                    onOpen={()=>{}}
+                    disableSwipeToOpen
                     PaperProps={{
-                        sx: { width: DRAWER_WIDTH }
+                      sx: { width: DRAWER_WIDTH }
                     }}
+                    disableBackdropTransition={!isIOS}
+                    disableDiscovery
                 >
                     {renderContent}
-                </Drawer>
+                </SwipeableDrawer>
             )}
     
             {isDesktop && (

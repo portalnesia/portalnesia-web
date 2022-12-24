@@ -10,7 +10,7 @@ import Grid from '@mui/material/Grid';
 import { navbarMenu } from './navbar.config';
 import ButtonBase from '@mui/material/ButtonBase';
 import { styled } from '@mui/material/styles';
-import Fade from '@mui/material/Fade';
+import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import ListItemText from '@mui/material/ListItemText';
 import Link from '@design/components/Link';
 import { useRouter } from 'next/router';
@@ -18,21 +18,7 @@ import Portal from '@mui/material/Portal';
 import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
 import { ArrowBack } from '@mui/icons-material';
-
-const Theme = [
-  {
-    value: 'auto',
-    label: "Device Theme",
-  },
-  {
-    value: 'light',
-    label: "Light Theme"
-  },
-  {
-    value: 'dark',
-    label: "Dark Theme",
-  }
-];
+import { isIOS } from 'react-device-detect';
 
 export const CustomListItemText = styled(ListItemText)(({theme})=>({
     '& .MuiListItemText-secondary':{
@@ -89,7 +75,18 @@ export function NavbarPopover() {
                 </IconButtonActive>
             </Tooltip>
             <Portal>
-                <Fade in={open}>
+                <SwipeableDrawer
+                    open={open}
+                    onClose={handleOpen}
+                    onOpen={()=>{}}
+                    disableSwipeToOpen
+                    PaperProps={{
+                        sx: { width: '100%' }
+                    }}
+                    anchor="right"
+                    disableBackdropTransition={!isIOS}
+                    disableDiscovery
+                >
                     <Box position='fixed' bgcolor='background.paper' m={0} ml={'0 !important'} pb={2} width='100%' left={0} top={0} overflow='auto' height='100%' zIndex={1103}>
                         <Stack position='fixed' top={0} left={0} width='100%' bgcolor='background.paper' direction="row" spacing={2} borderBottom={theme=>`2px solid ${theme.palette.divider}`} p={2} height={63} zIndex={1}>
                             <IconButton onClick={handleOpen}>
@@ -101,7 +98,7 @@ export function NavbarPopover() {
                         <Box px={2} py={1} pt={'85px'}>
                             <Box bgcolor='background.default' p={2} borderRadius={2} overflow='auto'>
                                 <Grid container spacing={1}>
-                                    {navbarMenu.sort((a,b)=>a.child ? 1 : -1).map((m)=>{
+                                    {navbarMenu.map((m)=>{
                                         if(m.child) {
                                             return m.child.map(c=>(
                                                 <Grid key={`${m.name}-${c.name}`} item xs={12} sm={6}>
@@ -127,7 +124,7 @@ export function NavbarPopover() {
                             </Box>
                         </Box>
                     </Box>
-                </Fade>
+                </SwipeableDrawer>
             </Portal>
         </>
     )

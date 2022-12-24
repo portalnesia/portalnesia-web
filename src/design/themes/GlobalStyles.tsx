@@ -29,6 +29,9 @@ export default function GlobalStyles({styles}: GlobalStylesProps) {
           width: '100%',
           height: '100%'
         },
+        'div#arc-widget-container[data-arc-widget-portalnesia]':{
+          zIndex:'unset !important'
+        },
         '#root': {
           width: '100%',
           height: '100%'

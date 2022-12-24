@@ -95,7 +95,7 @@ export default function CalendarAdminIndex() {
 
     const handleOrder=React.useCallback((bali: boolean)=>()=>{
         setDOrder(false);
-        Router.push(`/admin/calendar${bali ? '?filter=bali' : ''}`,undefined,{shallow:true,scroll:true});
+        Router.push(`/admin/calendar${bali ? '?filter=bali' : ''}`,undefined,{shallow:true});
     },[])
 
     const handleReset = React.useCallback(()=>{
@@ -190,15 +190,6 @@ export default function CalendarAdminIndex() {
                         <Stack direction='row' spacing={1}>
                             <Button disabled={!data&&!error} ref={orderRef} color='inherit' text onClick={()=>setDOrder(true)} endIcon={<Iconify icon='fe:list-order' />}>{"Filter"}</Button>
                             <Button onClick={handleOpenDialog}>New</Button>
-                            
-                            <MenuPopover open={dOrder} onClose={()=>setDOrder(false)} anchorEl={orderRef.current} paperSx={{py:1,width:150}}>
-                                <MenuItem key={'public'} sx={{ color: 'text.secondary',py:1 }} onClick={handleOrder(false)} selected={!isBali}>
-                                    <ListItemText primary={"General"} />
-                                </MenuItem>
-                                <MenuItem key={'bali'} sx={{ color: 'text.secondary',py:1 }} onClick={handleOrder(true)} selected={isBali}>
-                                        <ListItemText primary={"Bali"} />
-                                    </MenuItem>
-                            </MenuPopover>
                         </Stack>
                     </Stack>
                 </Box>
@@ -329,6 +320,16 @@ export default function CalendarAdminIndex() {
                 <Typography>Delete calendar <Span sx={{color:'customColor.link'}}>{delCalendar.text}</Span>?</Typography>
             ) : undefined} />
             <Backdrop open={loading==="del"} />
+            <MenuPopover disableDrawer open={dOrder} onClose={()=>setDOrder(false)} anchorEl={orderRef.current} paperSx={{width:150}}>
+                <Box py={1}>
+                    <MenuItem key={'public'} sx={{ color: 'text.secondary',py:1 }} onClick={handleOrder(false)} selected={!isBali}>
+                        <ListItemText primary={"General"} />
+                    </MenuItem>
+                    <MenuItem key={'bali'} sx={{ color: 'text.secondary',py:1 }} onClick={handleOrder(true)} selected={isBali}>
+                        <ListItemText primary={"Bali"} />
+                    </MenuItem>
+                </Box>
+            </MenuPopover>
         </Pages>
     )
 }

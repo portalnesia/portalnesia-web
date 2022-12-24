@@ -720,7 +720,7 @@ function MenuButton({data,disabled,onFollow,user}: MenuButtonProps) {
                 onClose={handleMenu(false)}
                 anchorEl={anchorRef.current}
             >
-                <Box sx={{ my: 1.5}}>
+                <Box sx={{ py: 1}}>
                     <Link href={`/user/${data.username}`} passHref legacyBehavior><MenuItem component='a' onClick={handleMenu(false)}><ListItemIcon><AccountCircle/></ListItemIcon> View Profile</MenuItem></Link>
                     {('isFollowing' in data && user && user.id !== data.id) && (
                         <>

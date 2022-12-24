@@ -56,7 +56,7 @@ export default function Dialog({handleClose,loading,onClose:_,fullScreen,maxWidt
     return (
       <Dialogg {...(isDark  ? {PaperProps:{elevation:0}} : {})} fullScreen={isFullscreen} onClose={onClose} fullWidth maxWidth={maxWidth} scroll='body' {...other}>
         {title && (
-          <Div {...sticky ? {sx:{position:'sticky',top:0,width:'100%',backgroundColor:'background.paper',zIndex:1}} : {}}>
+          <Div {...sticky ? {sx:{position:'sticky',top:0,width:'100%',backgroundColor:'background.paper',zIndex:1,borderBottom:t=>`1px solid ${t.palette.divider}`}} : {}}>
             <DialogTitle>
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Typography variant='h5'>{title}</Typography>

@@ -12,7 +12,7 @@ import CustomCard from "@design/components/Card";
 import { getDayJs, href } from "@utils/main";
 import Container from "@comp/Container";
 import { ChordPagination } from "@model/chord";
-import { useRouter } from "next/router";
+import Router,{ useRouter } from "next/router";
 import { ucwords } from "@portalnesia/utils";
 import Button from "@comp/Button";
 import MenuPopover from "@design/components/MenuPopover";
@@ -43,8 +43,7 @@ export default function News() {
 
     const handleOrder=React.useCallback((order:'recent'|'popular')=>()=>{
         setDOrder(false);
-        router.push({pathname:'/chord',query:{order}},`/chord?order=${order}`,{shallow:true,scroll:true});
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */
+        Router.push({pathname:'/chord',query:{order}},`/chord?order=${order}`,{shallow:true});
     },[])
 
     return (
@@ -79,14 +78,6 @@ export default function News() {
                     <Box sx={{display:"flex",flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
                         <Typography variant='h4' component='h1'>{order === 'recent' ? `Recent Chord` : 'Popular Chord'}</Typography>
                         <Button disabled={!data&&!error} ref={orderRef} color='inherit' text onClick={()=>setDOrder(true)} endIcon={<Iconify icon='fe:list-order' />}>{order}</Button>
-
-                        <MenuPopover open={dOrder} onClose={()=>setDOrder(false)} anchorEl={orderRef.current} paperSx={{py:1,width:150}}>
-                            {selectArr.map(s=>(
-                                <MenuItem key={s} sx={{ color: 'text.secondary',py:1 }} onClick={handleOrder(s)} selected={order === s}>
-                                    <ListItemText primary={ucwords(s)} />
-                                </MenuItem>
-                            ))}
-                        </MenuPopover>
                     </Box>
                 </Box>
 
@@ -114,6 +105,15 @@ export default function News() {
                         
                 </SWRPages>
             </DefaultLayout>
+            <MenuPopover disableDrawer open={dOrder} onClose={()=>setDOrder(false)} anchorEl={orderRef.current} paperSx={{width:150}}>
+                <Box py={1}>
+                    {selectArr.map(s=>(
+                        <MenuItem key={s} sx={{ color: 'text.secondary',py:1 }} onClick={handleOrder(s)} selected={order === s}>
+                            <ListItemText primary={ucwords(s)} />
+                        </MenuItem>
+                    ))}
+                </Box>
+            </MenuPopover>
         </Pages>
     )
 }

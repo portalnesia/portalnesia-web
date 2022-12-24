@@ -29,6 +29,7 @@ import LocalStorage from "@utils/local-storage"
 import Dialog from "@design/components/Dialog"
 import SimpleBarReact from 'simplebar-react';
 import { BoxPagination } from "@design/components/Pagination"
+import Slide from "@mui/material/Slide"
 
 type BrowserInfo = IBrowserInfo & ({
     user?: UserPagination
@@ -54,6 +55,7 @@ export interface FeedbackProps {
     hideTip?: string
     editDoneLabel?: string
     confirmLabel?: string
+    open: boolean
 }
 
 interface FeedbackClassProps {  
@@ -118,6 +120,8 @@ interface FeedbackState {
     baseScreenshot: string|null;
     loadingEdit: boolean,
     legacyLoadingScreenshot: boolean
+    paperOpen: boolean
+    sysInfo?: IBrowserInfo
 }
 
 type FeedbackAllProps = FeedbackProps&FeedbackClassProps
@@ -143,12 +147,9 @@ class FeedbackClass extends React.Component<FeedbackAllProps,FeedbackState> {
     highlight = React.createRef<HTMLDivElement>()
     black = React.createRef<HTMLDivElement>()
     simpleBar = React.createRef<HTMLElement>()
-    hasHelper=false;
     imageBlob?: Blob;
     screenshotBtn = React.createRef<HTMLButtonElement>()
     textarea = React.createRef<HTMLTextAreaElement>()
-    timer?: NodeJS.Timeout
-    sysInfo?: IBrowserInfo
 
     constructor(props: FeedbackAllProps) {
         super(props);
@@ -174,7 +175,9 @@ class FeedbackClass extends React.Component<FeedbackAllProps,FeedbackState> {
           screenshotImg:null,
           baseScreenshot:null,
           loadingEdit:false,
-          legacyLoadingScreenshot:false
+          legacyLoadingScreenshot:false,
+          paperOpen:true,
+          sysInfo:undefined
         }
         this.dragRect = false;
         this.startX = 0;
@@ -183,15 +186,16 @@ class FeedbackClass extends React.Component<FeedbackAllProps,FeedbackState> {
         this.shareScreenCapture = this.shareScreenCapture.bind(this);
     }
 
-    componentDidMount(): void {
+    init() {
         this.setState({
             window:{
                 height:window.innerHeight,
                 width:window.innerWidth
-            }
+            },
+            paperOpen:true,
+            sysInfo: getBrowserInfo()
         })
 
-        this.sysInfo = getBrowserInfo();
         let baseCanvas = this.baseCanvas.current;
         if(baseCanvas) {
             this.baseCtx = baseCanvas.getContext('2d');
@@ -208,6 +212,40 @@ class FeedbackClass extends React.Component<FeedbackAllProps,FeedbackState> {
                 })
             }
         }
+    }
+
+    componentDidMount(): void {
+        this.init();
+    }
+
+    componentDidUpdate(prevProps: Readonly<FeedbackAllProps>, prevState: Readonly<FeedbackState>, snapshot?: any): void {
+        if(this.props.open && prevProps.open !== this.props.open) {
+            this.init();
+        }
+    }
+
+    close() {
+        this.setState({paperOpen:false},()=>{
+            setTimeout(()=>{
+                if(typeof this.props.onCancel === "function") this.props.onCancel();
+                this.setState({
+                    loading: false,
+                    editMode: false,
+                    toolBarType: 'highlight',
+                    showDialog:true,
+                    highlightItem: [],
+                    blackItem: [],
+                    text: '',
+                    textError: '',
+                    showInformation: false,
+                    helperSteps:0,
+                    screenshotImg:null,
+                    baseScreenshot:null,
+                    loadingEdit:false,
+                    legacyLoadingScreenshot:false
+                });
+            },200); 
+        })
     }
 
     handleGotItHelper() {
@@ -368,19 +406,19 @@ class FeedbackClass extends React.Component<FeedbackAllProps,FeedbackState> {
     canvasMouseDown(e: React.MouseEvent<HTMLCanvasElement>) {
         this.dragRect = true;
         this.startX = e.clientX + (this.simpleBar.current?.scrollLeft||0);
-        this.startY = e.clientY + (this.simpleBar.current?.scrollTop||0) - 72;
+        this.startY = e.clientY + (this.simpleBar.current?.scrollTop||0) - 65;
     }
 
     canvasMouseLeave(e: React.MouseEvent<HTMLCanvasElement>) {
         this.dragRect = false;
+        if(this.ctx) this.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
     }
 
     canvasMouseMove(e: React.MouseEvent<HTMLCanvasElement>) {
-        console.log(this.dragRect)
         if(this.dragRect) {
             let toolBarType = this.state.toolBarType;
             let clientX = e.clientX + (this.simpleBar.current?.scrollLeft||0),
-                clientY = e.clientY + (this.simpleBar.current?.scrollTop||0) - 72,
+                clientY = e.clientY + (this.simpleBar.current?.scrollTop||0) - 65,
                 width =(this.startX - clientX),
                 height = (this.startY - clientY);
 
@@ -405,8 +443,8 @@ class FeedbackClass extends React.Component<FeedbackAllProps,FeedbackState> {
         if(this.dragRect) {
             this.dragRect=false;
             let clientX = e.clientX + (this.simpleBar.current?.scrollLeft||0),
-                clientY = e.clientY + (this.simpleBar.current?.scrollTop||0) - 72,
-                width = this.startX - clientX,
+                clientY = e.clientY + (this.simpleBar.current?.scrollTop||0) - 65,
+                width = this.startX - clientX ,
                 height = this.startY - clientY;
 
             if (Math.abs(width) < 6 || Math.abs(height) < 6) {
@@ -432,6 +470,10 @@ class FeedbackClass extends React.Component<FeedbackAllProps,FeedbackState> {
             }
             if(this.ctx) this.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
             if (toolBarType == 'highlight') {
+                obj.sx -= 3
+                obj.sy -= 3;
+                obj.width += 5;
+                obj.height += 5;
                 highlightItem.push(obj);
                 this.setState({
                     highlightItem: highlightItem,
@@ -479,8 +521,7 @@ class FeedbackClass extends React.Component<FeedbackAllProps,FeedbackState> {
           if(this.imageBlob) {
             data.image = this.imageBlob;
           }
-          console.log(data);
-          //this.props.onSend(data);
+          this.props.onSend(data);
         }
     }
 
@@ -490,7 +531,7 @@ class FeedbackClass extends React.Component<FeedbackAllProps,FeedbackState> {
 
         return (
             <>
-                <Fade in={state.showDialog}>
+                <Fade in={state.showDialog && props.open} unmountOnExit={!props.open}>
                     <Box
                         data-test="Feedback Root"
                         sx={{
@@ -505,126 +546,128 @@ class FeedbackClass extends React.Component<FeedbackAllProps,FeedbackState> {
                         <Box>
                             <Box position='absolute' top={0} left={0} width='100%' height='100%' bgcolor={alpha('#000000',0.3)} />
                             <Box data-html2canvas-ignore="true" position='relative' width='100%' height='100%' data-test="BoxRelative">
-                                <Paper elevation={3} data-test='dialog' data-html2canvas-ignore="true" sx={{position:'fixed',zIndex:20,width:props.is400Down ? '100%' : 400,right:0,top:0,height:'100%'}}>
-                                    <Box position='absolute' top={0} left={0} bgcolor='background.paper' borderBottom={theme=>`2px solid ${theme.palette.divider}`} p={2} height={70} zIndex={1} width="100%">
-                                        <Stack direction="row" spacing={2}>
-                                            <Stack direction="row" spacing={2} flexGrow={1}>
-                                                {state.showInformation && (
-                                                    <IconButton disabled={props.disabled} onClick={()=>this.showInformation()}>
-                                                        <ArrowBack />
-                                                    </IconButton>
-                                                )}
-                                                <Typography variant='h6' component='h1'>{state.showInformation ? "Additional Info" : props.title}</Typography>
+                                <Slide in={state.paperOpen} appear direction='left'>
+                                    <Paper elevation={3} data-test='dialog' data-html2canvas-ignore="true" sx={{position:'fixed',zIndex:20,width:props.is400Down ? '100%' : 400,right:0,top:0,height:'100%'}}>
+                                        <Box position='absolute' top={0} left={0} bgcolor='background.paper' borderBottom={theme=>`2px solid ${theme.palette.divider}`} p={2} height={70} zIndex={1} width="100%">
+                                            <Stack direction="row" spacing={2}>
+                                                <Stack direction="row" spacing={2} flexGrow={1}>
+                                                    {state.showInformation && (
+                                                        <IconButton disabled={props.disabled} onClick={()=>this.showInformation()}>
+                                                            <ArrowBack />
+                                                        </IconButton>
+                                                    )}
+                                                    <Typography variant='h6' component='h1'>{state.showInformation ? "Additional Info" : props.title}</Typography>
+                                                </Stack>
+                                                <IconButton disabled={props.disabled} onClick={()=>this.close()}>
+                                                    <Close />
+                                                </IconButton>
                                             </Stack>
-                                            <IconButton disabled={props.disabled} onClick={props.onCancel}>
-                                                <Close />
-                                            </IconButton>
-                                        </Stack>
-                                    </Box>
-                                    <Fade in={this.sysInfo!==undefined && state.showInformation} unmountOnExit>
-                                        <Box position='absolute' {...(isMobile ? {overflow:'auto'} : {})} zIndex={5} top={69} left={0} height='calc(100% - 69px)' width='100%'>
-                                            <Scrollbar>
-                                                <Stack px={2} alignItems='flex-start' spacing={2} bgcolor='background.paper' py={2}>
-                                                    {props.user && (
-                                                        <Box key='user' borderBottom={t=>`1px solid ${t.palette.divider}`} pb={2} width="100%">
-                                                            <Typography>User</Typography>
-                                                            <Stack alignItems='flex-start' spacing={2} bgcolor='background.paper'>
-                                                                {Object.entries(props.user||{}).filter(([key])=>['id','name','username','email'].includes(key)).map(([key,val])=>(
-                                                                    <Box key={`user-${key}`}>
-                                                                        <Typography sx={{fontSize:14}}>{`${key}:`}</Typography>
-                                                                        <Typography sx={{fontWeight:'bold'}}>{String(val)}</Typography>
+                                        </Box>
+                                        <Fade in={state.sysInfo!==undefined && state.showInformation} unmountOnExit>
+                                            <Box position='absolute' {...(isMobile ? {overflow:'auto'} : {})} zIndex={5} top={69} left={0} height='calc(100% - 69px)' width='100%'>
+                                                <Scrollbar>
+                                                    <Stack px={2} alignItems='flex-start' spacing={2} bgcolor='background.paper' py={2}>
+                                                        {props.user && (
+                                                            <Box key='user' borderBottom={t=>`1px solid ${t.palette.divider}`} pb={2} width="100%">
+                                                                <Typography>User</Typography>
+                                                                <Stack alignItems='flex-start' spacing={2} bgcolor='background.paper'>
+                                                                    {Object.entries(props.user||{}).filter(([key])=>['id','name','username','email'].includes(key)).map(([key,val])=>(
+                                                                        <Box key={`user-${key}`}>
+                                                                            <Typography sx={{fontSize:14}}>{`${key}:`}</Typography>
+                                                                            <Typography sx={{fontWeight:'bold'}}>{String(val)}</Typography>
+                                                                        </Box>
+                                                                    ))}
+                                                                </Stack>
+                                                            </Box>
+                                                        )}
+                                                        {Object.keys(state.sysInfo||{}).map((dt)=>{
+                                                            const value = (state.sysInfo||{})[dt as keyof IBrowserInfo];
+                                                            const val = Array.isArray(value) ? value.join(",") : String(value)
+                                                            return (
+                                                                <Box key={dt}>
+                                                                    <Typography sx={{fontSize:14}}>{`${dt}:`}</Typography>
+                                                                    <Typography sx={{fontWeight:'bold'}}>{val}</Typography>
+                                                                </Box>
+                                                            )
+                                                        })}
+                                                    </Stack>
+                                                </Scrollbar>
+                                            </Box>
+                                        </Fade>
+                                        <Stack pt={'70px'} alignItems='flex-start' height='100%' width='100%'>
+                                            <Box height='100%' width='100%' {...(isMobile ? {overflow:'auto'} : {})}>
+                                                <Scrollbar>
+                                                    <Stack px={3} py={2} alignItems={'flex-start'} spacing={1}>
+                                                        <Textarea
+                                                            label="Describe your issue or suggestion"
+                                                            inputRef={this.textarea}
+                                                            value={state.text}
+                                                            disabled={props.disabled}
+                                                            placeholder={props.placeholder}
+                                                            fullWidth
+                                                            multiline
+                                                            helperText={state.textError || undefined}
+                                                            error={state.textError.length > 0}
+                                                            rows={7}
+                                                            onChange={(e) => {
+                                                                this.setState({
+                                                                text: e.target.value,
+                                                                textError: '',
+                                                                })
+                                                            }}
+                                                        />
+
+                                                        <Stack direction="row" spacing={1}>
+                                                            <Typography variant='caption'>Please don&apos;t include any sensitive information</Typography>
+                                                            <Popover icon="ic:outline-help-outline" disablePortal sx={{zIndex:1601}}>Sensitive information is any data that should be protected. For example, don&apos;t include passwords, credit card numbers, and personal details.</Popover>
+                                                        </Stack>
+
+                                                        <Box width="100%">
+                                                            {state.screenshotImg === null ? <Typography>A screenshot will help us better understand the issue</Typography> : <Typography>Attached screenshot</Typography> }
+
+                                                            <Stack width="100%" justifyContent="center" minHeight={state.screenshotImg === null ? 200 : 100}>
+                                                                {state.legacyLoadingScreenshot ? (
+                                                                    <BoxPagination loading maxHeight={200} />
+                                                                ) : state.screenshotImg === null ? (
+                                                                    <Button ref={this.screenshotBtn} size="large" sx={{width:'100%'}} outlined color="inherit" startIcon={<ScreenshotMonitor />} onClick={()=>this.shareScreenCapture()}>Capture screenshot</Button>
+                                                                ) : (
+                                                                    <Box position='relative' border={t=>`2px solid ${t.palette.divider}`} borderRadius={1} sx={{":hover":{border:t=>`2px solid ${t.palette.primary.main}`}}}>
+                                                                        <Box borderRadius={5} bgcolor="error.lighter" position="absolute" right={-10} top={-10} zIndex={1}>
+                                                                            <IconButton onClick={()=>this.removeScreenCapture()}>
+                                                                                <Delete sx={{color:'error.main'}} />
+                                                                            </IconButton>
+                                                                        </Box>
+
+                                                                        {!isMobile && (
+                                                                            <Box zIndex={2} display="flex" justifyContent="center" left={0} position="absolute" right={0} top="45%">
+                                                                                <Button color="inherit" sx={{width:'70%'}} onClick={()=>this.openEditMode()}>Highlight or Hide Info</Button>
+                                                                            </Box>
+                                                                        )}
+
+                                                                        <Box position="relative">
+                                                                            <Image src={state.screenshotImg} alt={"Screenshot"} sx={{width:'100%',borderRadius:1}} />
+                                                                            <Box  sx={{content:'""',background:"linear-gradient(0deg,rgba(0,0,0,.1),rgba(0,0,0,.1))"}} display="inline-block" height="100%" width="100%" left={0} top={0} position="absolute" />
+                                                                        </Box>
                                                                     </Box>
-                                                                ))}
+                                                                )}
                                                             </Stack>
                                                         </Box>
-                                                    )}
-                                                    {Object.keys(this.sysInfo||{}).map((dt)=>{
-                                                        const value = (this.sysInfo||{})[dt as keyof IBrowserInfo];
-                                                        const val = Array.isArray(value) ? value.join(",") : String(value)
-                                                        return (
-                                                            <Box key={dt}>
-                                                                <Typography sx={{fontSize:14}}>{`${dt}:`}</Typography>
-                                                                <Typography sx={{fontWeight:'bold'}}>{val}</Typography>
-                                                            </Box>
-                                                        )
-                                                    })}
-                                                </Stack>
-                                            </Scrollbar>
-                                        </Box>
-                                    </Fade>
-                                    <Stack pt={'70px'} alignItems='flex-start' height='100%' width='100%'>
-                                        <Box height='100%' width='100%' {...(isMobile ? {overflow:'auto'} : {})}>
-                                            <Scrollbar>
-                                                <Stack px={3} py={2} alignItems={'flex-start'} spacing={1}>
-                                                    <Textarea
-                                                        label="Describe your issue or suggestion"
-                                                        inputRef={this.textarea}
-                                                        value={state.text}
-                                                        disabled={props.disabled}
-                                                        placeholder={props.placeholder}
-                                                        fullWidth
-                                                        multiline
-                                                        helperText={state.textError || undefined}
-                                                        error={state.textError.length > 0}
-                                                        rows={7}
-                                                        onChange={(e) => {
-                                                            this.setState({
-                                                            text: e.target.value,
-                                                            textError: '',
-                                                            })
-                                                        }}
-                                                    />
 
-                                                    <Stack direction="row" spacing={1}>
-                                                        <Typography variant='caption'>Please don&apos;t include any sensitive information</Typography>
-                                                        <Popover icon="ic:outline-help-outline" disablePortal>Sensitive information is any data that should be protected. For example, don&apos;t include passwords, credit card numbers, and personal details.</Popover>
+                                                        <Box>
+                                                            <Typography variant='caption'>Some <Span onClick={()=>!props.disabled && this.showInformation()} sx={{color: props.disabled ? 'text.disabled' : 'customColor.link',cursor:"pointer",':hover':{textDecoration:'underline'}}}>system information</Span> may be sent to Portalnesia. We will use the information that give us to help address technical issues and to improve our services.</Typography>
+                                                        </Box>
                                                     </Stack>
 
-                                                    <Box width="100%">
-                                                        {state.screenshotImg === null ? <Typography>A screenshot will help us better understand the issue</Typography> : <Typography>Attached screenshot</Typography> }
+                                                    <Box flexGrow={1} />
 
-                                                        <Stack width="100%" justifyContent="center" minHeight={state.screenshotImg === null ? 200 : 100}>
-                                                            {state.legacyLoadingScreenshot ? (
-                                                                <BoxPagination loading maxHeight={200} />
-                                                            ) : state.screenshotImg === null ? (
-                                                                <Button ref={this.screenshotBtn} size="large" sx={{width:'100%'}} outlined color="inherit" startIcon={<ScreenshotMonitor />} onClick={()=>this.shareScreenCapture()}>Capture screenshot</Button>
-                                                            ) : (
-                                                                <Box position='relative' border={t=>`2px solid ${t.palette.divider}`} borderRadius={1} sx={{":hover":{border:t=>`2px solid ${t.palette.primary.main}`}}}>
-                                                                    <Box borderRadius={5} bgcolor="error.lighter" position="absolute" right={-10} top={-10} zIndex={1}>
-                                                                        <IconButton onClick={()=>this.removeScreenCapture()}>
-                                                                            <Delete sx={{color:'error.main'}} />
-                                                                        </IconButton>
-                                                                    </Box>
-
-                                                                    {!isMobile && (
-                                                                        <Box zIndex={2} display="flex" justifyContent="center" left={0} position="absolute" right={0} top="45%">
-                                                                            <Button color="inherit" sx={{width:'70%'}} onClick={()=>this.openEditMode()}>Highlight or Hide Info</Button>
-                                                                        </Box>
-                                                                    )}
-
-                                                                    <Box position="relative">
-                                                                        <Image src={state.screenshotImg} alt={"Screenshot"} sx={{width:'100%',borderRadius:1}} />
-                                                                        <Box  sx={{content:'""',background:"linear-gradient(0deg,rgba(0,0,0,.1),rgba(0,0,0,.1))"}} display="inline-block" height="100%" width="100%" left={0} top={0} position="absolute" />
-                                                                    </Box>
-                                                                </Box>
-                                                            )}
-                                                        </Stack>
+                                                    <Box px={2} pt={2} mb={2} borderTop={t=>`2px solid ${t.palette.divider}`} width='100%'>
+                                                        <Button sx={{width:'100%'}} disabled={props.disabled} loading={props.disabled} onClick={()=>this.send()}>{props.confirmLabel}</Button>
                                                     </Box>
-
-                                                    <Box>
-                                                        <Typography variant='caption'>Some <Span onClick={()=>!props.disabled && this.showInformation()} sx={{color: props.disabled ? 'text.disabled' : 'customColor.link',cursor:"pointer",':hover':{textDecoration:'underline'}}}>system information</Span> may be sent to Portalnesia. We will use the information that give us to help address technical issues and to improve our services.</Typography>
-                                                    </Box>
-                                                </Stack>
-
-                                                <Box flexGrow={1} />
-
-                                                <Box px={2} pt={2} mb={2} borderTop={t=>`2px solid ${t.palette.divider}`} width='100%'>
-                                                    <Button sx={{width:'100%'}} disabled={props.disabled} loading={props.disabled} onClick={()=>this.send()}>{props.confirmLabel}</Button>
-                                                </Box>
-                                            </Scrollbar>
-                                        </Box>
-                                    </Stack>
-                                </Paper>
+                                                </Scrollbar>
+                                            </Box>
+                                        </Stack>
+                                    </Paper>
+                                </Slide>
                             </Box>
                         </Box>
                         <PopoverMui
@@ -662,81 +705,85 @@ class FeedbackClass extends React.Component<FeedbackAllProps,FeedbackState> {
                         </PopoverMui>
                     </Box>
                 </Fade>
-                <Canvas ref={this.baseCanvas} height={state.window.height} width={state.window.width} />
-                <Canvas ref={this.tmpCanvas} height={state.window.height} width={state.window.width} />
-                <Dialog keepMounted sx={{zIndex:2000}} fullScreen open={Boolean(state.editMode && state.baseScreenshot)} scroll="paper" title={"Highlight or Hide info on your screenshot"} content={{dividers:true,sx:{overflow:"hidden",p:0}}} titleWithClose={false}
-                    actions={
-                        <Stack direction="row" justifyContent="space-between" width="100%" borderTop={t=>`1px solid ${t.palette.divider}`} px={2} py={1}>
-                            <Stack direction="row" spacing={1}>
-                                <Button outlined sx={{...(state.toolBarType === "highlight" ? {bgcolor:t=>alpha(t.palette.primary.main,0.1)} : {})}} color={state.toolBarType === "highlight" ? "primary" : "inherit"} onClick={()=>this.setState({toolBarType:'highlight'})} startIcon={<HighlightAlt />}>Highlight</Button>
-                                <Button outlined sx={{...(state.toolBarType === "hide" ? {bgcolor:t=>alpha(t.palette.primary.main,0.1)} : {})}} color={state.toolBarType === "hide" ? "primary" : "inherit"} onClick={()=>this.setState({toolBarType:'hide'})} startIcon={<TabUnselected />}>Hide</Button>
-                            </Stack>
-                            <Stack direction="row" spacing={1}>
-                                <Button onClick={()=>this.closeEditMode()}>Save</Button>
-                            </Stack>
-                        </Stack>
-                    }
-                    actionsProps={{sx:{p:0}}}
-                >
-                    <SimpleBarReact timeout={500} clickOnTrack={false} scrollableNodeProps={{ref:this.simpleBar}} style={{maxHeight:'100%'}}>
-                        <Box position="relative">
+                {props.open && (
+                    <>
+                        <Canvas ref={this.baseCanvas} height={state.window.height} width={state.window.width} />
+                        <Canvas ref={this.tmpCanvas} height={state.window.height} width={state.window.width} />
+                        <Dialog keepMounted sx={{zIndex:2000}} fullScreen open={Boolean(state.editMode && state.baseScreenshot)} scroll="paper" title={"Highlight or Hide info on your screenshot"} content={{dividers:true,sx:{overflow:"hidden",p:0}}} titleWithClose={false}
+                            actions={
+                                <Stack direction="row" justifyContent="space-between" width="100%" borderTop={t=>`1px solid ${t.palette.divider}`} px={2} py={1}>
+                                    <Stack direction="row" spacing={1}>
+                                        <Button outlined sx={{...(state.toolBarType === "highlight" ? {bgcolor:t=>alpha(t.palette.primary.main,0.1)} : {})}} color={state.toolBarType === "highlight" ? "primary" : "inherit"} onClick={()=>this.setState({toolBarType:'highlight'})} startIcon={<HighlightAlt />}>Highlight</Button>
+                                        <Button outlined sx={{...(state.toolBarType === "hide" ? {bgcolor:t=>alpha(t.palette.primary.main,0.1)} : {})}} color={state.toolBarType === "hide" ? "primary" : "inherit"} onClick={()=>this.setState({toolBarType:'hide'})} startIcon={<TabUnselected />}>Hide</Button>
+                                    </Stack>
+                                    <Stack direction="row" spacing={1}>
+                                        <Button onClick={()=>this.closeEditMode()}>Save</Button>
+                                    </Stack>
+                                </Stack>
+                            }
+                            actionsProps={{sx:{p:0}}}
+                        >
+                            <SimpleBarReact timeout={500} clickOnTrack={false} scrollableNodeProps={{ref:this.simpleBar}} style={{maxHeight:'100%'}}>
+                                <Box position="relative">
 
-                            <Image src={state.baseScreenshot||""} alt="Screenshot" sx={{width:'auto',height:'100%',objectFit:'contain',mx:'auto'}} />
+                                    <Image src={state.baseScreenshot||""} alt="Screenshot" sx={{width:'auto',height:'100%',objectFit:'contain',mx:'auto'}} />
 
-                            <Canvas ref={this.canvas} height={state.window.height} width={state.window.width} onMouseDown={(e)=>this.canvasMouseDown(e)} onMouseMove={e=>this.canvasMouseMove(e)} onMouseUp={e=>this.canvasMouseUp(e)} onMouseLeave={e=>this.canvasMouseLeave(e)} sx={{
-                                width:`${state.window.width}px`,
-                                height:`${state.window.height}px`,
-                                position:'absolute',
-                                left:0,
-                                top:0,
-                                zIndex: 5,
-                                cursor:'crosshair'
-                            }} />
-
-                            {state.highlightItem.map((data,k)=>(
-                                <Box zIndex={6} key={`highlight-${k}`} width={data.width} height={data.height} left={data.sx} top={data.sy} position='absolute' border={`5px solid #FEEA4E`} bgcolor='none' sx={{":hover":{
-                                    bgcolor:'rgba(55, 131, 249, 0.2)',
-                                    "& .clear-icon":{
-                                        opacity:1
-                                    }
-                                }}}>
-                                    <IconButton className="clear-icon" sx={{
+                                    <Canvas ref={this.canvas} height={state.window.height} width={state.window.width} onMouseDown={(e)=>this.canvasMouseDown(e)} onMouseMove={e=>this.canvasMouseMove(e)} onMouseUp={e=>this.canvasMouseUp(e)} onMouseLeave={e=>this.canvasMouseLeave(e)} sx={{
+                                        width:`${state.window.width}px`,
+                                        height:`${state.window.height}px`,
                                         position:'absolute',
-                                        top:-20,
-                                        right:-20,
-                                        zIndex:1,
-                                        opacity:0
-                                    }} onClick={()=>this.clearHighlight(k)}>
-                                        <Box width={24} height={24} bgcolor='error.main' borderRadius={5}>
-                                            <Close fontSize="small" />
-                                        </Box>
-                                    </IconButton>
-                                </Box>
-                            ))}
+                                        left:0,
+                                        top:0,
+                                        //zIndex: 1,
+                                        cursor:'crosshair'
+                                    }} />
 
-                            {state.blackItem.map((data,k)=>(
-                                <Box key={`hide-${k}`} zIndex={6} width={data.width} height={data.height} left={data.sx} top={data.sy} position='absolute' bgcolor='#000'  sx={{":hover":{
-                                    bgcolor:'rgba(0, 0, 0, 0.8)',
-                                    "& .clear-icon":{
-                                        opacity:1
-                                    }
-                                }}}>
-                                    <IconButton className="clear-icon" sx={{
-                                        position:'absolute',
-                                        top:-20,
-                                        right:-20,
-                                        zIndex:2,
-                                        opacity:0
-                                    }} onClick={()=>this.clearBlack(k)}>
-                                        <Box width={24} height={24} bgcolor='error.main' borderRadius={5}>
-                                            <Close fontSize="small" />
+                                    {state.highlightItem.map((data,k)=>(
+                                        <Box key={`highlight-${k}`} zIndex={1} width={data.width} height={data.height} left={data.sx} top={data.sy} position='absolute' border={`5px solid #FEEA4E`} bgcolor='none' sx={{":hover":{
+                                            bgcolor:'rgba(55, 131, 249, 0.2)',
+                                            "& .clear-icon":{
+                                                opacity:1
+                                            }
+                                        }}}>
+                                            <IconButton className="clear-icon" sx={{
+                                                position:'absolute',
+                                                top:-20,
+                                                right:-20,
+                                                zIndex:1,
+                                                opacity:0
+                                            }} onClick={()=>this.clearHighlight(k)}>
+                                                <Box width={24} height={24} bgcolor='error.main' borderRadius={5}>
+                                                    <Close fontSize="small" />
+                                                </Box>
+                                            </IconButton>
                                         </Box>
-                                    </IconButton>
+                                    ))}
+
+                                    {state.blackItem.map((data,k)=>(
+                                        <Box key={`hide-${k}`} zIndex={1} width={data.width} height={data.height} left={data.sx} top={data.sy} position='absolute' bgcolor='#000'  sx={{":hover":{
+                                            bgcolor:'rgba(0, 0, 0, 0.8)',
+                                            "& .clear-icon":{
+                                                opacity:1
+                                            }
+                                        }}}>
+                                            <IconButton className="clear-icon" sx={{
+                                                position:'absolute',
+                                                top:-20,
+                                                right:-20,
+                                                zIndex:2,
+                                                opacity:0
+                                            }} onClick={()=>this.clearBlack(k)}>
+                                                <Box width={24} height={24} bgcolor='error.main' borderRadius={5}>
+                                                    <Close fontSize="small" />
+                                                </Box>
+                                            </IconButton>
+                                        </Box>
+                                    ))}
                                 </Box>
-                            ))}
-                        </Box>
-                    </SimpleBarReact>
-                </Dialog>
+                            </SimpleBarReact>
+                        </Dialog>
+                    </>
+                )}
             </>
         )
     }

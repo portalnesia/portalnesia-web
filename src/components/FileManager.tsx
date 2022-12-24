@@ -64,7 +64,8 @@ const Sticky=styled('div',{shouldForwardProp:prop=>prop!=="nosticky"})<{notstick
     zIndex:100,
     paddingTop:10,
     paddingBottom:10,
-    backgroundColor:theme.palette.background.paper
+    backgroundColor:theme.palette.background.paper,
+    borderBottom:`1px solid ${theme.palette.divider}`
 }))
 
 type FilesWithIdx = IFiles & ({
@@ -476,7 +477,7 @@ function PortalnesiaFiles({data:dt,index:i,onClick,onRightClick,disabled,onDelet
         e.currentTarget.blur();
         handleContextClose()();
         handleClick();
-    },[onClick,handleContextClose,handleClick])
+    },[handleContextClose,handleClick])
 
     return (
         <>
@@ -505,6 +506,7 @@ function PortalnesiaFiles({data:dt,index:i,onClick,onRightClick,disabled,onDelet
                         invisible:false
                     }
                 }}
+                sx={{zIndex:1301}}
             >
                 <Box py={1}>
                     <MenuItem onClick={handleSelect}>
