@@ -78,7 +78,7 @@ const Image=React.forwardRef<HTMLImageElement,ImageProps>((props,ref)=>{
     const imgRef=React.useRef<HTMLAnchorElement|null>(null);
 
     const onRightClick: React.MouseEventHandler<HTMLImageElement> = React.useCallback((event: React.MouseEvent<HTMLImageElement>)=>{
-        event.stopPropagation()
+        //event.stopPropagation()
         event.preventDefault()
         setMenu(!menu)
         setAnchorEl([event.clientX - 2,event.clientY - 4]);
@@ -86,7 +86,7 @@ const Image=React.forwardRef<HTMLImageElement,ImageProps>((props,ref)=>{
 
     const onNonFancuboxRightClick: React.MouseEventHandler<HTMLImageElement> = React.useCallback((event: React.MouseEvent<HTMLImageElement>)=>{
         //if(process.env.NODE_ENV === "production") {
-            event.stopPropagation()
+            //event.stopPropagation()
             event.preventDefault()
         //}
     },[])

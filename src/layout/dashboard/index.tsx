@@ -8,6 +8,7 @@ import config from '@src/config';
 import React, { useMemo } from 'react';
 import DashboardNavbar from './Navbar';
 import DashboardSidebar from './Sidebar';
+import { getCookieMsg, removeCookieMsg } from '@utils/cookie';
 
 export type DashboardLayoutProps = {
     children: React.ReactNode
@@ -31,6 +32,15 @@ export default function DashboardLayout({children,withoutContainer,adminPage}:Da
 
     const handleCloseCookieNotification = React.useCallback(() => {
         setShowCookieMsg(false);
+    }, [])
+
+    React.useEffect(() => {
+        const cookie = getCookieMsg();
+        if (cookie) {
+            setCookieMsg(cookie);
+            setShowCookieMsg(true)
+        }
+        removeCookieMsg();
     }, [])
     
     return (

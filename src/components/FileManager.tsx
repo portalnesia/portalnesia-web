@@ -23,6 +23,9 @@ import ConfirmationDialog from '@design/components/ConfirmationDialog';
 import { Span } from '@design/components/Dom';
 import type { HandleChangeEvent } from '@design/components/DragableFiles';
 import { AxiosRequestConfig } from 'axios';
+import Fade from '@mui/material/Fade';
+import Alert from '@mui/material/Alert';
+import { isMobile } from 'react-device-detect';
 
 const MenuPopover = dynamic(()=>import('@design/components/MenuPopover'));
 const DragableFiles = dynamic(()=>import('@design/components/DragableFiles'));
@@ -95,17 +98,15 @@ export default function FileManager(props: BrowserProps) {
     const {onSelected,open,maxWidth='md',handleClose,onUnsplashSelected,withUnsplash=false,onPixabaySelected,withPixabay=false} = props;
     const setNotif = useNotification();
     const [page,setPage] = usePagination(1);
-    const [selected,setSelected] = React.useState<FilesWithIdx|undefined|'upload'>();
-    const [isHover,setIsHover]=React.useState(false)
-    const [labelText,setLabelText] = React.useState("Drag files or click here to upload");
+    const [selected,setSelected] = React.useState<FilesWithIdx>();
     const [progressUpload,setProgressUpload] = React.useState(0)
     const [search,setSearch] = React.useState("");
     const [disabled,setDisabled] = React.useState<string|null>(null)
+    const [showTips,setShowTips] = React.useState(false);
     const [searchSubmit,setSearchSubmit] = React.useState("");
     const [serverType,setServerType] = React.useState<'unsplash'|'pixabay'|'portalnesia'>();
     const [pixabayTypes,setPixabayTypes]=React.useState("vector");
     const [tab,setTab] = React.useState(-1)
-    const [openOption,setOpenOption] = React.useState(false);
     const smDown = useResponsive('down','sm')
     const mdDown = useResponsive('down','md')
     const smMd = useResponsive('between','sm','md')
@@ -123,9 +124,6 @@ export default function FileManager(props: BrowserProps) {
             tab.push({
                 key:"upload",
                 label:"Upload"
-            },{
-                key:"options",
-                label:"Options"
             })
         }
         return tab;
@@ -135,8 +133,6 @@ export default function FileManager(props: BrowserProps) {
         const index = tabArr.findIndex(i=>i.key === 'upload')
         return index === tab;
     },[tabArr,tab])
-
-    const anchorEl = React.useRef(null);
 
     const cols = React.useMemo(()=>{
         if(smDown) return 2;
@@ -194,16 +190,6 @@ export default function FileManager(props: BrowserProps) {
         }
     },[onPixabaySelected,onClose,post,disabled])
 
-    const handleClick=React.useCallback((dt: IFiles,index: number)=>{
-        if(selected === undefined || selected === 'upload') {
-            setSelected({...dt,index})
-        } else {
-            if(selected.id_number === dt.id_number) setSelected(undefined)
-            else setSelected({...dt,index})
-        }
-    },[selected])
-
-
     const onRightClick = React.useCallback((dt: IFiles,index: number)=>{
         setSelected({...dt,index})
     },[])
@@ -215,16 +201,12 @@ export default function FileManager(props: BrowserProps) {
     },[])
 
     const handleTabChange = React.useCallback((key: string)=>()=>{
-        if(key === "options") {
-            setOpenOption(true);
-        } else {
-            setSelected(undefined);
-        }
-        if(['portalnesia','pixabay','unsplash','upload','options'].includes(key)) {
+        setSelected(undefined);
+        if(['portalnesia','pixabay','unsplash','upload'].includes(key)) {
             const index = tabArr.findIndex(i=>i.key === key);
             setTab(index);
             
-            if(!['upload','options'].includes(key)) {
+            if(!['upload'].includes(key)) {
                 handleServerType(key as 'portalnesia'|'pixabay'|'unsplash')()
             }
         }
@@ -301,6 +283,7 @@ export default function FileManager(props: BrowserProps) {
             setSearchSubmit("")
             setServerType('portalnesia')
             setTab(0);
+            setShowTips(true);
         }
     /* eslint-disable-next-line react-hooks/exhaustive-deps */
     },[open])
@@ -339,11 +322,11 @@ export default function FileManager(props: BrowserProps) {
     return (
         <Portal>
             <Dialog loading={disabled!==null} fullScreen={mdDown} open={open} handleClose={onClose} title="File Manager" sticky={false} content={{sx:{px:0,pt:0,overflow:'unset'}}} {...(!mdDown ? {PaperProps:{sx:{overflow:'unset'}}} : {})} maxWidth={maxWidth}>
-                <Sticky id='test-sticky'>
+                <Sticky>
                     <Stack direction='row'>
                         <CustomTabs variant='scrollable' value={tab > -1 ? tab : undefined} sx={{px:1,flexGrow:1}}>
                             {tabArr.map(t=>(
-                                <CustomTab onClick={handleTabChange(t.key)} key={t.key} sx={{py:1,...(t.key === 'options' ? {display:typeof selected === 'object' ?'block' : 'none'} : {})}} label={t.label} {...(t.key === 'options' ? {ref:anchorEl} : {})} />
+                                <CustomTab onClick={handleTabChange(t.key)} key={t.key} sx={{py:1}} label={t.label} />
                             ))}
                             {(serverType && serverType !== 'portalnesia') ? (
                                 <a className='no-blank no-underline' href={serverType === 'unsplash' ? 'https://unsplash.com/license?utm_source=Portalnesia&utm_medium=referral' : 'https://pixabay.com/service/license?utm_source=Portalnesia&utm_medium=referral'} target='_blank' rel='nofollow noopener noreferrer'><CustomTab key={'license'} sx={{py:1}} label={"License"} component='a' /></a>
@@ -371,6 +354,11 @@ export default function FileManager(props: BrowserProps) {
                 </Sticky>
 
                 <Box>
+                    <Fade in={serverType === "portalnesia" && showTips} unmountOnExit>
+                        <Box mb={2} px={2} width="100%">
+                            <Alert onClose={()=>setShowTips(false)} severity={"info"}>{`${isMobile ? "Press and hold" : "Right click"} on the image to display the options`}</Alert>
+                        </Box>
+                    </Fade>
                     {isUploadTab ? (
                         <Box px={3}>
                             <DragableFiles id='dragable-upload' label="Drag images or click here to select images" type="file" accept="image/*" handleChange={handleUpload} />
@@ -425,7 +413,7 @@ export default function FileManager(props: BrowserProps) {
                             {(data && data?.data?.length > 0) ? (
                                 <ImageList variant='masonry' cols={cols} gap={4}>
                                     {data?.data?.map((dt,i)=>(
-                                        <PortalnesiaFiles key={`portalnesia-${i}`} selected={selected} data={dt} index={i} onClick={handleClick} onRightClick={onRightClick} onSelect={handleSelect} onDelete={handleDelete} disabled={disabled!==null} />
+                                        <PortalnesiaFiles key={`portalnesia-${i}`} data={dt} index={i} onClick={handleSelect} onRightClick={onRightClick} onDelete={handleDelete} disabled={disabled!==null} />
                                     ))}
                                 </ImageList>
                             ) : (
@@ -444,25 +432,6 @@ export default function FileManager(props: BrowserProps) {
                     </>
                 )}
             </Dialog>
-            <MenuPopover
-                open={openOption && typeof selected === 'object'}
-                anchorEl={anchorEl.current}
-                onClose={()=>{setOpenOption(false),setTab(0)}}
-                sx={{ width: 220 }}
-            >
-                {typeof selected === 'object' && (
-                    <Box py={1}>
-                        <MenuItem onClick={(e)=>{e.currentTarget.blur(),handleSelect(selected)}}>
-                            <ListItemIcon><AddPhotoIcon /></ListItemIcon>
-                            <ListItemText>Use image</ListItemText>
-                        </MenuItem>
-                        <MenuItem onClick={handleDelete}>
-                            <ListItemIcon><DeleteIcon /></ListItemIcon>
-                            <ListItemText>Delete</ListItemText>
-                        </MenuItem>
-                    </Box>
-                )}
-            </MenuPopover>
             <ConfirmationDialog ref={confirmRef} body={typeof selected === 'object' ? (
                 <Typography>Delete <Span sx={{color:'customColor.link'}}>{selected.title}</Span>?</Typography>
             ) : undefined} />
@@ -474,20 +443,19 @@ export default function FileManager(props: BrowserProps) {
 type PortalnesiaFilesProps = {
     data: IFiles
     index: number
-    selected?: FilesWithIdx | "upload"
-    onClick:(data: IFiles,index:number)=>void
+    onClick(selected: FilesWithIdx): void
     onRightClick:(data: IFiles,index:number)=>void
     disabled?: boolean
-    onSelect(selected: FilesWithIdx): void
+    //onSelect(selected: FilesWithIdx): void
     onDelete(): void
 }
-function PortalnesiaFiles({data:dt,selected,index:i,onClick,onRightClick,disabled,onSelect,onDelete}: PortalnesiaFilesProps) {
+function PortalnesiaFiles({data:dt,index:i,onClick,onRightClick,disabled,onDelete}: PortalnesiaFilesProps) {
     //const anchorEl = React.useRef<HTMLButtonElement>(null);
     const [anchorEl,setAnchorEl]=React.useState<[number,number]|null>(null)
     const [open,setOpen] = React.useState(false);
 
     const handleClick = React.useCallback(()=>{
-        if(onClick) onClick(dt,i)
+        if(onClick) onClick({...dt,index:i})
     },[onClick,dt,i])
 
     const handleRightClick = React.useCallback((e: React.MouseEvent<HTMLButtonElement>)=>{
@@ -506,14 +474,14 @@ function PortalnesiaFiles({data:dt,selected,index:i,onClick,onRightClick,disable
 
     const handleSelect = React.useCallback((e: React.MouseEvent<HTMLLIElement>)=>{
         e.currentTarget.blur();
-        if(typeof selected === 'object') onSelect(selected)
         handleContextClose()();
-    },[onSelect,handleContextClose,selected])
+        handleClick();
+    },[onClick,handleContextClose,handleClick])
 
     return (
         <>
             <CardActionArea title={dt?.title} disabled={disabled} onClick={handleClick} onContextMenu={handleRightClick} sx={{p:0.5,position:'relative'}}>
-                <SelectedArea selected={typeof selected === 'object' && selected.index === i} />
+                <SelectedArea />
                 <ImageListItem>
                     <Image webp src={`${dt.thumbs}&size=200&watermark=no`} alt={dt.title} style={{width:'100%',maxHeight:300,objectFit:'contain'}}/>
                     <ImageListItemBar
@@ -524,7 +492,7 @@ function PortalnesiaFiles({data:dt,selected,index:i,onClick,onRightClick,disable
                 </ImageListItem>
             </CardActionArea>
             <MenuPopover
-                open={open && typeof selected === 'object'}
+                open={open}
                 onClose={handleContextClose()}
                 anchorReference="anchorPosition"
                 anchorPosition={

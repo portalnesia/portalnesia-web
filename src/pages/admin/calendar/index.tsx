@@ -147,6 +147,7 @@ export default function CalendarAdminIndex() {
         }
     },[setNotif,del,mutate])
 
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
     const handleSubmit = React.useCallback(submitForm(async()=>{
         try {
             setLoading("post");

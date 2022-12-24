@@ -7,7 +7,7 @@ import Drawer from '@mui/material/Drawer';
 import Typography from '@mui/material/Typography';
 import config from '@src/config';
 import { version } from '@src/version';
-import { dashboardMenu, adminMenu, DRAWER_WIDTH, INavbar } from '@layout/navbar.config';
+import { DRAWER_WIDTH, INavbar } from '@layout/navbar.config';
 import useResponsive from '@design/hooks/useResponsive';
 import Scrollbar from '@design/components/Scrollbar';
 import Logo from '@comp/Logo';
@@ -38,10 +38,9 @@ export interface DashboardSidebarProps {
     onCloseSidebar(): void,
     title?: string,
     subtitle?: string
-    adminPage?: boolean
 };
 
-export default function DeveloperSidebar({ isOpenSidebar, onCloseSidebar, title, subtitle, adminPage}: DashboardSidebarProps) {
+export default function DeveloperSidebar({ isOpenSidebar, onCloseSidebar, title, subtitle}: DashboardSidebarProps) {
     const router = useRouter();
     const pathname = router.pathname;
     const isDesktop = useResponsive('up', 'lg');
