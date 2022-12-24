@@ -522,7 +522,7 @@ class FeedbackClass extends React.Component<FeedbackAllProps,FeedbackState> {
                                         </Stack>
                                     </Box>
                                     <Fade in={this.sysInfo!==undefined && state.showInformation} unmountOnExit>
-                                        <Box position='absolute' {...(isMobile ? {overflow:'auto'} : {})} zIndex={5} top={70} left={0} height='calc(100% - 70px)' width='100%'>
+                                        <Box position='absolute' {...(isMobile ? {overflow:'auto'} : {})} zIndex={5} top={69} left={0} height='calc(100% - 69px)' width='100%'>
                                             <Scrollbar>
                                                 <Stack px={2} alignItems='flex-start' spacing={2} bgcolor='background.paper' py={2}>
                                                     {props.user && (
@@ -580,7 +580,7 @@ class FeedbackClass extends React.Component<FeedbackAllProps,FeedbackState> {
                                                         <Popover icon="ic:outline-help-outline" disablePortal>Sensitive information is any data that should be protected. For example, don&apos;t include passwords, credit card numbers, and personal details.</Popover>
                                                     </Stack>
 
-                                                    <Box>
+                                                    <Box width="100%">
                                                         {state.screenshotImg === null ? <Typography>A screenshot will help us better understand the issue</Typography> : <Typography>Attached screenshot</Typography> }
 
                                                         <Stack width="100%" justifyContent="center" minHeight={state.screenshotImg === null ? 200 : 100}>

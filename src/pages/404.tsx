@@ -2,7 +2,7 @@ import React from 'react'
 import {useRouter} from 'next/router'
 import Head from 'next/head'
 import { NextSeo,LogoJsonLd } from 'next-seo';
-import { accountUrl, staticUrl } from '@utils/main';
+import { portalUrl, staticUrl } from '@utils/main';
 import { Span } from '@design/components/Dom';
 
 const titleMeta="Page Not Found – Portalnesia";
@@ -27,7 +27,7 @@ const Custom404=()=>{
                   content:'width=device-width, initial-scale=1, shrink-to-fit=yes'
                 }]}
                 openGraph={{
-                  url: accountUrl(router.asPath),
+                  url: portalUrl(router.asPath),
                   title: titleMeta,
                   description: descMeta,
                   images: [
@@ -45,7 +45,7 @@ const Custom404=()=>{
             />
             <LogoJsonLd
                 logo={staticUrl('icon/android-chrome-512x512.png')}
-                url={accountUrl()}
+                url={portalUrl()}
             />
             <Head>
                 <link rel="icon" href="/favicon.ico" />

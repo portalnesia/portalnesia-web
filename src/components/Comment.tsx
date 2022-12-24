@@ -126,6 +126,7 @@ export default function Comment({type,posId,comment_id,collapse}: CommentProps) 
             <ConfirmationDialog ref={confirmRef} body={delComment ? (
                 <Typography>Delete comment <Span sx={{color:'customColor.link'}}>{truncate(delComment.comment,50)}</Span>?</Typography>
             ) : undefined} />
+            <Recaptcha ref={captchaRef} />
         </PaperBlock>
     )
 }

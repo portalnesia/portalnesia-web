@@ -3,7 +3,7 @@ import {useRouter} from 'next/router'
 import Head from 'next/head'
 import { NextSeo,LogoJsonLd } from 'next-seo';
 import type { NextPage } from 'next';
-import { accountUrl, staticUrl } from '@utils/main';
+import { portalUrl, staticUrl } from '@utils/main';
 import { Span } from '@design/components/Dom';
 
 type IErrorProps = {
@@ -32,7 +32,7 @@ const Error: NextPage<IErrorProps> = ({statusCode}) => {
                     content:'width=device-width, initial-scale=1, shrink-to-fit=yes'
                 }]}
                 openGraph={{
-                    url: accountUrl(router.asPath),
+                    url: portalUrl(router.asPath),
                     title: titleMeta,
                     description: descMeta,
                     images: [
@@ -50,7 +50,7 @@ const Error: NextPage<IErrorProps> = ({statusCode}) => {
             />
             <LogoJsonLd
                 logo={staticUrl('icon/android-chrome-512x512.png')}
-                url={accountUrl()}
+                url={portalUrl()}
             />
             <Head>
                 <meta name="msapplication-TileColor" content="#2f6f4e" />

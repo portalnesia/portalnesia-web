@@ -91,6 +91,7 @@
     "react-auth-code-input": "^3.2.1",
     "react-device-detect": "^2.2.2",
     "react-dom": "18.2.0",
+    "react-html-props": "^1.0.33",
     "react-lazy-load-image-component": "^1.5.6",
     "react-multi-carousel": "^2.8.2",
     "react-redux": "^8.0.5",
