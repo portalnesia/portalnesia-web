@@ -23,7 +23,7 @@ import { useRouter } from 'next/router';
 type IMenu = {
   label: string
   icon: string
-  target?: string
+  blank?: boolean
   /**
    * Link or function arguments
    */
@@ -32,26 +32,27 @@ type IMenu = {
 
 const MENU_OPTIONS = (user?: IMe|null): IMenu[] => ([
   ...(user ? [{
+    label: "Setting",
+    icon: 'carbon:settings',
+    blank: true,
+    href: accountUrl(`?utm_source=portalnesia+web&utm_medium=header`)
+  },{
     label: "Profile",
     icon: 'gg:profile',
-    target: undefined,
     href: `/user/${user?.username}?utm_source=portalnesia+web&utm_medium=header`
   },{
     label: "Likes",
     icon: 'material-symbols:favorite-outline-rounded',
-    target: undefined,
     href: `/likes?utm_source=portalnesia+web&utm_medium=header`
   }] : []),
   {
     label: "Contact",
     icon: 'material-symbols:perm-contact-calendar',
-    target: undefined,
     href: `/contact?utm_source=portalnesia+web&utm_medium=header`
   },
   {
     label: "Support",
     icon: 'mdi:customer-service',
-    target: undefined,
     href: `/support?utm_source=portalnesia+web&utm_medium=header`
   },
 ]);
@@ -148,7 +149,7 @@ export default function AccountPopover() {
             if(m.href) {
               return (
                 <Link key={m.label} href={m.href} passHref legacyBehavior>
-                  <MenuItem component='a' onClick={handleClose} sx={{typography:'body2',py:1,px:2.5}}>
+                  <MenuItem component='a' {...(m.blank ? {target:"_blank",rel:"nofollow noopener noreferrer"} : {})} onClick={handleClose} sx={{typography:'body2',py:1,px:2.5}}>
                     <Iconify icon={m.icon} sx={{mr:2,width:24,height:24}} />
                     {m.label}
                   </MenuItem>

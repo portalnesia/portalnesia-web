@@ -28,7 +28,7 @@ export type ReportInformation = {
     }
 }
 
-type KontenReport = {
+export type KontenReport = {
     type:"konten",
     information:{
         konten:{
@@ -38,25 +38,25 @@ type KontenReport = {
     }
 }
 
-type FeedbackReport = {
+export type FeedbackReport = {
     type:"feedback"
 }
 
-type APIReport = {
+export type APIReport = {
     type:"api"
     information:{
         api: string
     }
 }
 
-type UserReport = {
+export type UserReport = {
     type:"user",
     information:{
         user:number
     }
 }
 
-type KomentarReport = {
+export type KomentarReport = {
     type:"komentar",
     information:{
         komentar: number

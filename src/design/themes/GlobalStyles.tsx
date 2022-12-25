@@ -205,8 +205,8 @@ export default function GlobalStyles({styles}: GlobalStylesProps) {
           msUserSelect:"none",
           userSelect: 'none'
         },
-        '.fancybox__container':{
-          zIndex:1500
+        'div.fancybox__container':{
+          zIndex:9999
         },
         ...styles as unknown as object
       }}

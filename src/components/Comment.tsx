@@ -7,9 +7,9 @@ import TextField, { TextFieldProps } from '@mui/material/TextField'
 import Textarea from '@design/components/Textarea'
 import Stack from '@mui/material/Stack'
 import IconButton from '@mui/material/IconButton'
-import { Delete, KeyboardArrowDown, MoreVert, Send } from '@mui/icons-material'
+import { Delete, KeyboardArrowDown, MoreVert, Report, Send } from '@mui/icons-material'
 import { Circular } from '@design/components/Loading'
-import { useSelector } from '@redux/store'
+import { useDispatch, useSelector } from '@redux/store'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import Link from '@design/components/Link'
@@ -265,6 +265,7 @@ type CommentSectionProps = CommentProps & {
 }
 function CommentSection({data,onDelete,type,posId,comment_id,onSubmit}: CommentSectionProps) {
     const anchorEl = React.useRef<HTMLButtonElement>(null);
+    const dispatch = useDispatch();
     const [open,setOpen] = React.useState(false);
     const [showReplies,setShowReplies] = React.useState(false)
     const {data:replies,error,mutate,size,setSize,isLoadingMore} = useSWRPagination<IReply>(showReplies ? `/v2/comments/${type}/${posId}/${data.id}${comment_id ? `?id=${comment_id}` : ''}` : null,data?.replies ? {fallbackData:[data?.replies]} : undefined);
@@ -297,6 +298,11 @@ function CommentSection({data,onDelete,type,posId,comment_id,onSubmit}: CommentS
         })
     },[data,onSubmit,mutate])
 
+    const handleReport = React.useCallback(()=>{
+        setOpen(false);
+        dispatch({type:"CUSTOM",payload:{report:{type:'komentar',information:{komentar:data.id}}}})
+    },[dispatch,data.id])
+
     React.useEffect(()=>{
         if(data.replies) {
             setShowReplies(true);
@@ -327,13 +333,11 @@ function CommentSection({data,onDelete,type,posId,comment_id,onSubmit}: CommentS
                     }
                 />
                 <ListItemSecondaryAction>
-                    {(data.can_deleted) && (
-                        <Tooltip title="Options">
-                            <IconButton ref={anchorEl} onClick={()=>setOpen(true)}>
-                                <MoreVert />
-                            </IconButton>
-                        </Tooltip>
-                    )}
+                    <Tooltip title="Options">
+                        <IconButton ref={anchorEl} onClick={()=>setOpen(true)}>
+                            <MoreVert />
+                        </IconButton>
+                    </Tooltip>
                     <Tooltip title={showReplies ? "Hide replies" : "Show replies"}>
                         <IconButton onClick={()=>setShowReplies(!showReplies)}>
                             <KeyboardArrowDown sx={{transform: showReplies ? 'rotate(180deg)' : 'rotate(0deg)',transition:t=>t.transitions.create('transform',{duration:t.transitions.duration.shortest})}} />
@@ -381,9 +385,15 @@ function CommentSection({data,onDelete,type,posId,comment_id,onSubmit}: CommentS
                     paperSx={{ width: 220 }}
                 >
                     <Box py={1}>
+                        {data.can_deleted && (
+                            <MenuItem>
+                                <ListItemIcon><Delete /></ListItemIcon>
+                                <ListItemText onClick={handleDelete}>Delete</ListItemText>
+                            </MenuItem>
+                        )}
                         <MenuItem>
-                            <ListItemIcon><Delete /></ListItemIcon>
-                            <ListItemText onClick={handleDelete}>Delete</ListItemText>
+                            <ListItemIcon><Report /></ListItemIcon>
+                            <ListItemText onClick={handleReport}>Report</ListItemText>
                         </MenuItem>
                     </Box>
                 </MenuPopover>
@@ -400,11 +410,17 @@ type RepliesSectionProps = {
 function RepliesSection({data,onDelete}: RepliesSectionProps) {
     const anchorEl = React.useRef<HTMLButtonElement>(null);
     const [open,setOpen] = React.useState(false);
+    const dispatch = useDispatch();
 
     const handleDelete = React.useCallback(()=>{
         setOpen(false)
         if(onDelete) onDelete(data)
     },[onDelete,data])
+
+    const handleReport = React.useCallback(()=>{
+        setOpen(false);
+        dispatch({type:"CUSTOM",payload:{report:{type:'komentar',information:{komentar:data.id}}}})
+    },[dispatch,data.id])
 
     return (
         <>
@@ -428,15 +444,11 @@ function RepliesSection({data,onDelete}: RepliesSectionProps) {
                         </>
                     }
                 />
-                {(data.can_deleted) && (
-                    <>
-                        <ListItemSecondaryAction>
-                            <IconButton ref={anchorEl} onClick={()=>setOpen(true)}>
-                                <MoreVert />
-                            </IconButton>
-                        </ListItemSecondaryAction>
-                    </>
-                )}
+                <ListItemSecondaryAction>
+                    <IconButton ref={anchorEl} onClick={()=>setOpen(true)}>
+                        <MoreVert />
+                    </IconButton>
+                </ListItemSecondaryAction>
             </ListItem>
             <Portal>
                 <MenuPopover
@@ -446,9 +458,15 @@ function RepliesSection({data,onDelete}: RepliesSectionProps) {
                     paperSx={{ width: 220 }}
                 >
                     <Box py={1}>
+                        {data.can_deleted && (
+                            <MenuItem>
+                                <ListItemIcon><Delete /></ListItemIcon>
+                                <ListItemText onClick={handleDelete}>Delete</ListItemText>
+                            </MenuItem>
+                        )}
                         <MenuItem>
-                            <ListItemIcon><Delete /></ListItemIcon>
-                            <ListItemText onClick={handleDelete}>Delete</ListItemText>
+                            <ListItemIcon><Report /></ListItemIcon>
+                            <ListItemText onClick={handleReport}>Report</ListItemText>
                         </MenuItem>
                     </Box>
                 </MenuPopover>

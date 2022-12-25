@@ -131,4 +131,8 @@ export const adminMenu: INavbar[] = [{
     name:"Blog",
     link:"/admin/blog?utm_source=portalnesia+web&utm_medium=navbar",
     icon: 'material-symbols:library-books-outline',
+},{
+    name:"Feedback & Report",
+    link:"/admin/feedback?utm_source=portalnesia+web&utm_medium=navbar",
+    icon: 'ic:outline-feedback',
 }]

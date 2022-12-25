@@ -30,6 +30,7 @@ import Dialog from "@design/components/Dialog"
 import SimpleBarReact from 'simplebar-react';
 import { BoxPagination } from "@design/components/Pagination"
 import Slide from "@mui/material/Slide"
+import { NextRouter, useRouter } from "next/router"
 
 type BrowserInfo = IBrowserInfo & ({
     user?: UserPagination
@@ -62,6 +63,7 @@ interface FeedbackClassProps {
     setNotif: ReturnType<typeof useNotification>
     user: State['user']
     is400Down: boolean
+    router: NextRouter
 }
 
 const helper = [{
@@ -556,21 +558,24 @@ class FeedbackClass extends React.Component<FeedbackAllProps,FeedbackState> {
                                                             <ArrowBack />
                                                         </IconButton>
                                                     )}
-                                                    <Typography variant='h6' component='h1'>{state.showInformation ? "Additional Info" : props.title}</Typography>
+                                                    <Typography variant='h6' component='h1'>{state.showInformation ? "Account and System Info" : props.title}</Typography>
                                                 </Stack>
-                                                <IconButton disabled={props.disabled} onClick={()=>this.close()}>
-                                                    <Close />
-                                                </IconButton>
+
+                                                {!state.showInformation && (
+                                                    <IconButton disabled={props.disabled} onClick={()=>this.close()}>
+                                                        <Close />
+                                                    </IconButton>
+                                                )}
                                             </Stack>
                                         </Box>
                                         <Fade in={state.sysInfo!==undefined && state.showInformation} unmountOnExit>
-                                            <Box position='absolute' {...(isMobile ? {overflow:'auto'} : {})} zIndex={5} top={69} left={0} height='calc(100% - 69px)' width='100%'>
+                                            <Box position='absolute' {...(isMobile ? {overflow:'auto'} : {})} zIndex={5} top={70} left={0} height='calc(100% - 70px)' width='100%'>
                                                 <Scrollbar>
-                                                    <Stack px={2} alignItems='flex-start' spacing={2} bgcolor='background.paper' py={2}>
+                                                    <Stack alignItems='flex-start' spacing={3} bgcolor='background.paper' py={2}>
                                                         {props.user && (
-                                                            <Box key='user' borderBottom={t=>`1px solid ${t.palette.divider}`} pb={2} width="100%">
-                                                                <Typography>User</Typography>
-                                                                <Stack alignItems='flex-start' spacing={2} bgcolor='background.paper'>
+                                                            <Box key='user-info' px={2} borderBottom={t=>`1px solid ${t.palette.divider}`} pb={3} width="100%">
+                                                                <Typography sx={{color:'text.disabled'}}>USER INFO</Typography>
+                                                                <Stack alignItems='flex-start' spacing={2} mt={2} bgcolor='background.paper'>
                                                                     {Object.entries(props.user||{}).filter(([key])=>['id','name','username','email'].includes(key)).map(([key,val])=>(
                                                                         <Box key={`user-${key}`}>
                                                                             <Typography sx={{fontSize:14}}>{`${key}:`}</Typography>
@@ -580,16 +585,32 @@ class FeedbackClass extends React.Component<FeedbackAllProps,FeedbackState> {
                                                                 </Stack>
                                                             </Box>
                                                         )}
-                                                        {Object.keys(state.sysInfo||{}).map((dt)=>{
-                                                            const value = (state.sysInfo||{})[dt as keyof IBrowserInfo];
-                                                            const val = Array.isArray(value) ? value.join(",") : String(value)
-                                                            return (
-                                                                <Box key={dt}>
-                                                                    <Typography sx={{fontSize:14}}>{`${dt}:`}</Typography>
-                                                                    <Typography sx={{fontWeight:'bold'}}>{val}</Typography>
+
+                                                        <Box key='page-info' px={2} borderBottom={t=>`1px solid ${t.palette.divider}`} pb={3} width="100%">
+                                                            <Typography sx={{color:'text.disabled'}}>PAGE INFO</Typography>
+                                                            <Stack alignItems='flex-start' mt={2} spacing={2} bgcolor='background.paper'>
+                                                                <Box key={`page-url`}>
+                                                                    <Typography sx={{fontSize:14}}>{`URL`}</Typography>
+                                                                    <Typography sx={{fontWeight:'bold'}}>{portalUrl(props.router.asPath)}</Typography>
                                                                 </Box>
-                                                            )
-                                                        })}
+                                                            </Stack>
+                                                        </Box>
+
+                                                        <Box key='browser-info' px={2} pb={2} width="100%">
+                                                            <Typography sx={{color:'text.disabled'}}>BROWSER INFO</Typography>
+                                                            <Stack alignItems='flex-start' mt={2} spacing={2} bgcolor='background.paper'>
+                                                                {Object.keys(state.sysInfo||{}).map((dt)=>{
+                                                                    const value = (state.sysInfo||{})[dt as keyof IBrowserInfo];
+                                                                    const val = Array.isArray(value) ? value.join(",") : String(value)
+                                                                    return (
+                                                                        <Box key={`browser-${dt}`}>
+                                                                            <Typography sx={{fontSize:14}}>{`${dt}:`}</Typography>
+                                                                            <Typography sx={{fontWeight:'bold'}}>{val}</Typography>
+                                                                        </Box>
+                                                                    )
+                                                                })}
+                                                            </Stack>
+                                                        </Box>
                                                     </Stack>
                                                 </Scrollbar>
                                             </Box>
@@ -808,12 +829,13 @@ FeedbackClass.defaultProps = {
 }
 
 const Feedback = forwardRef<FeedbackClass,FeedbackProps>((props,ref)=>{
+    const router = useRouter();
     const setNotif = useNotification();
     const user = useSelector(s=>s.user);
     const is400Down = useResponsive('down',500);
 
     return (
-        <FeedbackClass ref={ref} is400Down={is400Down} setNotif={setNotif} user={user} {...props} />
+        <FeedbackClass router={router} ref={ref} is400Down={is400Down} setNotif={setNotif} user={user} {...props} />
     )
 })
 Feedback.displayName="Feedback";

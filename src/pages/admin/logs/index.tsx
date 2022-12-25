@@ -125,6 +125,15 @@ export default function LogAdminPage() {
                                     </Grid>
                                 </PaperBlock>
                             ))}
+                            <Box width='100%'>
+                                {data?.can_load && (
+                                    <Box my={2} px={2} width='100%'>
+                                        {isLoadingMore ? <BoxPagination loading maxHeight={55} /> : (
+                                            <Button size='large' outlined color='inherit' sx={{width:'100%'}} onClick={()=>setSize(size+1)}>Load more</Button>
+                                        )}
+                                    </Box>
+                                )}
+                            </Box>
                         </Stack>
                     ) : (
                         <BoxPagination>

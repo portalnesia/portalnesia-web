@@ -72,7 +72,7 @@ function getPortalnesiaImagePng(img: string) {
  * 
  */
 const Image=React.forwardRef<HTMLImageElement,ImageProps>((props,ref)=>{
-    const {webp,src,lazy=true,type,withPng,className,fancybox,dataFancybox='images',dataSrc,alt,onContextMenu: __,placeholder:_,blured:p,caption,...rest}=props
+    const {webp,src,lazy=true,type,withPng,className,fancybox,dataFancybox='images',dataSrc,sx,alt,onContextMenu: __,placeholder:_,blured:p,caption,...rest}=props
     const [anchorEl,setAnchorEl]=React.useState<[number,number]|null>(null)
     const [menu,setMenu]=React.useState(false);
     const imgRef=React.useRef<HTMLAnchorElement|null>(null);
@@ -154,14 +154,14 @@ const Image=React.forwardRef<HTMLImageElement,ImageProps>((props,ref)=>{
         return (
             <>
                 {fancybox ? (
-                    <ButtonBase component='a' ref={(ref)=>imgRef.current=ref} data-fancybox={dataFancybox} data-src={withPng ? pngDataSrc : (dataSrc||src)} data-options="{'protect':'true'}" {...(caption||alt ? {'data-caption':caption||alt} : {})}>
+                    <ButtonBase component='a' ref={(ref)=>imgRef.current=ref} data-fancybox={dataFancybox} data-src={withPng ? pngDataSrc : (dataSrc||src)} data-options="{'protect':'true'}" {...(caption||alt ? {'data-caption':caption||alt} : {})} sx={sx}>
                         <picture>
                             {!withPng && <source type='image/webp' srcSet={webpSrc}/>}
                             <source type={withPng ? 'image/png' : 'image/jpeg'} srcSet={withPng ? pngSrc : src}/>
                             {lazy ? (
-                                <LazyImageStyle src={withPng ? pngSrc : src} className={`no-drag ${className ? ' '+className : ''}`} onContextMenu={onRightClick} {...(alt ? {alt:alt} : {})} {...rest} />
+                                <LazyImageStyle src={withPng ? pngSrc : src} className={`no-drag ${className ? ' '+className : ''}`} onContextMenu={onRightClick} {...(alt ? {alt:alt} : {})} sx={sx} {...rest} />
                             ) : (
-                                <ImageStyle ref={ref} src={withPng ? pngSrc : src} className={`no-drag ${className ? ' '+className : ''}`} onContextMenu={onRightClick} {...(alt ? {alt:alt} : {})} {...rest} />
+                                <ImageStyle ref={ref} src={withPng ? pngSrc : src} className={`no-drag ${className ? ' '+className : ''}`} onContextMenu={onRightClick} {...(alt ? {alt:alt} : {})} sx={sx} {...rest} />
                             )}
                         </picture>
                     </ButtonBase>
@@ -170,9 +170,9 @@ const Image=React.forwardRef<HTMLImageElement,ImageProps>((props,ref)=>{
                         {!withPng && <source type='image/webp' srcSet={webpSrc}/> }
                         <source type={withPng ? 'image/png' : 'image/jpeg'} srcSet={withPng ? pngSrc : src}/>
                         {lazy ? (
-                            <LazyImageStyle src={withPng ? pngSrc : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={onNonFancuboxRightClick} {...(alt ? {alt:alt} : {})} {...rest} />
+                            <LazyImageStyle src={withPng ? pngSrc : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={onNonFancuboxRightClick} {...(alt ? {alt:alt} : {})} sx={sx} {...rest} />
                         ) : (
-                            <ImageStyle ref={ref} src={withPng ? pngSrc : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={onNonFancuboxRightClick} {...(alt ? {alt:alt} : {})} {...rest} />
+                            <ImageStyle ref={ref} src={withPng ? pngSrc : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={onNonFancuboxRightClick} {...(alt ? {alt:alt} : {})} sx={sx} {...rest} />
                         )}
                     </picture>
                 )}
@@ -192,18 +192,18 @@ const Image=React.forwardRef<HTMLImageElement,ImageProps>((props,ref)=>{
         return(
             <>
                 {fancybox ? (
-                    <ButtonBase component='a' ref={(ref)=>imgRef.current=ref} data-fancybox={dataFancybox} data-src={withPng ? pngDataSrc : (dataSrc||src)} data-options="{'protect':'true'}" {...(caption||alt ? {'data-caption':caption||alt} : {})}>
+                    <ButtonBase component='a' ref={(ref)=>imgRef.current=ref} data-fancybox={dataFancybox} data-src={withPng ? pngDataSrc : (dataSrc||src)} data-options="{'protect':'true'}" {...(caption||alt ? {'data-caption':caption||alt} : {})} sx={sx}>
                         {lazy ? (
-                            <LazyImageStyle src={withPng ? `${src}&output=png` : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={onRightClick} {...(alt ? {alt:alt} : {})} {...rest} />
+                            <LazyImageStyle src={withPng ? `${src}&output=png` : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={onRightClick} {...(alt ? {alt:alt} : {})} sx={sx} {...rest} />
                         ) : (
-                            <ImageStyle ref={ref} src={withPng ? `${src}&output=png` : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={onRightClick} {...(alt ? {alt:alt} : {})} {...rest} />
+                            <ImageStyle ref={ref} src={withPng ? `${src}&output=png` : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={onRightClick} {...(alt ? {alt:alt} : {})} sx={sx} {...rest} />
                         )}
                         
                     </ButtonBase>
                 ) : lazy ? (
-                    <LazyImageStyle src={withPng ? `${src}&output=png` : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={onNonFancuboxRightClick} {...(alt ? {alt:alt} : {})} {...rest} />
+                    <LazyImageStyle src={withPng ? `${src}&output=png` : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={onNonFancuboxRightClick} {...(alt ? {alt:alt} : {})} sx={sx} {...rest} />
                 ) : (
-                    <ImageStyle ref={ref} src={withPng ? `${src}&output=png` : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={onNonFancuboxRightClick} {...(alt ? {alt:alt} : {})} {...rest} />
+                    <ImageStyle ref={ref} src={withPng ? `${src}&output=png` : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={onNonFancuboxRightClick} {...(alt ? {alt:alt} : {})} sx={sx} {...rest} />
                 )}
                 <Menu
                     anchorReference="anchorPosition"
