@@ -95,8 +95,14 @@ export default function CalendarAdminIndex() {
 
     const handleOrder=React.useCallback((bali: boolean)=>()=>{
         setDOrder(false);
-        Router.push(`/admin/calendar${bali ? '?filter=bali' : ''}`,undefined,{shallow:true});
+        setTimeout(()=>{
+            Router.push(`/admin/calendar${bali ? '?filter=bali' : ''}`,undefined,{shallow:true});
+        },500)
     },[])
+
+    React.useEffect(()=>{
+        setDOrder(false);
+    },[filter])
 
     const handleReset = React.useCallback(()=>{
         setDate(null)
@@ -320,7 +326,7 @@ export default function CalendarAdminIndex() {
                 <Typography>Delete calendar <Span sx={{color:'customColor.link'}}>{delCalendar.text}</Span>?</Typography>
             ) : undefined} />
             <Backdrop open={loading==="del"} />
-            <MenuPopover disableDrawer open={dOrder} onClose={()=>setDOrder(false)} anchorEl={orderRef.current} paperSx={{width:150}}>
+            <MenuPopover open={dOrder} onClose={()=>setDOrder(false)} anchorEl={orderRef.current} paperSx={{width:150}}>
                 <Box py={1}>
                     <MenuItem key={'public'} sx={{ color: 'text.secondary',py:1 }} onClick={handleOrder(false)} selected={!isBali}>
                         <ListItemText primary={"General"} />

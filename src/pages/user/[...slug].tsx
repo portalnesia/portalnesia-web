@@ -142,7 +142,7 @@ export default function UserPages({data:{refid,...userData},meta}: IPages<IDataB
     const tabValue = React.useMemo(()=>{
         if(typeof action !== 'string') return 0;
         if(action === 'friend-request') return tabArr.length
-        const index = tabArr.findIndex(c=>c.link.indexOf(action) > 0);
+        const index = tabArr.findIndex(c=>c.link.indexOf(action) >= 0);
         return index;
     },[action])
 

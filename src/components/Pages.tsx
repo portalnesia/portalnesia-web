@@ -50,7 +50,7 @@ export interface PageProps {
 export default function Pages({children,title,desc,keyword,canonical:canonicalProps,image,noIndex=false,withoutShowTop}: PageProps) {
     const { adBlock } = useInit();
     const dispatch = useDispatch();
-    const {appToken,report} = useSelector(s=>({appToken:s.appToken,report:s.report}));
+    const {appToken,report,user} = useSelector(s=>({appToken:s.appToken,report:s.report,user:s.user}));
     const theme = useTheme();
     const [showToTop,setShowToTop] = useState(false);
     const {atasKeyMap,bawahKeyMap,keysDialog,setKeysDialog} = useHotKeys(true)
@@ -184,7 +184,7 @@ export default function Pages({children,title,desc,keyword,canonical:canonicalPr
         }
 
         if(process.env.NODE_ENV === 'production') {
-            if(!pushAlready.current && appToken) {
+            if(!pushAlready.current && appToken && user) {
                 pushAlready.current = true;
                 isSupported().then(supported=>{
                     if(supported) {
@@ -196,7 +196,7 @@ export default function Pages({children,title,desc,keyword,canonical:canonicalPr
             }
         }
     /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    },[post,appToken])
+    },[post,appToken,user])
 
     const onWidgetLoad = useCallback(()=>{
         setTimeout(()=>{

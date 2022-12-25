@@ -6,7 +6,7 @@ import MenuPopover from '@design/components/MenuPopover';
 import {useDispatch, useSelector} from '@redux/store'
 import { State } from '@type/redux';
 import Image from '@comp/Image'
-import { accountUrl } from '@utils/main';
+import { accountUrl, portalUrl } from '@utils/main';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
@@ -149,7 +149,7 @@ export default function AccountPopover() {
             if(m.href) {
               return (
                 <Link key={m.label} href={m.href} passHref legacyBehavior>
-                  <MenuItem component='a' {...(m.blank ? {target:"_blank",rel:"nofollow noopener noreferrer"} : {})} onClick={handleClose} sx={{typography:'body2',py:1,px:2.5}}>
+                  <MenuItem component='a' className='no-blank no-underline' {...(m.blank ? {target:"_blank",rel:"nofollow noopener noreferrer"} : {})} onClick={handleClose} sx={{typography:'body2',py:1,px:2.5}}>
                     <Iconify icon={m.icon} sx={{mr:2,width:24,height:24}} />
                     {m.label}
                   </MenuItem>
@@ -171,12 +171,12 @@ export default function AccountPopover() {
 
           <Box sx={{ p: 2, pt: 1.5 }}>
             {user ? (
-              <Button href={accountUrl("logout?utm_source=portalnesia+web&utm_medium=header")} fullWidth color="inherit" variant="outlined">
+              <Button href={accountUrl(`logout?redirect=${encodeURIComponent(portalUrl(router.asPath))}&utm_source=portalnesia+web&utm_medium=header`)} fullWidth color="inherit" variant="outlined">
                 Logout
               </Button>
             ) : (
               <>
-                <Button href={accountUrl("login?utm_source=portalnesia+web&utm_medium=header")} fullWidth color="inherit" variant="outlined">
+                <Button href={accountUrl(`login?redirect=${encodeURIComponent(portalUrl(router.asPath))}&utm_source=portalnesia+web&utm_medium=header`)} fullWidth color="inherit" variant="outlined">
                   Login / Register
                 </Button>
               </>

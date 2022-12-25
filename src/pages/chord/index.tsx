@@ -43,8 +43,14 @@ export default function News() {
 
     const handleOrder=React.useCallback((order:'recent'|'popular')=>()=>{
         setDOrder(false);
-        Router.push({pathname:'/chord',query:{order}},`/chord?order=${order}`,{shallow:true});
+        setTimeout(()=>{
+            Router.push({pathname:'/chord',query:{order}},`/chord?order=${order}`,{shallow:true});
+        },500)        
     },[])
+
+    React.useEffect(()=>{
+        setDOrder(false);
+    },[order])
 
     return (
         <Pages title="Chord" canonical="/chord">
@@ -105,7 +111,7 @@ export default function News() {
                         
                 </SWRPages>
             </DefaultLayout>
-            <MenuPopover disableDrawer open={dOrder} onClose={()=>setDOrder(false)} anchorEl={orderRef.current} paperSx={{width:150}}>
+            <MenuPopover open={dOrder} onClose={()=>setDOrder(false)} anchorEl={orderRef.current} paperSx={{width:150}}>
                 <Box py={1}>
                     {selectArr.map(s=>(
                         <MenuItem key={s} sx={{ color: 'text.secondary',py:1 }} onClick={handleOrder(s)} selected={order === s}>

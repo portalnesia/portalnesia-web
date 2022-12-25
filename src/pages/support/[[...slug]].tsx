@@ -77,6 +77,7 @@ export const getServerSideProps = wrapper<ISupportPage>(async({redirect,resolved
             throw e;
         }
     } else {
+        if(!session) return redirect(accountUrl(`login?redirect=${encodeURIComponent(portalUrl(resolvedUrl))}`));
         return {
             props:{
                 data:{}

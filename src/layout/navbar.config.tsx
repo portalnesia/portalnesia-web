@@ -135,4 +135,8 @@ export const adminMenu: INavbar[] = [{
     name:"Feedback & Report",
     link:"/admin/feedback?utm_source=portalnesia+web&utm_medium=navbar",
     icon: 'ic:outline-feedback',
+},{
+    name:"User",
+    link:"/admin/user?utm_source=portalnesia+web&utm_medium=navbar",
+    icon: 'mdi:user-circle-outline',
 }]

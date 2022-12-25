@@ -9,7 +9,7 @@ import Pagination, { BoxPagination, usePagination } from "@design/components/Pag
 import SWRPages from "@comp/SWRPages";
 import { TwibbonPagination } from "@model/twibbon";
 import CustomCard from "@design/components/Card";
-import { href, staticUrl } from "@utils/main";
+import { href, portalUrl, staticUrl } from "@utils/main";
 import Router, { useRouter } from "next/router";
 import { NewsPagination } from "@model/news";
 import { UserPagination } from "@model/user";
@@ -53,8 +53,16 @@ export default function SearchPages() {
     const title = React.useMemo(()=>typeof q === 'string' ? `Search result for ${decodeURIComponent(q)}` : "Search",[q]);
     const {data,error} = useSWR<IResponse>(typeof q === 'string' ? `/v2/search${typeof filter === 'string' ? `/${filter}` : ''}?q=${q}&page=${page}&per_page=${24}` : null)
 
+    const canonical = React.useMemo(()=>{
+        const url = new URL("/search",portalUrl());
+        if(typeof q === "string") url.searchParams.set("q",q);
+        if(typeof filter === "string") url.searchParams.set('filter',filter);
+        const search = url.searchParams.toString();
+        return `${url.pathname}${search.length > 0 ? `?${search}` : ''}`
+    },[filter,q])
+
     return (
-        <Pages title="Search" canonical="/search">
+        <Pages title="Search" canonical={canonical}>
             <DefaultLayout>
                 <Box pb={0.5} mb={5}>
                     <Typography variant='h3' component='h1'>{title}</Typography>

@@ -73,7 +73,7 @@ export default function LogAdminPage() {
     },[setNotif,del,mutate])
 
     return (
-        <Pages title="Admin Logs" canonical="/admin/logs">
+        <Pages title="Admin Logs" canonical="/admin/logs" noIndex>
             <DashboardLayout adminPage>
                 <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
                     <Stack direction='row' justifyContent='space-between'>
