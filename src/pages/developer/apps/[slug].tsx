@@ -538,7 +538,11 @@ function UriComponent({value,onChange,label,...props}: UriComponentProps) {
           if(e?.stopPropagation) e?.stopPropagation();
           if(e?.preventDefault) e?.preventDefault();
 
-          if(!isURL(input)) return setNotif("Please provide a valid URI",true);
+          try {
+            new URL(input);
+          } catch {
+            return setNotif("Please provide a valid URI",true);
+          }
 
           const a = [...(value||[])]
           a.push(input);
@@ -581,7 +585,7 @@ function UriComponent({value,onChange,label,...props}: UriComponentProps) {
                                         ...props?.sx,
                                         mt:0.5
                                     }}
-                                    placeholder="Enter new uri"
+                                    placeholder="Press enter to add uri"
                                     {...props}
                                 />
                             </Grid>

@@ -104,7 +104,6 @@ export default function CKEditor(props: EditorProps) {
     },[])
 
     const openBrowser = React.useCallback(()=>{
-        console.log("OPEN")
         setBrowser(true)
     },[])
 
@@ -120,10 +119,6 @@ export default function CKEditor(props: EditorProps) {
     const handleSave=React.useCallback(()=>{
         if(onSave) onSave();
     },[onSave])
-
-    React.useEffect(()=>{
-        //console.log(PortalnesiaEditor.defaultConfig)
-    },[])
 
     return (
         <>

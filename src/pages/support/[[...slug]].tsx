@@ -77,6 +77,7 @@ export const getServerSideProps = wrapper<ISupportPage>(async({redirect,resolved
             throw e;
         }
     } else {
+        if(!session) return redirect(accountUrl(`login?redirect=${encodeURIComponent(portalUrl(resolvedUrl))}`));
         return {
             props:{
                 data:{}
@@ -308,8 +309,10 @@ function ChatComp({selected,img,setImg,mutateRoom}: ChatCompProps) {
     },[selected])
 
     React.useEffect(()=>{
-        window.scrollTo({left:0,top:document.body.scrollHeight,behavior:'auto'})
-    },[isLoading])
+        setTimeout(()=>{
+            window.scrollTo({left:0,top:document.body.scrollHeight})
+        },500);
+    },[isLoading,selected])
 
     React.useEffect(()=>{
         if(img === null) fileRef.current = undefined;

@@ -29,6 +29,9 @@ export default function GlobalStyles({styles}: GlobalStylesProps) {
           width: '100%',
           height: '100%'
         },
+        'div#arc-widget-container[data-arc-widget-portalnesia]':{
+          zIndex:'unset !important'
+        },
         '#root': {
           width: '100%',
           height: '100%'
@@ -202,8 +205,8 @@ export default function GlobalStyles({styles}: GlobalStylesProps) {
           msUserSelect:"none",
           userSelect: 'none'
         },
-        '.fancybox__container':{
-          zIndex:1500
+        'div.fancybox__container':{
+          zIndex:9999
         },
         ...styles as unknown as object
       }}

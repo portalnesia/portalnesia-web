@@ -22,11 +22,13 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Portal from '@mui/material/Portal';
 import Stack from '@mui/material/Stack';
+import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { useSelector } from '@redux/store';
 import { getDayJs, href } from '@utils/main';
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { isIOS } from 'react-device-detect';
 
 export interface NotificationProps {
     
@@ -101,7 +103,18 @@ export default function Notification({}: NotificationProps) {
                     
                     </MenuPopover>
                 ) : (
-                    <Fade in={open} unmountOnExit>
+                    <SwipeableDrawer
+                        open={open}
+                        onClose={handleClose}
+                        onOpen={()=>{}}
+                        disableSwipeToOpen
+                        PaperProps={{
+                            sx: { width: '100%' }
+                        }}
+                        anchor="right"
+                        disableBackdropTransition={!isIOS}
+                        disableDiscovery
+                    >
                         <Box zIndex={1110} bgcolor='background.paper' position='fixed' top={0} left={0} width="100%" overflow="auto" height="100%">
                             <Stack position='fixed' top={0} left={0} width='100%' bgcolor='background.paper' direction="row" spacing={2} borderBottom={theme=>`2px solid ${theme.palette.divider}`} p={2} height={63} zIndex={1}>
                                 <IconButton onClick={handleClose}>
@@ -115,7 +128,7 @@ export default function Notification({}: NotificationProps) {
                                 </Box>
                             </Scrollbar>
                         </Box>
-                    </Fade>
+                    </SwipeableDrawer>
                 )}
             </Portal>
         </>

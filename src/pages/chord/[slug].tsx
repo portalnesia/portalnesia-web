@@ -385,26 +385,26 @@ export default function ChordPage({data:chord,meta}: IPages<ChordDetail>) {
                     </Fab>
                 </Tooltip>
                 <MenuPopover anchorOrigin={undefined} transformOrigin={undefined} arrow={false} open={open} anchorEl={anchorEl.current} onClose={()=>setOpen(false)} paperSx={{width:320}}>
-                    <Box p={2} display="flex" flexDirection={"column"} justifyContent="center" alignItems="center">
+                    <Box width="100%" py={1} px={2} display="flex" flexDirection={"column"} justifyContent="center" alignItems="center">
                         <Typography variant='h5'>Chord Tools</Typography>
-                        <ButtonGroup key="auto-scroll" sx={{mt:2}}>
+                        <ButtonGroup key="auto-scroll" sx={{mt:2,width:'100%',justifyContent:'center',border:t=>`1px solid ${t.palette.divider}`,borderRadius:'8px'}}>
                             <Button color="error" onClick={handleAutoScroll('reset')}>X</Button>
                             <Button disabled={disable.a.d} onClick={handleAutoScroll('down')}>-</Button>
-                            <Span sx={{p:1,px:2,minWidth:120}}>{`Auto Scroll: ${scrollSpeed}`}</Span>
+                            <Span sx={{p:1,px:2,minWidth:120,flexGrow:1,textAlign:'center'}}>{`Auto Scroll: ${scrollSpeed}`}</Span>
                             <Button disabled={disable.a.u} onClick={handleAutoScroll('up')}>+</Button>
                         </ButtonGroup>
 
-                        <ButtonGroup key="transpose" sx={{my:2}}>
+                        <ButtonGroup key="transpose" sx={{my:2,width:'100%',justifyContent:'center',border:t=>`1px solid ${t.palette.divider}`,borderRadius:'8px'}}>
                             <Button color="error" onClick={handleTranspose('reset')}>X</Button>
                             <Button disabled={disable.t.d} onClick={handleTranspose('down')}>-</Button>
-                            <Span sx={{p:1,px:2,minWidth:120}}>{`Transpose: ${transpose}`}</Span>
+                            <Span sx={{p:1,px:2,minWidth:120,flexGrow:1,textAlign:'center'}}>{`Transpose: ${transpose}`}</Span>
                             <Button disabled={disable.t.u} onClick={handleTranspose('up')}>+</Button>
                         </ButtonGroup>
 
-                        <ButtonGroup key="font-size">
+                        <ButtonGroup key="font-size" sx={{width:'100%',justifyContent:'center',border:t=>`1px solid ${t.palette.divider}`,borderRadius:'8px'}}>
                             <Button color="error" onClick={handleFontSize('reset')}>X</Button>
                             <Button disabled={disable.f.d} onClick={handleFontSize('down')}>-</Button>
-                            <Span sx={{p:1,px:2,minWidth:120}}>{`Font Size: ${fontsize}`}</Span>
+                            <Span sx={{p:1,px:2,minWidth:120,flexGrow:1,textAlign:'center'}}>{`Font Size: ${fontsize}`}</Span>
                             <Button disabled={disable.f.u} onClick={handleFontSize('up')}>+</Button>
                         </ButtonGroup>
                     </Box>

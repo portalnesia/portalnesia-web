@@ -309,8 +309,10 @@ function ChatComp({selected,img,setImg,mutateRoom}: ChatCompProps) {
     },[selected])
 
     React.useEffect(()=>{
-        window.scrollTo({left:0,top:document.body.scrollHeight,behavior:'auto'})
-    },[isLoading])
+        setTimeout(()=>{
+            window.scrollTo({left:0,top:document.body.scrollHeight})
+        },500);
+    },[isLoading,selected])
 
     React.useEffect(()=>{
         if(img === null) fileRef.current = undefined;

@@ -30,9 +30,9 @@ const Popover=(props: PopoverProps)=>{
         setOpen(true)
     },[])
 
-    const closePopOver=React.useCallback((event: {}, reason: "backdropClick" | "escapeKeyDown")=>{
+    const closePopOver=React.useCallback(()=>{
         setOpen(false)
-        if(onClose) onClose(event,reason);
+        if(onClose) onClose();
     },[onClose])
 
     return (

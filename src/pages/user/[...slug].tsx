@@ -142,7 +142,7 @@ export default function UserPages({data:{refid,...userData},meta}: IPages<IDataB
     const tabValue = React.useMemo(()=>{
         if(typeof action !== 'string') return 0;
         if(action === 'friend-request') return tabArr.length
-        const index = tabArr.findIndex(c=>c.link.indexOf(action) > 0);
+        const index = tabArr.findIndex(c=>c.link.indexOf(action) >= 0);
         return index;
     },[action])
 
@@ -720,7 +720,7 @@ function MenuButton({data,disabled,onFollow,user}: MenuButtonProps) {
                 onClose={handleMenu(false)}
                 anchorEl={anchorRef.current}
             >
-                <Box sx={{ my: 1.5}}>
+                <Box sx={{ py: 1}}>
                     <Link href={`/user/${data.username}`} passHref legacyBehavior><MenuItem component='a' onClick={handleMenu(false)}><ListItemIcon><AccountCircle/></ListItemIcon> View Profile</MenuItem></Link>
                     {('isFollowing' in data && user && user.id !== data.id) && (
                         <>

@@ -69,7 +69,7 @@ function Backdrop(props: BackdropProps) {
     return(
         <Portal>
             {progress || children ? (
-                <Dialog open={open} titleWithClose={false} maxWidth="lg" fullScreen={false}>
+                <Dialog open={open} titleWithClose={false} maxWidth="lg" fullScreen={false} sx={{zIndex:2000}}>
                     <Box display='flex' flexDirection='column' alignItems='center' textAlign='center'>
                         {loading && <Loading />}
                         {progress && <ProgressLinear progress={progress} textColor={textColor} /> }

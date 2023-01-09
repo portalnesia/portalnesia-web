@@ -12,7 +12,7 @@ import CustomCard from "@design/components/Card";
 import { getDayJs, href } from "@utils/main";
 import Container from "@comp/Container";
 import { ChordPagination } from "@model/chord";
-import { useRouter } from "next/router";
+import Router,{ useRouter } from "next/router";
 import { ucwords } from "@portalnesia/utils";
 import Button from "@comp/Button";
 import MenuPopover from "@design/components/MenuPopover";
@@ -39,13 +39,21 @@ export default function News() {
     const {data,error} = useSWR<PaginationResponse<ChordPagination>>(`/v2/chord?page=${page}&per_page=24&order=${order}`);
     const {data:recommendation,error:errRecommendation} = useSWR<ChordPagination[]>(`/v2/chord/recommendation`);
     const [dOrder,setDOrder] = React.useState(false);
+    const [loadingPopover,setLoadingPopover] = React.useState(false);
     const orderRef = React.useRef(null);
 
     const handleOrder=React.useCallback((order:'recent'|'popular')=>()=>{
+        setLoadingPopover(true)
         setDOrder(false);
-        router.push({pathname:'/chord',query:{order}},`/chord?order=${order}`,{shallow:true,scroll:true});
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */
+        setTimeout(()=>{
+            setLoadingPopover(false);
+            Router.push({pathname:'/chord',query:{order}},`/chord?order=${order}`,{shallow:true});
+        },500)        
     },[])
+
+    React.useEffect(()=>{
+        setDOrder(false);
+    },[order])
 
     return (
         <Pages title="Chord" canonical="/chord">
@@ -78,15 +86,7 @@ export default function News() {
                 <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} mt={7} pb={0.5} mb={2}>
                     <Box sx={{display:"flex",flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
                         <Typography variant='h4' component='h1'>{order === 'recent' ? `Recent Chord` : 'Popular Chord'}</Typography>
-                        <Button disabled={!data&&!error} ref={orderRef} color='inherit' text onClick={()=>setDOrder(true)} endIcon={<Iconify icon='fe:list-order' />}>{order}</Button>
-
-                        <MenuPopover open={dOrder} onClose={()=>setDOrder(false)} anchorEl={orderRef.current} paperSx={{py:1,width:150}}>
-                            {selectArr.map(s=>(
-                                <MenuItem key={s} sx={{ color: 'text.secondary',py:1 }} onClick={handleOrder(s)} selected={order === s}>
-                                    <ListItemText primary={ucwords(s)} />
-                                </MenuItem>
-                            ))}
-                        </MenuPopover>
+                        <Button disabled={(!data&&!error) || loadingPopover} ref={orderRef} color='inherit' text onClick={()=>setDOrder(true)} endIcon={<Iconify icon='fe:list-order' />}>{order}</Button>
                     </Box>
                 </Box>
 
@@ -114,6 +114,15 @@ export default function News() {
                         
                 </SWRPages>
             </DefaultLayout>
+            <MenuPopover open={dOrder} onClose={()=>setDOrder(false)} anchorEl={orderRef.current} paperSx={{width:150}}>
+                <Box py={1}>
+                    {selectArr.map(s=>(
+                        <MenuItem key={s} sx={{ color: 'text.secondary',py:1 }} onClick={handleOrder(s)} selected={order === s}>
+                            <ListItemText primary={ucwords(s)} />
+                        </MenuItem>
+                    ))}
+                </Box>
+            </MenuPopover>
         </Pages>
     )
 }

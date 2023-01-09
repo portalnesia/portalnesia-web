@@ -304,7 +304,7 @@ export default function DefaultNavbar({logo,tableContent}: NavbarProps) {
                 <Grid container spacing={2} sx={{height:80}}>
                     <Grid item xs={6} lg={3}>
                         <Stack direction="row" alignItems="center" justifyContent='flex-start' spacing={1.5} height='100%'>
-                            <Box sx={{ pr:2,mt:1,display: 'inline-flex' }}>
+                            <Box sx={{ pr:2,display: 'inline-flex' }}>
                                 <Logo href="/?utm_source=portalnesia+web&utm_medium=header" svg={{size:35}} {...logo} />
                             </Box>
                             <Hidden only={['md','xs']}>

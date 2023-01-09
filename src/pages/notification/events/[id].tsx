@@ -45,7 +45,7 @@ export const getServerSideProps = wrapper<IData>(async({params,redirect,query,se
             meta:{
                 title: event.text||"",
                 desc: event.full_text ? event.full_text : (event.text||undefined),
-                image: event.photo ? staticUrl(`calendar-cover/${event.id}`) : staticUrl(`img?image=notfound.png&export=twibbon`)
+                image: event.photo ? staticUrl(`calendar_cover/${event.id}`) : staticUrl(`img?image=notfound.png&export=twibbon`)
             }
         }
     }
@@ -57,7 +57,7 @@ export default function NotificationEvent({data,meta}: IPages<IData>) {
         <Pages title={meta?.title} desc={meta?.desc} image={meta?.image} canonical={`/notification/events/${data?.id}`} noIndex>
             <DefaultLayout maxWidth='sm'>
                 <Box display='flex' flexDirection='column' alignItems='center' justifyContent='center' textAlign='center'>
-                    <Image width={300} height={300} fancybox src={`${meta?.image}&size=300`} dataSrc={meta?.image} alt={meta?.title} className='image-container' />
+                    <Image width={300} height={300} fancybox src={`${meta?.image}`} alt={meta?.title} className='image-container' />
 
                     <Box width='100%' my={4}><Divider /></Box>
 
