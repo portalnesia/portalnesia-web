@@ -73,7 +73,7 @@ export default function CalendarAdminIndex() {
     const [date,setDate] = React.useState<Dayjs|null>(null);
     const confirmRef = React.useRef<ConfirmationDialog>(null)
     const [delCalendar,setDelete] = React.useState<CalendarDetail>();
-    // [Zero index,One index,One index]
+    const [loadingPopover,setLoadingPopover] = React.useState(false);
     const [dateBali,setDateBali] = React.useState<[number,number,number]>([0,1,1]);
     const [loading,setLoading] = React.useState<'post'|'del'>();
     const captchaRef = React.useRef<Recaptcha>(null);
@@ -94,8 +94,10 @@ export default function CalendarAdminIndex() {
     },[])
 
     const handleOrder=React.useCallback((bali: boolean)=>()=>{
+        setLoadingPopover(true)
         setDOrder(false);
         setTimeout(()=>{
+            setLoadingPopover(false)
             Router.push(`/admin/calendar${bali ? '?filter=bali' : ''}`,undefined,{shallow:true});
         },500)
     },[])
@@ -194,7 +196,7 @@ export default function CalendarAdminIndex() {
                         <Typography variant='h3' component='h1'>Calendar</Typography>
                         
                         <Stack direction='row' spacing={1}>
-                            <Button disabled={!data&&!error} ref={orderRef} color='inherit' text onClick={()=>setDOrder(true)} endIcon={<Iconify icon='fe:list-order' />}>{"Filter"}</Button>
+                            <Button disabled={(!data&&!error) || loadingPopover} ref={orderRef} color='inherit' text onClick={()=>setDOrder(true)} endIcon={<Iconify icon='fe:list-order' />}>{"Filter"}</Button>
                             <Button onClick={handleOpenDialog}>New</Button>
                         </Stack>
                     </Stack>

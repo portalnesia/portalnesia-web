@@ -39,11 +39,14 @@ export default function News() {
     const {data,error} = useSWR<PaginationResponse<ChordPagination>>(`/v2/chord?page=${page}&per_page=24&order=${order}`);
     const {data:recommendation,error:errRecommendation} = useSWR<ChordPagination[]>(`/v2/chord/recommendation`);
     const [dOrder,setDOrder] = React.useState(false);
+    const [loadingPopover,setLoadingPopover] = React.useState(false);
     const orderRef = React.useRef(null);
 
     const handleOrder=React.useCallback((order:'recent'|'popular')=>()=>{
+        setLoadingPopover(true)
         setDOrder(false);
         setTimeout(()=>{
+            setLoadingPopover(false);
             Router.push({pathname:'/chord',query:{order}},`/chord?order=${order}`,{shallow:true});
         },500)        
     },[])
@@ -83,7 +86,7 @@ export default function News() {
                 <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} mt={7} pb={0.5} mb={2}>
                     <Box sx={{display:"flex",flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
                         <Typography variant='h4' component='h1'>{order === 'recent' ? `Recent Chord` : 'Popular Chord'}</Typography>
-                        <Button disabled={!data&&!error} ref={orderRef} color='inherit' text onClick={()=>setDOrder(true)} endIcon={<Iconify icon='fe:list-order' />}>{order}</Button>
+                        <Button disabled={(!data&&!error) || loadingPopover} ref={orderRef} color='inherit' text onClick={()=>setDOrder(true)} endIcon={<Iconify icon='fe:list-order' />}>{order}</Button>
                     </Box>
                 </Box>
 
