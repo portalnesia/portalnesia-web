@@ -1,0 +1,17 @@
+diff --git a/node_modules/mariadb/check-node.js b/node_modules/mariadb/check-node.js
+index 27d973a..e66a2bf 100644
+--- a/node_modules/mariadb/check-node.js
++++ b/node_modules/mariadb/check-node.js
+@@ -21,10 +21,10 @@ const hasMinVersion = function (nodeVersionStr, connectorRequirement) {
+ 
+ module.exports.hasMinVersion = hasMinVersion;
+ 
+-const requirement = require('./package.json').engines.node;
++/*const requirement = require('./package.json').engines.node;
+ const connectorRequirement = requirement.replace('>=', '').trim();
+ const currentNodeVersion = process.version.replace('v', '');
+ if (!hasMinVersion(currentNodeVersion, connectorRequirement)) {
+   console.error(`please upgrade node: mariadb requires at least version ${connectorRequirement}`);
+   process.exit(1);
+-}
++}*/

@@ -246,7 +246,9 @@ const nextConfig = {
           ...config.resolve.fallback,
           fs:false,
           net:false,
-          tls:false
+          tls:false,
+          mariadb:false,
+          process:false
         }
         config.externals['node-fetch'] = 'fetch';
         config.externals['fetch'] = 'fetch';
