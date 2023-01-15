@@ -157,7 +157,7 @@ function CommentForm({handleSubmit,wrapper,placeholder="Add comments..."}: Comme
     }),[handleSubmit,input,unLogin,user])
 
     const handleKeyPress=React.useCallback((e: React.KeyboardEvent<HTMLDivElement>)=>{
-        if(e?.keyCode==13 && !e?.shiftKey && !isMobile) {
+        if(e.key === 'Enter' && !e?.shiftKey && !isMobile) {
             if(input?.match(/\S/) !== null){
                 e.preventDefault();
                 onSubmit();

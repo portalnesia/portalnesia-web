@@ -392,7 +392,7 @@ function ChatComp({selected,img,setImg,mutateRoom}: ChatCompProps) {
 
     const handleKeyPress=React.useCallback((e: React.KeyboardEvent<HTMLDivElement>)=>{
         console.log(e)
-        if(e?.keyCode==13 && !e?.shiftKey && !isMobile) {
+        if(e.key === 'Enter' && !e?.shiftKey && !isMobile) {
             if(/\S+/.test(message)){
                 e.preventDefault();
                 handleSend();
