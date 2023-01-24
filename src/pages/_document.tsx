@@ -1,9 +1,10 @@
 import React from 'react';
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 //import {GA_TRACKING_ID} from 'portal/utils/gtag'
-import { augmentDocumentWithEmotionCache } from './_app';
+import createEmotionServer from "@emotion/server/create-instance"
+import createEmotionCache from '@utils/emotion-cache';
 
-class MyDocument extends Document {
+class MyDocument extends Document<{emotionStyleTags: JSX.Element[]}> {
   render() {
     return (
       <Html lang="en">
@@ -26,6 +27,7 @@ class MyDocument extends Document {
           <link className='higtlightjs-light' rel='stylesheet' href='/css/github.css' />
           {/* eslint-disable-next-line @next/next/no-css-tags */}
           <link className='higtlightjs-dark' rel='stylesheet' href='/css/github-dark.css' />
+          {this.props.emotionStyleTags}
         </Head>
         <body className='scroll-disabled'>
           <Main />
@@ -37,6 +39,34 @@ class MyDocument extends Document {
   }
 }
 
-augmentDocumentWithEmotionCache(MyDocument)
+MyDocument.getInitialProps = async(ctx) => {
+  const originalRenderPage = ctx.renderPage;
+
+  const cache = createEmotionCache();
+  const { extractCriticalToChunks } = createEmotionServer(cache);
+
+  ctx.renderPage = () =>
+    originalRenderPage({
+      enhanceApp: (App) =>
+        function EnhanceApp(props) {
+          //@ts-ignore
+          return <App emotionCache={cache} {...props} />;
+        },
+    });
+
+  const initialProps = await Document.getInitialProps(ctx);
+  const emotionStyles = extractCriticalToChunks(initialProps.html);
+  const emotionStyleTags = emotionStyles.styles.map((style) => (
+    <style
+      data-emotion={`${style.key} ${style.ids.join(" ")}`}
+      key={style.key}
+      dangerouslySetInnerHTML={{ __html: style.css }}
+    />
+  ));
+  return {
+    ...initialProps,
+    emotionStyleTags,
+  };
+}
 
 export default MyDocument;

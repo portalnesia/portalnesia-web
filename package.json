@@ -108,7 +108,6 @@
     "socket.io-client": "^4.5.4",
     "superjson": "^1.11.0",
     "swr": "^2.0.0",
-    "tss-react": "^4.4.4",
     "typescript": "4.8.4",
     "url-metadata": "^2.5.0",
     "zip-lib": "^0.7.3"
