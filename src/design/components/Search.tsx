@@ -89,7 +89,8 @@ export interface SearchProps {
   
   export default function Search({onsubmit,onremove,onchange,remove=false,value,autosize=false,sx,wrapperSx}: SearchProps) {
     const [open,setOpen] = React.useState(false);
-  
+    const [focus,setFocus] = React.useState(false);
+
     const inputRef = React.useRef<HTMLInputElement>(null);
     const buttonRef = React.useRef(null)
   
@@ -117,7 +118,7 @@ export interface SearchProps {
             {autosize ? (
                 <form onSubmit={handleSubmit}>
                     <Wrapper autoresize sx={{...wrapperSx}}>
-                        {remove && value?.length > 0? (
+                        {!focus && remove && value?.length > 0? (
                             <DeleteStyle focused={value?.length > 0 }>
                                 <IconButton onClick={handleRemove} size="small">
                                     <ClearIcon />
@@ -128,7 +129,7 @@ export interface SearchProps {
                                 <SearchIcon />
                             </SearchStyle>
                         )}
-                        <InputStyle ref={inputRef} sx={sx} autoresize removed={remove && value?.length > 0} placeholder={`Search...`} value={value} onChange={onchange} />
+                        <InputStyle onFocus={()=>setFocus(true)} onBlur={()=>setFocus(false)} ref={inputRef} sx={sx} autoresize removed={remove && value?.length > 0} placeholder={`Search...`} value={value} onChange={onchange} />
                     </Wrapper>
                 </form>
             ) : (

@@ -64,6 +64,8 @@ function getPortalnesiaImagePng(img: string) {
     }
 }
 
+NativeFancybox.defaults.Hash = false;
+
 /**
  * 
  * Custom Image Components
@@ -154,7 +156,7 @@ const Image=React.forwardRef<HTMLImageElement,ImageProps>((props,ref)=>{
         return (
             <>
                 {fancybox ? (
-                    <ButtonBase component='a' ref={(ref)=>imgRef.current=ref} data-fancybox={dataFancybox} data-src={withPng ? pngDataSrc : (dataSrc||src)} data-options="{'protect':'true'}" {...(caption||alt ? {'data-caption':caption||alt} : {})} sx={sx}>
+                    <ButtonBase component='a' ref={(ref)=>imgRef.current=ref} data-fancybox={dataFancybox} data-src={withPng ? pngDataSrc : (dataSrc||src)} data-options="{'protect':'true'}" {...(caption||alt ? {'data-caption':caption||alt} : {})} sx={sx}  {...(dataSrc !== src ? {['data-thumb']: src} : {})}>
                         <picture>
                             {!withPng && <source type='image/webp' srcSet={webpSrc}/>}
                             <source type={withPng ? 'image/png' : 'image/jpeg'} srcSet={withPng ? pngSrc : src}/>
@@ -192,7 +194,7 @@ const Image=React.forwardRef<HTMLImageElement,ImageProps>((props,ref)=>{
         return(
             <>
                 {fancybox ? (
-                    <ButtonBase component='a' ref={(ref)=>imgRef.current=ref} data-fancybox={dataFancybox} data-src={withPng ? pngDataSrc : (dataSrc||src)} data-options="{'protect':'true'}" {...(caption||alt ? {'data-caption':caption||alt} : {})} sx={sx}>
+                    <ButtonBase component='a' ref={(ref)=>imgRef.current=ref} data-fancybox={dataFancybox} data-src={withPng ? pngDataSrc : (dataSrc||src)} data-options="{'protect':'true'}" {...(caption||alt ? {'data-caption':caption||alt} : {})} sx={sx} {...(dataSrc !== src ? {['data-thumb']: src} : {})}>
                         {lazy ? (
                             <LazyImageStyle src={withPng ? `${src}&output=png` : src} className={`no-drag${className ? ' '+className : ''}`} onContextMenu={onRightClick} {...(alt ? {alt:alt} : {})} sx={sx} {...rest} />
                         ) : (

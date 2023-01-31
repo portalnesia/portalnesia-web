@@ -65,9 +65,13 @@ type Args = {
   data: any
 }
 
-type Content = {
+type BaseContent = {
   id: string,
   name: string
+}
+
+type Content = BaseContent & {
+  child?: BaseContent[]
 }
 
 export function getOffset(elem: Element|null){
@@ -102,10 +106,14 @@ export default function useTableContent(opt: Args) {
   React.useEffect(()=>{
     const tim1 = setTimeout(()=>{
       let konten: Content[]=[];
-      document.querySelectorAll('a > h1[id],a > h2[id], a > h3[id], .table-content[id]').forEach(e=>{
-          const id = e.getAttribute('id')||'';
-          const name = (e.textContent||'')
-          konten = konten.concat({id:id,name:name})
+      document.querySelectorAll('a > h1[id],a > h2[id],a > h3[id]').forEach(e=>{
+        const id = e.getAttribute('id')||'';
+        const name = (e.textContent||'')
+        if(e.tagName === 'H3' && konten.length > 0) {
+          konten[konten.length-1].child = (konten?.[konten.length-1]?.child||[]).concat({id,name})
+        } else {
+          konten = konten.concat({id:id,name:name});
+        }
       })
       setContent(konten);
     },500)
@@ -129,9 +137,9 @@ export default function useTableContent(opt: Args) {
                 if(getOffset(id).top - padding <= o+5) {
                   if(a.parentNode?.parentNode) {
                     const li = a.parentElement;
-                    for(let siblings of li?.parentNode?.children||[]) {
-                      siblings.classList.remove('active');
-                    }
+                    document.querySelectorAll<HTMLAnchorElement>('#tableOfContents li').forEach(l=>{
+                      l.classList.remove('active');
+                    })
                     li?.classList?.add('active');
                   }
                 }
@@ -172,7 +180,17 @@ export function HtmlMdUp(props: Args) {
     <div id='tableOfContents'>
       <List component="ol" sx={{listStyle:'numeric',listStylePosition:'inside'}}>
         {content.map((dt,i)=>(
-            <CustomLi key={`${dt?.id}-${i}`}><ContentSpan href={`#${dt?.id}`} onClick={handlePageContent(dt?.id)}><span>{dt?.name}</span></ContentSpan></CustomLi>
+          <React.Fragment key={`${dt?.id}-${i}`}>
+            <CustomLi {...dt.child && dt.child?.length > 0 ? {className:'not-margin'} : {}}><ContentSpan href={`#${dt?.id}`} onClick={handlePageContent(dt?.id)}><span>{dt?.name}</span></ContentSpan></CustomLi>
+            {dt.child && dt.child?.length > 0 && (
+              <List component="ul" sx={{listStyle:'inside',listStylePosition:'inside',pl:2}}>
+                {dt.child.map((c,ii)=>(
+                  <CustomLi key={`${c.id}-${i}-${ii}`}><ContentSpan href={`#${c?.id}`} onClick={handlePageContent(c?.id)}><span>{c?.name}</span></ContentSpan></CustomLi>
+                ))}
+              </List>
+            )}
+            
+          </React.Fragment>
         ))}
       </List>
     </div>
@@ -220,7 +238,17 @@ export function HtmlMdDown(props: Args) {
           <div id='tableOfContents'>
             <List component="ol" sx={{listStyle:'numeric',listStylePosition:'inside'}}>
               {content.map((dt,i)=>(
-                  <CustomLi key={`${dt?.id}-${i}`}><ContentSpan href={`#${dt?.id}`} onClick={handleClick(dt?.id)}><span>{dt?.name}</span></ContentSpan></CustomLi>
+                <React.Fragment key={`${dt?.id}-${i}`}>
+                  <CustomLi {...dt.child && dt.child?.length > 0 ? {className:'not-margin'} : {}}><ContentSpan href={`#${dt?.id}`} onClick={handleClick(dt?.id)}><span>{dt?.name}</span></ContentSpan></CustomLi>
+                  {dt.child && dt.child?.length > 0 && (
+                    <List component="ul" sx={{listStyle:'inside',listStylePosition:'inside',pl:2}}>
+                      {dt.child.map((c,ii)=>(
+                        <CustomLi key={`${c.id}-${i}-${ii}`}><ContentSpan href={`#${c?.id}`} onClick={handleClick(c?.id)}><span>{c?.name}</span></ContentSpan></CustomLi>
+                      ))}
+                    </List>
+                  )}
+                  
+                </React.Fragment>
               ))}
             </List>
           </div>
