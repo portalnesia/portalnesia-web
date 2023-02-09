@@ -199,7 +199,7 @@ const parseOption = (opt : {preview?:boolean}): HTMLReactParserOptions =>({
           const withPng = Boolean(child?.attribs?.['data-png']=='true');
           //return null
           return (
-            <Box display='flex' justifyContent='center' my={3}>
+            <Box data-id="image-content" display='flex' justifyContent='center' my={3}>
               <Img caption={caption} lazy={!opt.preview} webp withPng={withPng} fancybox src={srrc} dataSrc={ssrc} className={clx('image-container',classs)} />
             </Box>
           )
@@ -217,20 +217,20 @@ const parseOption = (opt : {preview?:boolean}): HTMLReactParserOptions =>({
       const oriSrc = parent?.attribs?.['data-src'];
       const ssrc=oriSrc||srrrc;
       return (
-        <Box display='flex' justifyContent='center' my={3}>
+        <Box data-id="image-content" display='flex' justifyContent='center' my={3}>
           <Img caption={caption} lazy={!opt.preview} webp withPng={withPng} fancybox src={srrc} dataSrc={ssrc} className={clx('image-container',classs)} />
         </Box>
       )
     }
     // figure
     if(node?.type==='tag'&&node?.name==='figure') {
-      return <Box sx={{my:3}}>{domToReact(node?.children,parseOption(opt))}</Box>
+      return <Box data-id="figure-content" sx={{my:3}}>{domToReact(node?.children,parseOption(opt))}</Box>
     }
     // figcaption
     if(node?.type==='tag'&&node?.name==='figcaption') {
       return (
         <Box mx={2} textAlign='center' display='flex' justifyContent='center'>
-          <Typography variant='caption' component='p' sx={{textAlign:"justify"}}>{domToReact(node?.children,parseOption(opt))}</Typography>
+          <Typography data-id='caption-content' variant='caption' component='p' sx={{textAlign:"justify"}}>{domToReact(node?.children,parseOption(opt))}</Typography>
         </Box>
       )
     }

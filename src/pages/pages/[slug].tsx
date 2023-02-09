@@ -90,6 +90,9 @@ export default function BlogPages({data:pages,meta}: IPages<PagesDetail>) {
                 images={meta?.image ? [meta?.image] : [""]}
             />
             <DefaultLayout navbar={{tableContent:data}}>
+                <div data-id="author" data-content={"Portalnesia"} />
+                <div data-id="author_url" data-content={portalUrl()} />
+                {data?.image && <div data-id="cover" data-content={data?.image} />}
                 <SWRPages loading={!data&&!error} error={error}>
                     <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={0.5}>
                         <Typography variant='h3' component='h1'>{data?.title||pages.title}</Typography>
@@ -122,14 +125,14 @@ export default function BlogPages({data:pages,meta}: IPages<PagesDetail>) {
                     
                     <Grid container spacing={2} justifyContent='center'>
                         <Grid item xs={12} md={content.length > 0 ? 8 : 10}>
-                            <Box key='page-content' id='page-content'>
+                            <Box key='body-content' id='body-content'>
                                 {data && <Parser html={data?.text} />}
                             </Box>
                         </Grid>
                         {content.length > 0 && (
                             <Hidden mdDown>
                                 <Grid item xs={12} md={4}>
-                                    <Sidebar id='page-content' disabled={!error && !data}>
+                                    <Sidebar id='body-content' disabled={!error && !data}>
                                         <PaperBlock title="Table of Content">
                                             <HtmlMdUp data={data} />
                                         </PaperBlock>

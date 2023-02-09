@@ -105,6 +105,13 @@ export default function BlogPages({data:blog,meta}: IPages<BlogDetail>) {
                 images={meta?.image ? [meta?.image] : [""]}
             />
             <DefaultLayout navbar={{tableContent:data}}>
+                {data?.user && (
+                    <>
+                        <div data-id="author" data-content={data?.user?.name} />
+                        <div data-id="author_url" data-content={portalUrl(`/user/${data?.user?.username}`)} />
+                    </>
+                )}
+                {data?.image && <div data-id="cover" data-content={data?.image} />}
                 {data && <Breadcrumbs title={data.title} routes={[{
                     label:"Blog",
                     link:"/blog"
@@ -151,7 +158,7 @@ export default function BlogPages({data:blog,meta}: IPages<BlogDetail>) {
                     
                     <Grid container spacing={4}>
                         <Grid item xs={12} md={8}>
-                            <Box id='blog-content'>
+                            <Box id='body-content'>
                                 {data && (
                                     <>
                                         {data.format === 'html' ? <Parser html={data?.text} /> : data.format === 'markdown' ? <Markdown source={data?.text} /> : null}
@@ -214,7 +221,7 @@ export default function BlogPages({data:blog,meta}: IPages<BlogDetail>) {
                             </PaperBlock>
                             {content.length > 0 && (
                                 <Hidden mdDown>
-                                    <Sidebar id='blog-content'>
+                                    <Sidebar id='body-content'>
                                         <PaperBlock title="Table of Content">
                                             <HtmlMdUp data={data} />
                                         </PaperBlock>

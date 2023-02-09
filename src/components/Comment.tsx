@@ -107,7 +107,7 @@ export default function Comment({type,posId,comment_id,collapse}: CommentProps) 
     },[type,posId,del,setNotif,mutate])
 
     return (
-        <PaperBlock title="Comments" content={{sx:{p:0,pb:'0!important'}}} collapse={collapse}>
+        <PaperBlock data-id="comment-box" title="Comments" content={{sx:{p:0,pb:'0!important'}}} collapse={collapse}>
             <CommentForm handleSubmit={onSubmitComment} />
             <Divider sx={{mt:2}} />
             <CommentTree data={data} error={error} onDelete={handleDelete} type={type} posId={posId} comment_id={comment_id} onSubmit={onSubmitComment} />

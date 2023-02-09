@@ -7,7 +7,7 @@ import { NewsDetail, NewsPagination } from "@model/news";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
-import { adddesc, clean, truncate, ucwords } from "@portalnesia/utils";
+import { adddesc, clean, truncate, ucwords, urlToDomain } from "@portalnesia/utils";
 import wrapper, { BackendError } from "@redux/store";
 import { IPages } from "@type/general";
 import { useRouter } from "next/router";
@@ -102,6 +102,9 @@ export default function NewsPages({data:news,meta}: IPages<NewsDetail>) {
                 description={typeof meta?.desc === 'string' ? adddesc(meta?.desc) : ""}
             />
             <DefaultLayout navbar={{tableContent:data}}>
+                <div data-id="author" data-content={data?.source ? ucwords(data?.source) : "Portalnesia"} />
+                <div data-id="author_url" data-content={data?.source_link ? `https://${urlToDomain(data?.source_link)}` : portalUrl()} />
+                {data?.source !== "kumparan" && <div data-id="cover" data-content={data?.image} />}
                 {data && <Breadcrumbs title={data.title} routes={[{
                     label:"News",
                     link:"/news"
@@ -144,7 +147,7 @@ export default function NewsPages({data:news,meta}: IPages<NewsDetail>) {
                 <SWRPages loading={!data&&!error} error={error}>
                     <Grid container spacing={2}>
                         <Grid item xs={12} md={8}>
-                            <Box id='blog-content'>
+                            <Box id='body-content'>
                                 {data && (
                                     <>
                                         <Parser html={data?.text} />
@@ -164,7 +167,7 @@ export default function NewsPages({data:news,meta}: IPages<NewsDetail>) {
                         </Grid>
                         
                         <Grid item xs={12} md={4}>
-                            <Sidebar id='blog-content'>
+                            <Sidebar id='body-content'>
                                 <PaperBlock title="Recommendation" content={{sx:{px:2}}}>
                                     <SWRPages loading={!recommendation&&!errRecommendation} error={errRecommendation}>
                                         <Stack alignItems='flex-start' spacing={1}>
