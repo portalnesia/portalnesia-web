@@ -23,6 +23,7 @@ import Scrollbar from './Scrollbar'
 import { handlePageContent } from './TableContent'
 import { BoxPagination } from './Pagination'
 import SocialEmbed from '@comp/SocialEmbed'
+import { Em, Figcaption, Figure } from './Dom'
 
 export const editorStyles=(theme: Theme)=>({
   '& pre code':{
@@ -199,11 +200,25 @@ const parseOption = (opt : {preview?:boolean}): HTMLReactParserOptions =>({
           const withPng = Boolean(child?.attribs?.['data-png']=='true');
           //return null
           return (
-            <Box data-id="image-content" display='flex' justifyContent='center' my={3}>
+            <Box data-id="image-content" display='flex' justifyContent='center'>
               <Img caption={caption} lazy={!opt.preview} webp withPng={withPng} fancybox src={srrc} dataSrc={ssrc} className={clx('image-container',classs)} />
             </Box>
           )
       }
+    }
+    if(node?.type==='tag' && node?.name==='em'){
+      if(node?.parent?.children && node?.parent?.children?.length > 2) {
+        const child = node?.parent?.children[0] as Element;
+        if(child.name === "img") {
+          const props = attributesToProps(node?.attribs);
+          return (
+            <Figcaption data-id='caption-content'>
+              <Em {...props} sx={{fontSize:14,color:'text.secondary'}}>{domToReact(node?.children,parseOption(opt))}</Em>
+            </Figcaption>
+          )
+        }
+      }
+      
     }
     // IMG
     if(node?.type==='tag' && node?.name==='img' && (node?.attribs?.src||node?.attribs?.['data-src'])){
@@ -217,21 +232,21 @@ const parseOption = (opt : {preview?:boolean}): HTMLReactParserOptions =>({
       const oriSrc = parent?.attribs?.['data-src'];
       const ssrc=oriSrc||srrrc;
       return (
-        <Box data-id="image-content" display='flex' justifyContent='center' my={3}>
+        <Box data-id="image-content" display='flex' justifyContent='center'>
           <Img caption={caption} lazy={!opt.preview} webp withPng={withPng} fancybox src={srrc} dataSrc={ssrc} className={clx('image-container',classs)} />
         </Box>
       )
     }
     // figure
     if(node?.type==='tag'&&node?.name==='figure') {
-      return <Box data-id="figure-content" sx={{my:3}}>{domToReact(node?.children,parseOption(opt))}</Box>
+      return <Figure>{domToReact(node?.children,parseOption(opt))}</Figure>
     }
     // figcaption
     if(node?.type==='tag'&&node?.name==='figcaption') {
       return (
-        <Box mx={2} textAlign='center' display='flex' justifyContent='center'>
-          <Typography data-id='caption-content' variant='caption' component='p' sx={{textAlign:"justify"}}>{domToReact(node?.children,parseOption(opt))}</Typography>
-        </Box>
+        <Figcaption data-id='caption-content'>
+          <Em sx={{fontSize:14,color:'text.secondary'}}>{domToReact(node?.children,parseOption(opt))}</Em>
+        </Figcaption>
       )
     }
     // TABLE
@@ -281,10 +296,16 @@ const parseOption = (opt : {preview?:boolean}): HTMLReactParserOptions =>({
     }
     // P
     if(node?.type==='tag'&&node?.name==='p') {
-      const findChild = node.children.find(n=>{
-        return n?.type === 'tag' && n?.name === "div"
+      const findChildDiv = node.children.find(n=>{
+        return n?.type === 'tag' && (["div"].includes(n?.name))
       });
-      if(findChild) return domToReact(node?.children,parseOption(opt))
+      if(findChildDiv) return domToReact(node?.children,parseOption(opt));
+
+      const findChildImage = node.children.find(n=>{
+        return n?.type === 'tag' && (["img","picture"].includes(n?.name))
+      });
+      if(findChildImage) return <Figure>{domToReact(node?.children,parseOption(opt))}</Figure>
+
       const parent = node?.parent;
       if(parent?.type === 'tag' && parent?.name === "li") {
         return <Typography paragraph variant='body1' component='span' sx={{textAlign:"justify"}}>{domToReact(node?.children,parseOption(opt))}</Typography>
@@ -359,9 +380,13 @@ export function Parser({html,preview,...other}: ParserProps) {
         }
     },[html])
 
+    const children = React.useMemo(()=>{
+      return Parserr(html,parseOption({preview}))
+    },[html,preview])
+
     return(
       <Div ref={divRef} {...other}>
-        {Parserr(html,parseOption({preview}))}
+        {children}
       </Div>
     )
 }

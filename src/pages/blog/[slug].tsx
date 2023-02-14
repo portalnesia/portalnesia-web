@@ -176,27 +176,24 @@ export default function BlogPages({data:blog,meta}: IPages<BlogDetail>) {
                                             </Grid>
                                         </Box>
 
-                                        <Hidden mdDown>
-                                            <PaperBlock title={"Other Posts"} sx={{width:'100%',mt:10}} content={{sx:{px:2}}}>
-                                                <SWRPages loading={!recommendation&&!errRecommendation} error={errRecommendation}>
-                                                    <Scrollbar>
-                                                        {(recommendation && recommendation.length) ? (
-                                                            <Carousel responsive={responsiveContentDefault}>
-                                                                {recommendation.map(d=>(
-                                                                    <Box px={1} key={d.title} height='100%'>
-                                                                        <CustomCard ellipsis={2} key={d.title} link={href(d.link)} title={d.title} image={`${d.image}&export=banner&size=300`} variant='outlined' />
-                                                                    </Box>
-                                                                ))}
-                                                            </Carousel>
-                                                        ) : (
+                                        <PaperBlock title={"Other Posts"} sx={{width:'100%',mt:10}} content={{sx:{px:0}}}>
+                                            <SWRPages loading={!recommendation&&!errRecommendation} error={errRecommendation}>
+                                                <Scrollbar>
+                                                    <Stack direction='row' pb={2} spacing={2} px={2}>
+                                                        {(recommendation && recommendation.length) ? recommendation.map(d=>(
+                                                            <CustomCard ellipsis={2} key={d.title} link={href(d.link)} title={d.title} image={`${d.image}&export=banner&size=300`} sx={{minWidth:250,maxWidth:250,height:'auto'}}>
+                                                                <Typography variant='caption'>{getDayJs(d.last_modified).time_ago().format}</Typography>
+                                                            </CustomCard>
+                                                        )) : (
                                                             <BoxPagination>
                                                                 <Typography>No data</Typography>
                                                             </BoxPagination>
                                                         )}
-                                                    </Scrollbar>
-                                                </SWRPages>
-                                            </PaperBlock>
-                                        </Hidden>
+                                                        <Box>&nbsp;</Box>
+                                                    </Stack>
+                                                </Scrollbar>
+                                            </SWRPages>
+                                        </PaperBlock>
 
                                         <Box mt={10}>
                                             <Comment posId={data.id} type='blog' collapse={false} />
@@ -206,19 +203,6 @@ export default function BlogPages({data:blog,meta}: IPages<BlogDetail>) {
                             </Box>
                         </Grid>
                         <Grid item xs={12} md={4}>
-                            <PaperBlock title={"Other Posts"} sx={{width:'100%',mb:5}} content={{sx:{px:2}}}>
-                                <SWRPages loading={!recommendation&&!errRecommendation} error={errRecommendation}>
-                                    <Stack alignItems='flex-start' spacing={1}>
-                                        {(recommendation && recommendation.length) ? recommendation.map(d=>(
-                                            <CustomCard key={d.title} link={href(d.link)} title={d.title} variant='outlined' />
-                                        )) : (
-                                            <BoxPagination>
-                                                <Typography>No data</Typography>
-                                            </BoxPagination>
-                                        )}
-                                    </Stack>
-                                </SWRPages>
-                            </PaperBlock>
                             {content.length > 0 && (
                                 <Hidden mdDown>
                                     <Sidebar id='body-content'>

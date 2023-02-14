@@ -29,6 +29,7 @@ import { getAnalytics, logEvent } from "@utils/firebase";
 import Button from "@comp/Button";
 import Link from "@design/components/Link";
 import Divider from "@mui/material/Divider";
+import Scrollbar from "@design/components/Scrollbar";
 
 export const getServerSideProps = wrapper<NewsDetail>(async({params,redirect,fetchAPI})=>{
     const slug = params?.slug;
@@ -158,6 +159,27 @@ export default function NewsPages({data:news,meta}: IPages<NewsDetail>) {
                                             <Link href={data?.source_link} passHref legacyBehavior><Button component='a' className="no-blank" target='_blank' rel="nofollow noopener noreferrer" outlined color='inherit'>Artikel Asli</Button></Link>
                                         </Box>
 
+                                        <Hidden mdUp>
+                                            <PaperBlock title={"Recommendation"} sx={{width:'100%',mt:10}} content={{sx:{px:0}}}>
+                                                <SWRPages loading={!recommendation&&!errRecommendation} error={errRecommendation}>
+                                                    <Scrollbar>
+                                                        <Stack direction='row' pb={2} spacing={2} px={2}>
+                                                            {(recommendation && recommendation.length) ? recommendation.map(d=>(
+                                                                <CustomCard ellipsis={2} key={d.title} link={href(d.link)} title={d.title} image={`${d.image}&export=banner&size=300`} sx={{minWidth:250,maxWidth:250,height:'auto'}}>
+                                                                    <Typography variant='caption'>{getDayJs(d.created).time_ago().format}</Typography>
+                                                                </CustomCard>
+                                                            )) : (
+                                                                <BoxPagination>
+                                                                    <Typography>No data</Typography>
+                                                                </BoxPagination>
+                                                            )}
+                                                            <Box>&nbsp;</Box>
+                                                        </Stack>
+                                                    </Scrollbar>
+                                                </SWRPages>
+                                            </PaperBlock>
+                                        </Hidden>
+
                                         <Box mt={10}>
                                             <Comment posId={data.id} type='news' collapse={false} />
                                         </Box>
@@ -167,21 +189,23 @@ export default function NewsPages({data:news,meta}: IPages<NewsDetail>) {
                         </Grid>
                         
                         <Grid item xs={12} md={4}>
-                            <Sidebar id='body-content'>
-                                <PaperBlock title="Recommendation" content={{sx:{px:2}}}>
-                                    <SWRPages loading={!recommendation&&!errRecommendation} error={errRecommendation}>
-                                        <Stack alignItems='flex-start' spacing={1}>
-                                            {(recommendation && recommendation.length) ? recommendation.map(d=>(
-                                                <CustomCard key={d.title} link={href(d.link)} title={d.title} variant='outlined' />
-                                            )) : (
-                                                <BoxPagination>
-                                                    <Typography>No data</Typography>
-                                                </BoxPagination>
-                                            )}
-                                        </Stack>
-                                    </SWRPages>
-                                </PaperBlock>
-                            </Sidebar>
+                            <Hidden mdDown>
+                                <Sidebar id='body-content'>
+                                    <PaperBlock title="Recommendation" content={{sx:{px:2}}}>
+                                        <SWRPages loading={!recommendation&&!errRecommendation} error={errRecommendation}>
+                                            <Stack alignItems='flex-start' spacing={1}>
+                                                {(recommendation && recommendation.length) ? recommendation.map(d=>(
+                                                    <CustomCard key={d.title} link={href(d.link)} title={d.title} variant='outlined' />
+                                                )) : (
+                                                    <BoxPagination>
+                                                        <Typography>No data</Typography>
+                                                    </BoxPagination>
+                                                )}
+                                            </Stack>
+                                        </SWRPages>
+                                    </PaperBlock>
+                                </Sidebar>
+                            </Hidden>
                         </Grid>
                     </Grid>
                 </SWRPages>
