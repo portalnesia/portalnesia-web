@@ -225,20 +225,22 @@ function Search() {
     useMousetrap("/",openSearch);
 
     return (
-        <Form sx={{flexGrow:{lg:1,sm:1,xl:1,md:0,xs:0}}} onSubmit={handleSearch}>
+        <>
             <Hidden only={['md','xs']}>
-                <InputSearch
-                    sx={{px:2,py:1}}
-                    id='search-input-home'
-                    active={focus}
-                    value={q}
-                    onFocus={()=>setFocus(true)}
-                    onBlur={()=>setFocus(false)}
-                    onChange={(e)=>setQ(e.target.value)}
-                    placeholder="Search..."
-                    inputProps={{ 'aria-label': 'Search'}}
-                    inputRef={ref2}
-                />
+                <Form sx={{flexGrow:{lg:1,sm:1,xl:1,md:0,xs:0}}} onSubmit={handleSearch}>
+                    <InputSearch
+                        sx={{px:2,py:1}}
+                        id='search-input-home'
+                        active={focus}
+                        value={q}
+                        onFocus={()=>setFocus(true)}
+                        onBlur={()=>setFocus(false)}
+                        onChange={(e)=>setQ(e.target.value)}
+                        placeholder="Search..."
+                        inputProps={{ 'aria-label': 'Search'}}
+                        inputRef={ref2}
+                    />
+                </Form>
             </Hidden>
             <Hidden only={['lg','sm','xl']}>
                 <Tooltip title="Search"><IconButtonActive open={open} onClick={openSearch}>
@@ -247,26 +249,28 @@ function Search() {
                 
                 <Portal>
                     <Fade in={open}>
-                        <Stack direction='row' spacing={2} position='fixed' bgcolor='background.paper' px={2} py={1} width='100%' left={0} top={0} zIndex={1102}>
-                            <IconButton onClick={()=>setOpen(false)}>
-                                <ArrowBack />
-                            </IconButton>
-                            <InputSearch
-                                sx={{px:2,py:1}}
-                                active={focus}
-                                id='search-input-home'
-                                value={q}
-                                onFocus={()=>setFocus(true)}
-                                onBlur={()=>setFocus(false)}
-                                onChange={(e)=>setQ(e.target.value)}
-                                placeholder="Search..."
-                                inputProps={{ 'aria-label': 'Search'}}
-                                inputRef={ref} />
-                        </Stack>
+                        <Form sx={{flexGrow:{lg:1,sm:1,xl:1,md:0,xs:0}}} onSubmit={handleSearch}>
+                            <Stack direction='row' spacing={2} position='fixed' bgcolor='background.paper' px={2} py={1} width='100%' left={0} top={0} zIndex={1102}>
+                                <IconButton onClick={()=>setOpen(false)}>
+                                    <ArrowBack />
+                                </IconButton>
+                                <InputSearch
+                                    sx={{px:2,py:1}}
+                                    active={focus}
+                                    id='search-input-home'
+                                    value={q}
+                                    onFocus={()=>setFocus(true)}
+                                    onBlur={()=>setFocus(false)}
+                                    onChange={(e)=>setQ(e.target.value)}
+                                    placeholder="Search..."
+                                    inputProps={{ 'aria-label': 'Search'}}
+                                    inputRef={ref} />
+                            </Stack>
+                        </Form>
                     </Fade>
                 </Portal>
             </Hidden>
-        </Form>
+        </>
     )
 }
 

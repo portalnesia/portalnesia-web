@@ -133,7 +133,7 @@ export default function GlobalStyles({styles}: GlobalStylesProps) {
           }
         },
         'a.a-blank[target="blank"], a.a-blank[target="_blank"], a[target="_blank"]:not(.no-blank), a[target="blank"]:not(.no-blank)':{
-          display:'inline-flex',
+          //display:'inline-flex',
           alignItems:'center',
           '&:after':{
             backgroundImage:`url(/svg/new_tab_${theme.palette.mode}.svg)`,
@@ -144,6 +144,7 @@ export default function GlobalStyles({styles}: GlobalStylesProps) {
             position:'relative',
             left:5,
             width: '.8125rem',
+            top:1.5,
             marginRight:7
           }
         },

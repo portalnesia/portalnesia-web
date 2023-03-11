@@ -33,13 +33,11 @@ function Section({children,...props}: BoxProps) {
 function FirstSection() {
     return (
         <Section bgcolor='background.paper' display='flex' justifyContent='center' alignItems='center'>
-            <Grid sx={{textAlign:'center'}} container justifyContent='center'>
-                <Grid item xs={6} lg={8}>
-                    <SvgInformation size={250} />
-                    <Typography paragraph variant='h3'>The Future Platform</Typography>
-                    <Typography variant='h5' sx={{fontWeight:'normal'}}>A multi-functional website to accompany you to surf the internet. Sign up to get more features.</Typography>
-                </Grid>
-            </Grid>
+            <Box>
+                <Box textAlign='center'><SvgInformation size={250} /></Box>
+                <Box textAlign='center'><Typography paragraph variant='h3'>The Future Platform</Typography></Box>
+                <Box textAlign='center'><Typography variant='h5' sx={{fontWeight:'normal'}}>A multi-functional website to accompany you to surf the internet. Sign up to get more features.</Typography></Box>
+            </Box>
         </Section>
     )
 }

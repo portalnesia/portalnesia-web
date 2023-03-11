@@ -104,6 +104,23 @@ export function usePageContent(data?:any) {
   return null;
 }
 
+function checkParentHasFigure(node: Element['parent']|null) {
+  let check = false;
+  let currentNode: Element['parent']|null = node;
+  for (let i=0;i < 4 && currentNode;i++) {
+    if(
+      (currentNode.type === "tag" && currentNode.name === "figure") || 
+      (currentNode.type === "tag" && currentNode.name === "div" && currentNode?.attribs?.class === "article__media") //vice
+    ) {
+      check = true;
+      break;
+    } else {
+      currentNode = currentNode.parent
+    }
+  }
+  return check;
+}
+
 const parseOption = (opt : {preview?:boolean}): HTMLReactParserOptions =>({
   replace: (htmlNode)=>{
     const node = htmlNode as Element
@@ -117,14 +134,20 @@ const parseOption = (opt : {preview?:boolean}): HTMLReactParserOptions =>({
           //else if(type=='728') return <AdsBanner2 />
           //else if(type=='button') return <AdsBanner3 />
         }
-      }
-      
-      if(/table\-responsive/.test(node?.attribs?.class||"")) {
+      } else if(/table\-responsive/.test(node?.attribs?.class||"")) {
         return domToReact(node?.children,parseOption(opt)) as any;
-      }
-
-      if(node?.attribs?.class === "fb-post" && typeof node?.attribs?.['data-href'] === "string") {
+      } else if(node?.attribs?.class === "fb-post" && typeof node?.attribs?.['data-href'] === "string") {
         <SocialEmbed type="facebook" url={node?.attribs?.['data-href']} />
+      } else if(node?.attribs?.class === "article__image-caption") {
+        return (
+          <Figcaption data-id='caption-content'>
+            <Em sx={{fontSize:14,color:'text.secondary'}}>{domToReact(node?.children,parseOption(opt))}</Em>
+          </Figcaption>
+        )
+      } else if(node?.attribs?.class === "article__embed article__embed--vice") {
+        return <></>
+      } else if(node?.attribs?.class === "article__media") {
+        return <Figure>{domToReact(node?.children,parseOption(opt))}</Figure>
       }
     }
     if(node?.type==='tag'&&node?.name==='center'){
@@ -192,6 +215,7 @@ const parseOption = (opt : {preview?:boolean}): HTMLReactParserOptions =>({
       const caption = parent?.attribs?.['data-caption'];
       const child = node?.children?.[node?.children?.length -1] as Element|undefined;
       if(child?.name === 'img') {
+          const margin = checkParentHasFigure(node.parent) ? 0:3
           const {src,class:classs,...other}=child?.attribs;
           const srrrc=child?.attribs?.['data-src']||src;
           const ssrc=oriSrc||srrrc;
@@ -200,7 +224,7 @@ const parseOption = (opt : {preview?:boolean}): HTMLReactParserOptions =>({
           const withPng = Boolean(child?.attribs?.['data-png']=='true');
           //return null
           return (
-            <Box data-id="image-content" display='flex' justifyContent='center'>
+            <Box mb={margin} data-id="image-content" display='flex' justifyContent='center'>
               <Img caption={caption} lazy={!opt.preview} webp withPng={withPng} fancybox src={srrc} dataSrc={ssrc} className={clx('image-container',classs)} />
             </Box>
           )
