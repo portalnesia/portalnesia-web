@@ -18,49 +18,49 @@ import { useRouter } from "next/router";
 import wrapper from "@redux/store";
 import { IPages } from "@type/general";
 
-export const getServerSideProps = wrapper(async({params})=>{
+export const getServerSideProps = wrapper(async ({ params }) => {
     const slug = params?.slug;
     let title = "";
-    if(typeof slug === "string") {
-        title = ucwords(slug?.replace(/\-/g," ")) + " ";
+    if (typeof slug === "string") {
+        title = ucwords(slug?.replace(/\-/g, " ")) + " ";
     }
     return {
-        props:{
-            data:{},
-            meta:{
+        props: {
+            data: {},
+            meta: {
                 title
             }
         }
     }
 })
 
-export default function BlogCategoryPage({meta}: IPages) {
+export default function BlogCategoryPage({ meta }: IPages) {
     const router = useRouter();
     const slug = router?.query?.slug;
 
-    const [page,setPage] = usePagination();
-    const {data,error} = useSWR<PaginationResponse<BlogPagination>>(`/v2/blog/category/${slug}?page=${page}&per_page=24`);
+    const [page, setPage] = usePagination();
+    const { data, error } = useSWR<PaginationResponse<BlogPagination>>(`/v2/blog/category/${slug}?page=${page}&per_page=24`);
 
     return (
         <Pages title={`${meta?.title}Category - Blog`} canonical={`/blog/category/${slug}`}>
             <DefaultLayout>
                 <Breadcrumbs title={`${meta?.title}Category`} routes={[{
-                    label:"Blog",
-                    link:"/blog"
+                    label: "Blog",
+                    link: "/blog"
                 }]} />
 
-                <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
+                <Box borderBottom={theme => `2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
                     <Typography variant='h4' component='h1'>{`${meta?.title}Category`}</Typography>
                 </Box>
 
-                <SWRPages loading={!data&&!error} error={error}>
+                <SWRPages loading={!data && !error} error={error}>
                     <Grid container spacing={2}>
-                        {data && data?.data?.length > 0 ? ( data.data.map(d=>(
+                        {data && data?.data?.length > 0 ? (data.data.map(d => (
                             <Grid key={d.title} item xs={12} sm={6} md={4} lg={3}>
-                                <CustomCard link={href(d.link)} title={d.title} image={`${d.image}&export=banner&size=300`}>
+                                <CustomCard link={href(d.link)} title={d.title} image={d.image} image_query="&export=banner&size=300">
                                     <Stack direction='row' justifyContent='space-between'>
-                                        <Typography variant='caption'>{`By ${truncate(d.user.name,20)}`}</Typography>
-                                        <Typography variant='caption'>{getDayJs(d.last_modified||d.created).time_ago().format}</Typography>
+                                        <Typography variant='caption'>{`By ${truncate(d.user.name, 20)}`}</Typography>
+                                        <Typography variant='caption'>{getDayJs(d.last_modified || d.created).time_ago().format}</Typography>
                                     </Stack>
                                 </CustomCard>
                             </Grid>
@@ -72,12 +72,12 @@ export default function BlogCategoryPage({meta}: IPages) {
                             </Grid>
                         )}
                         {(data) && (
-                            <Grid sx={{mt:2}} key={'pagination'} item xs={12}>
+                            <Grid sx={{ mt: 2 }} key={'pagination'} item xs={12}>
                                 <Pagination page={page} onChange={setPage} count={data?.total_page} />
                             </Grid>
                         )}
                     </Grid>
-                        
+
                 </SWRPages>
             </DefaultLayout>
         </Pages>

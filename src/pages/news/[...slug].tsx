@@ -31,66 +31,66 @@ import Link from "@design/components/Link";
 import Divider from "@mui/material/Divider";
 import Scrollbar from "@design/components/Scrollbar";
 
-export const getServerSideProps = wrapper<NewsDetail>(async({params,redirect,fetchAPI})=>{
+export const getServerSideProps = wrapper<NewsDetail>(async ({ params, redirect, fetchAPI }) => {
     const slug = params?.slug;
-    if(typeof slug?.[1] === 'undefined') return redirect();
+    if (typeof slug?.[1] === 'undefined') return redirect();
 
     try {
         const url: string = `/v2/news/${slug[0]}/${slug[1]}`;
         const data: NewsDetail = await fetchAPI<NewsDetail>(url);
 
-        const desc = truncate(clean(data?.text||""),800);
+        const desc = truncate(clean(data?.text || ""), 800);
         return {
-            props:{
-                data:data,
-                meta:{
+            props: {
+                data: data,
+                meta: {
                     title: data?.title,
                     desc,
                     image: staticUrl(`ogimage/news/${data.source.toLowerCase()}/${slug?.[1]}`)
                 }
             }
         }
-    } catch(e) {
-        if(e instanceof BackendError) {
-            if(e?.status === 404) return redirect();
+    } catch (e) {
+        if (e instanceof BackendError) {
+            if (e?.status === 404) return redirect();
         }
         throw e;
     }
 })
 
-export default function NewsPages({data:news,meta}: IPages<NewsDetail>) {
+export default function NewsPages({ data: news, meta }: IPages<NewsDetail>) {
     usePageContent(news);
     const router = useRouter();
     const slug = router.query?.slug;
-    const {data,error} = useSWR<NewsDetail>(`/v2/news/${slug?.[0]}/${slug?.[1]}`,{fallbackData:news});
-    const {data:recommendation,error:errRecommendation} = useSWR<NewsPagination[]>(data ? `/v2/news/recommendation/${data.id}` : null);
-    const {get} = useAPI();
-    const [liked,setLiked] = React.useState(!!news.liked);
+    const { data, error } = useSWR<NewsDetail>(`/v2/news/${slug?.[0]}/${slug?.[1]}`, { fallbackData: news });
+    const { data: recommendation, error: errRecommendation } = useSWR<NewsPagination[]>(data ? `/v2/news/recommendation/${data.id}` : null);
+    const { get } = useAPI();
+    const [liked, setLiked] = React.useState(!!news.liked);
 
-    React.useEffect(()=>{
-        let timeout = setTimeout(()=>{
-            get(`/v2/news/${slug?.[0]}/${slug?.[1]}/update`).catch(()=>{})
+    React.useEffect(() => {
+        let timeout = setTimeout(() => {
+            get(`/v2/news/${slug?.[0]}/${slug?.[1]}/update`).catch(() => { })
             const analytics = getAnalytics();
-            logEvent(analytics,"select_content",{
-                content_type:"news",
-                item_id:`${news.id}`
+            logEvent(analytics, "select_content", {
+                content_type: "news",
+                item_id: `${news.id}`
             })
-        },10000)
+        }, 10000)
 
         setLiked(!!news.liked)
 
-        return ()=>{
+        return () => {
             clearTimeout(timeout);
         }
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    },[news,slug])
+        /* eslint-disable-next-line react-hooks/exhaustive-deps */
+    }, [news, slug])
 
     return (
-        <Pages title={meta?.title} desc={meta?.desc} canonical={`/news/${data?.source}/${encodeURIComponent(data?.title||"")}`} image={meta?.image}>
+        <Pages title={meta?.title} desc={meta?.desc} canonical={`/news/${data?.source}/${encodeURIComponent(data?.title || "")}`} image={meta?.image}>
             <NewsArticleJsonLd
                 section={""}
                 keywords={""}
-                dateCreated={data?.created||""}
+                dateCreated={data?.created || ""}
                 body={typeof meta?.desc === 'string' ? adddesc(meta?.desc) : ""}
                 url={portalUrl(`news/${slug?.[0]}/${slug?.[1]}`)}
                 title={data?.title || ""}
@@ -102,37 +102,37 @@ export default function NewsPages({data:news,meta}: IPages<NewsDetail>) {
                 publisherLogo="https://content.portalnesia.com/icon/ms-icon-310x310.png"
                 description={typeof meta?.desc === 'string' ? adddesc(meta?.desc) : ""}
             />
-            <DefaultLayout navbar={{tableContent:data}}>
+            <DefaultLayout navbar={{ tableContent: data }}>
                 <div data-id="author" data-content={data?.source ? ucwords(data?.source) : "Portalnesia"} />
                 <div data-id="author_url" data-content={data?.source_link ? `https://${urlToDomain(data?.source_link)}` : portalUrl()} />
                 {data?.source !== "kumparan" && <div data-id="cover" data-content={data?.image} />}
                 {data && <Breadcrumbs title={data.title} routes={[{
-                    label:"News",
-                    link:"/news"
+                    label: "News",
+                    link: "/news"
                 }]} />}
-                <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={0.5}>
-                    <Typography variant='h3' component='h1'>{data?.title||news.title}</Typography>
+                <Box borderBottom={theme => `2px solid ${theme.palette.divider}`} pb={0.5} mb={0.5}>
+                    <Typography variant='h3' component='h1'>{data?.title || news.title}</Typography>
                     {data && (
                         <Box mt={1}>
                             <CombineAction list={{
-                                like:{
-                                    type:'news',
-                                    posId:data.id,
-                                    liked:liked,
-                                    onChange:setLiked
+                                like: {
+                                    type: 'news',
+                                    posId: data.id,
+                                    liked: liked,
+                                    onChange: setLiked
                                 },
-                                share:{
-                                    campaign:"news",
-                                    posId:data.id
+                                share: {
+                                    campaign: "news",
+                                    posId: data.id
                                 },
-                                donation:true,
-                                report:{
-                                    report:{
-                                        type:"konten",
-                                        information:{
-                                            konten:{
-                                                id:data.id,
-                                                type:"news"
+                                donation: true,
+                                report: {
+                                    report: {
+                                        type: "konten",
+                                        information: {
+                                            konten: {
+                                                id: data.id,
+                                                type: "news"
                                             }
                                         }
                                     }
@@ -145,7 +145,7 @@ export default function NewsPages({data:news,meta}: IPages<NewsDetail>) {
                     <Typography>{`${getDayJs(data?.created).time_ago().format}`}</Typography>
                 </Box>
 
-                <SWRPages loading={!data&&!error} error={error}>
+                <SWRPages loading={!data && !error} error={error}>
                     <Grid container spacing={2}>
                         <Grid item xs={12} md={8}>
                             <Box id='body-content'>
@@ -153,19 +153,19 @@ export default function NewsPages({data:news,meta}: IPages<NewsDetail>) {
                                     <>
                                         <Parser html={data?.text} />
 
-                                        <Divider sx={{mt:5,mb:3}} />
+                                        <Divider sx={{ mt: 5, mb: 3 }} />
 
                                         <Box textAlign='right'>
                                             <Link href={data?.source_link} passHref legacyBehavior><Button component='a' className="no-blank" target='_blank' rel="nofollow noopener noreferrer" outlined color='inherit'>Artikel Asli</Button></Link>
                                         </Box>
 
                                         <Hidden mdUp>
-                                            <PaperBlock title={"Recommendation"} sx={{width:'100%',mt:10}} content={{sx:{px:0}}}>
-                                                <SWRPages loading={!recommendation&&!errRecommendation} error={errRecommendation}>
+                                            <PaperBlock title={"Recommendation"} sx={{ width: '100%', mt: 10 }} content={{ sx: { px: 0 } }}>
+                                                <SWRPages loading={!recommendation && !errRecommendation} error={errRecommendation}>
                                                     <Scrollbar>
                                                         <Stack direction='row' pb={2} spacing={2} px={2}>
-                                                            {(recommendation && recommendation.length) ? recommendation.map(d=>(
-                                                                <CustomCard ellipsis={2} key={d.title} link={href(d.link)} title={d.title} image={`${d.image}&export=banner&size=300`} sx={{minWidth:250,maxWidth:250,height:'auto'}}>
+                                                            {(recommendation && recommendation.length) ? recommendation.map(d => (
+                                                                <CustomCard ellipsis={2} key={d.title} link={href(d.link)} title={d.title} image={d.image} image_query="&export=banner&size=300" sx={{ minWidth: 250, maxWidth: 250, height: 'auto' }}>
                                                                     <Typography variant='caption'>{getDayJs(d.created).time_ago().format}</Typography>
                                                                 </CustomCard>
                                                             )) : (
@@ -187,14 +187,14 @@ export default function NewsPages({data:news,meta}: IPages<NewsDetail>) {
                                 )}
                             </Box>
                         </Grid>
-                        
+
                         <Grid item xs={12} md={4}>
                             <Hidden mdDown>
                                 <Sidebar id='body-content'>
-                                    <PaperBlock title="Recommendation" content={{sx:{px:2}}}>
-                                        <SWRPages loading={!recommendation&&!errRecommendation} error={errRecommendation}>
+                                    <PaperBlock title="Recommendation" content={{ sx: { px: 2 } }}>
+                                        <SWRPages loading={!recommendation && !errRecommendation} error={errRecommendation}>
                                             <Stack alignItems='flex-start' spacing={1}>
-                                                {(recommendation && recommendation.length) ? recommendation.map(d=>(
+                                                {(recommendation && recommendation.length) ? recommendation.map(d => (
                                                     <CustomCard key={d.title} link={href(d.link)} title={d.title} variant='outlined' />
                                                 )) : (
                                                     <BoxPagination>

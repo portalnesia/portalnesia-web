@@ -21,45 +21,45 @@ import Button from "@comp/Button";
 import Link from "@design/components/Link";
 
 type ResultData = {
-    type:'twibbon',
+    type: 'twibbon',
     data: TwibbonPagination[]
 } | {
-    type:'news',
+    type: 'news',
     data: NewsPagination[]
 } | {
-    type:"user",
+    type: "user",
     data: UserPagination[]
 } | {
-    type:"chord",
+    type: "chord",
     data: ChordPagination[]
 } | {
-    type:"blog",
-    data:BlogPagination[]
+    type: "blog",
+    data: BlogPagination[]
 }
 
 type IResponse = {
-    page: number|null
-    total: number|null,
-    total_page: number|null
-    can_load: boolean|null
+    page: number | null
+    total: number | null,
+    total_page: number | null
+    can_load: boolean | null
     data: ResultData[]
 }
 
 export default function SearchPages() {
-    const router=useRouter();
-    const [page,setPage] = usePagination(true);
+    const router = useRouter();
+    const [page, setPage] = usePagination(true);
     const q = router.query?.q;
     const filter = router.query?.filter
-    const title = React.useMemo(()=>typeof q === 'string' ? `Search result for ${decodeURIComponent(q)}` : "Search",[q]);
-    const {data,error} = useSWR<IResponse>(typeof q === 'string' ? `/v2/search${typeof filter === 'string' ? `/${filter}` : ''}?q=${q}&page=${page}&per_page=${24}` : null)
+    const title = React.useMemo(() => typeof q === 'string' ? `Search result for ${decodeURIComponent(q)}` : "Search", [q]);
+    const { data, error } = useSWR<IResponse>(typeof q === 'string' ? `/v2/search${typeof filter === 'string' ? `/${filter}` : ''}?q=${q}&page=${page}&per_page=${24}` : null)
 
-    const canonical = React.useMemo(()=>{
-        const url = new URL("/search",portalUrl());
-        if(typeof q === "string") url.searchParams.set("q",q);
-        if(typeof filter === "string") url.searchParams.set('filter',filter);
+    const canonical = React.useMemo(() => {
+        const url = new URL("/search", portalUrl());
+        if (typeof q === "string") url.searchParams.set("q", q);
+        if (typeof filter === "string") url.searchParams.set('filter', filter);
         const search = url.searchParams.toString();
         return `${url.pathname}${search.length > 0 ? `?${search}` : ''}`
-    },[filter,q])
+    }, [filter, q])
 
     return (
         <Pages title="Search" canonical={canonical}>
@@ -69,10 +69,10 @@ export default function SearchPages() {
                 </Box>
 
                 {typeof q === 'string' ? (
-                    <SWRPages loading={!data&&!error} error={error}>
-                        {!data ? null : data.data.filter(t=>!['thread','quiz'].includes(t.type)).map((type)=>(
+                    <SWRPages loading={!data && !error} error={error}>
+                        {!data ? null : data.data.filter(t => !['thread', 'quiz'].includes(t.type)).map((type) => (
                             <Box key={type.type} mb={5}>
-                                <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
+                                <Box borderBottom={theme => `2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
                                     <Stack direction='row' justifyContent='space-between' alignItems='center' spacing={2}>
                                         <Typography variant='h4' component='h2'>{ucwords(type.type)}</Typography>
                                         {type.data.length === 6 && (
@@ -87,21 +87,22 @@ export default function SearchPages() {
                                                 <Typography>No data</Typography>
                                             </BoxPagination>
                                         </Grid>
-                                    ) : type.data.map(d=>{
+                                    ) : type.data.map(d => {
                                         const title = 'artist' in d ? `${d.artist} - ${d.title}` : 'title' in d ? d.title : ('name' in d && 'username' in d) ? `${d.name} (@${d.username})` : '';
                                         const link = 'link' in d ? d.link : 'username' in d ? href(`/user/${d.username}`) : ''
-                                        const image = 'image' in d ? `${d.image}&export=banner&size=300` : 'picture' in d ? (d.picture ? `${d.picture}&watermark=no` : staticUrl('img/content?image=notfound.png&watermark=no')) : undefined;
+                                        const image = 'image' in d ? (d.image || null) : 'picture' in d ? (d.picture || null) : undefined;
+                                        const image_query = 'image' in d ? "&export=banner&size=300" : "&watermark=no"
 
                                         return (
                                             <Grid key={`${type}-${d.id}`} item xs={12} sm={6} md={4} lg={3}>
-                                                <CustomCard link={href(link)} title={title} {...(image ? {image}:{})} />
+                                                <CustomCard link={href(link)} title={title} image={image} image_query={image_query} />
                                             </Grid>
                                         )
                                     })}
                                 </Grid>
-                                {(typeof filter === 'string' && (data?.total||0) > 0) &&  (
+                                {(typeof filter === 'string' && (data?.total || 0) > 0) && (
                                     <Box mt={5}>
-                                        <Pagination page={page} onChange={setPage} count={data?.total_page||0} />
+                                        <Pagination page={page} onChange={setPage} count={data?.total_page || 0} />
                                     </Box>
                                 )}
                             </Box>
