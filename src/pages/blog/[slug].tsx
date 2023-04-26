@@ -8,7 +8,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { adddesc, clean, slugFormat, truncate, ucwords } from "@portalnesia/utils";
-import wrapper, { BackendError } from "@redux/store";
+import wrapper, { BackendError, useSelector } from "@redux/store";
 import { IPages } from "@type/general";
 import { useRouter } from "next/router";
 import React from "react";
@@ -65,6 +65,7 @@ export default function BlogPages({ data: blog, meta }: IPages<BlogDetail>) {
     usePageContent(meta);
     const router = useRouter();
     const slug = router.query?.slug;
+    const appToken = useSelector(s => s.appToken);
     const { data, error, mutate } = useSWR<BlogDetail>(`/v2/blog/${slug}`, { fallbackData: blog });
     const { data: recommendation, error: errRecommendation } = useSWR<BlogPagination[]>(data ? `/v2/blog/recommendation/${data.id}` : null);
     const { content } = useTableContent({ data })
@@ -72,14 +73,17 @@ export default function BlogPages({ data: blog, meta }: IPages<BlogDetail>) {
     const { get } = useAPI();
 
     React.useEffect(() => {
-        let timeout = setTimeout(() => {
-            get(`/v2/blog/${blog.slug}/update`).catch(() => { })
-            const analytics = getAnalytics();
-            logEvent(analytics, "select_content", {
-                content_type: "blog",
-                item_id: `${blog.id}`
-            })
-        }, 10000)
+        let timeout: NodeJS.Timer | undefined;
+        if (appToken) {
+            timeout = setTimeout(() => {
+                get(`/v2/blog/${blog.slug}/update`).catch(() => { })
+                const analytics = getAnalytics();
+                logEvent(analytics, "select_content", {
+                    content_type: "blog",
+                    item_id: `${blog.id}`
+                })
+            }, 10000)
+        }
 
         setLiked(!!blog.liked)
 
@@ -87,7 +91,7 @@ export default function BlogPages({ data: blog, meta }: IPages<BlogDetail>) {
             clearTimeout(timeout);
         }
         /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    }, [blog])
+    }, [blog, appToken]);
 
     return (
         <Pages title={meta?.title} desc={meta?.desc} canonical={`/blog/${data?.slug}`} image={meta?.image}>

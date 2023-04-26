@@ -30,7 +30,7 @@ export default function TwibbonIndex() {
                     <Grid container spacing={2}>
                         {data && data?.data?.length > 0 ? data.data.map(d => (
                             <Grid key={d.slug} item xs={12} sm={6} md={4} lg={3}>
-                                <CustomCard link={href(d.link)} title={d.title} image={d.image} image_query="&export=banner&size=300" ellipsis={2}>
+                                <CustomCard link={href(d.link)} title={d.title} image={d.image} image_query="?size=300" ellipsis={2}>
                                     <Stack direction='row' justifyContent='space-between'>
                                         <Typography variant='caption' component='p'>{`By ${d.user.name}`}</Typography>
                                         <Typography variant='caption' component='p'>{getDayJs(d.created).pn_format('minimal')}</Typography>

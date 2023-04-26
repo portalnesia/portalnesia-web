@@ -187,7 +187,7 @@ export default function UserPages({ data: { refid, ...userData }, meta }: IPages
     }, [data, user, post, setNotif, del, mutate])
 
     const downloadQR = React.useCallback(() => {
-        window?.open(staticUrl(`/download_qr/user/${data?.username}?token=${data?.token_qr}`))
+        window.location.href = staticUrl(`/download_qr/user/${data?.username}?token=${data?.token_qr}`);
         setShowQr(false)
     }, [data])
 
@@ -431,7 +431,7 @@ function OverviewPages({ data }: SubcomProps) {
                 <Grid container spacing={2}>
                     {(data?.twibbon?.length || 0) > 0 ? data?.twibbon?.map(d => (
                         <Grid key={d.slug} item xs={12} sm={6} lg={4}>
-                            <CustomCard link={href(d.link)} title={d.title} image={d.image} image_query="&export=banner&size=300" ellipsis={1} />
+                            <CustomCard link={href(d.link)} title={d.title} image={d.image} image_query="?size=300" ellipsis={1} />
                         </Grid>
                     )) : (
                         <Grid key={'no-data'} item xs={12}>
@@ -542,7 +542,7 @@ function TwibbonPages({ data: user }: SubcomProps) {
                 <Grid container spacing={2}>
                     {data && data?.data?.length > 0 ? (data.data.map(d => (
                         <Grid key={d.slug} item xs={12} sm={6} lg={4}>
-                            <CustomCard link={href(d.link)} title={d.title} image={d.image} image_query="&export=banner&size=300" ellipsis={1} />
+                            <CustomCard link={href(d.link)} title={d.title} image={d.image} image_query="?size=300" ellipsis={1} />
                         </Grid>
                     ))) : (
                         <Grid key={'no-data'} item xs={12}>

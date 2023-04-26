@@ -181,12 +181,6 @@ const InputSearch = styled(InputBase, { shouldForwardProp: prop => prop !== 'act
     ...active ? {
         border: `1px solid ${theme.palette.customColor.linkIcon} !important`,
     } : {},
-    '& input:-webkit-autofill, & input:-internal-autofill-selected, & input:-internal-autofill-previewed': {
-        WebkitBoxShadow: `0 0 0 100px ${theme.palette.customColor.search} inset`,
-        WebkitTextFillColor: `${theme.palette.text.primary}`,
-        caretColor: `${theme.palette.text.primary}`,
-        backgroundColor: `${theme.palette.customColor.search} !important`
-    },
 }))
 function Search() {
     const router = useRouter();
@@ -227,9 +221,9 @@ function Search() {
     return (
         <>
             <Hidden only={['md', 'xs']}>
-                <Form sx={{ flexGrow: { lg: 1, sm: 1, xl: 1, md: 0, xs: 0 } }} onSubmit={handleSearch}>
+                <Form sx={{ flexGrow: { lg: 1, sm: 1, xl: 1, md: 0, xs: 0 }, ml: '8px!important' }} onSubmit={handleSearch}>
                     <InputSearch
-                        sx={{ px: 2, py: 1 }}
+                        sx={{ px: 2, py: 0.5, borderRadius: 1.8 }}
                         id='search-input-home'
                         active={focus}
                         value={q}
@@ -308,8 +302,8 @@ export default function DefaultNavbar({ logo, tableContent }: NavbarProps) {
                 <Grid container spacing={2} sx={{ height: 80 }}>
                     <Grid item xs={6} lg={3}>
                         <Stack direction="row" alignItems="center" justifyContent='flex-start' spacing={1.5} height='100%'>
-                            <Box sx={{ pr: 2, display: 'inline-flex' }}>
-                                <Logo href="/?utm_source=portalnesia+web&utm_medium=header" svg={{ size: 35 }} {...logo} />
+                            <Box sx={{ pr: 1, display: 'inline-flex' }}>
+                                <Logo href="/?utm_source=portalnesia+web&utm_medium=header" svg={{ size: 40 }} {...logo} />
                             </Box>
                             <Hidden only={['md', 'xs']}>
                                 <Search />

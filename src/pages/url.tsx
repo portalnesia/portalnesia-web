@@ -92,7 +92,7 @@ export default function UrlPages() {
 
     const downloadQR = React.useCallback((data: UrlPagination) => (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
-        window?.open(staticUrl(`download_qr/url/${data.custom}?token=${data.download_token}`))
+        window.location.href = staticUrl(`download_qr/url/${data.custom}?token=${data.download_token}`);
     }, [])
 
     return (

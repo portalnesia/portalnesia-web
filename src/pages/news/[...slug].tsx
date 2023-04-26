@@ -8,7 +8,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { adddesc, clean, truncate, ucwords, urlToDomain } from "@portalnesia/utils";
-import wrapper, { BackendError } from "@redux/store";
+import wrapper, { BackendError, useSelector } from "@redux/store";
 import { IPages } from "@type/general";
 import { useRouter } from "next/router";
 import React from "react";
@@ -62,20 +62,25 @@ export default function NewsPages({ data: news, meta }: IPages<NewsDetail>) {
     usePageContent(news);
     const router = useRouter();
     const slug = router.query?.slug;
+    const appToken = useSelector(s => s.appToken);
     const { data, error } = useSWR<NewsDetail>(`/v2/news/${slug?.[0]}/${slug?.[1]}`, { fallbackData: news });
     const { data: recommendation, error: errRecommendation } = useSWR<NewsPagination[]>(data ? `/v2/news/recommendation/${data.id}` : null);
     const { get } = useAPI();
+    const { content } = useTableContent({ data });
     const [liked, setLiked] = React.useState(!!news.liked);
 
     React.useEffect(() => {
-        let timeout = setTimeout(() => {
-            get(`/v2/news/${slug?.[0]}/${slug?.[1]}/update`).catch(() => { })
-            const analytics = getAnalytics();
-            logEvent(analytics, "select_content", {
-                content_type: "news",
-                item_id: `${news.id}`
-            })
-        }, 10000)
+        let timeout: NodeJS.Timer | undefined;
+        if (appToken) {
+            timeout = setTimeout(() => {
+                get(`/v2/news/${slug?.[0]}/${slug?.[1]}/update`).catch(() => { })
+                const analytics = getAnalytics();
+                logEvent(analytics, "select_content", {
+                    content_type: "news",
+                    item_id: `${news.id}`
+                })
+            }, 10000)
+        }
 
         setLiked(!!news.liked)
 
@@ -180,6 +185,26 @@ export default function NewsPages({ data: news, meta }: IPages<NewsDetail>) {
                                             </PaperBlock>
                                         </Hidden>
 
+                                        {content.length > 0 && (
+                                            <Hidden mdDown>
+                                                <PaperBlock title="Recommendation" content={{ sx: { px: 2 } }}>
+                                                    <SWRPages loading={!recommendation && !errRecommendation} error={errRecommendation}>
+                                                        <Scrollbar>
+                                                            <Stack direction='row' pb={2} spacing={2} px={2}>
+                                                                {(recommendation && recommendation.length) ? recommendation.map(d => (
+                                                                    <CustomCard key={d.title} ellipsis={2} link={href(d.link)} title={d.title} image={d.image} image_query="&export=banner&size=300" sx={{ minWidth: 250, maxWidth: 250, height: 'auto' }} />
+                                                                )) : (
+                                                                    <BoxPagination>
+                                                                        <Typography>No data</Typography>
+                                                                    </BoxPagination>
+                                                                )}
+                                                            </Stack>
+                                                        </Scrollbar>
+                                                    </SWRPages>
+                                                </PaperBlock>
+                                            </Hidden>
+                                        )}
+
                                         <Box mt={10}>
                                             <Comment posId={data.id} type='news' collapse={false} />
                                         </Box>
@@ -191,19 +216,29 @@ export default function NewsPages({ data: news, meta }: IPages<NewsDetail>) {
                         <Grid item xs={12} md={4}>
                             <Hidden mdDown>
                                 <Sidebar id='body-content'>
-                                    <PaperBlock title="Recommendation" content={{ sx: { px: 2 } }}>
-                                        <SWRPages loading={!recommendation && !errRecommendation} error={errRecommendation}>
-                                            <Stack alignItems='flex-start' spacing={1}>
-                                                {(recommendation && recommendation.length) ? recommendation.map(d => (
-                                                    <CustomCard key={d.title} link={href(d.link)} title={d.title} variant='outlined' />
-                                                )) : (
-                                                    <BoxPagination>
-                                                        <Typography>No data</Typography>
-                                                    </BoxPagination>
-                                                )}
-                                            </Stack>
-                                        </SWRPages>
-                                    </PaperBlock>
+                                    <Hidden mdDown>
+                                        {content.length > 0 ? (
+                                            <Sidebar id='body-content'>
+                                                <PaperBlock title="Table of Content">
+                                                    <HtmlMdUp data={data} />
+                                                </PaperBlock>
+                                            </Sidebar>
+                                        ) : (
+                                            <PaperBlock title="Recommendation" content={{ sx: { px: 2 } }}>
+                                                <SWRPages loading={!recommendation && !errRecommendation} error={errRecommendation}>
+                                                    <Stack alignItems='flex-start' spacing={1}>
+                                                        {(recommendation && recommendation.length) ? recommendation.map(d => (
+                                                            <CustomCard key={d.title} link={href(d.link)} title={d.title} variant='outlined' />
+                                                        )) : (
+                                                            <BoxPagination>
+                                                                <Typography>No data</Typography>
+                                                            </BoxPagination>
+                                                        )}
+                                                    </Stack>
+                                                </SWRPages>
+                                            </PaperBlock>
+                                        )}
+                                    </Hidden>
                                 </Sidebar>
                             </Hidden>
                         </Grid>

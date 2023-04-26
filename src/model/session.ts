@@ -32,11 +32,7 @@ export type SessionAttribute = {
     notif_news?: boolean
     notif_fitur?: boolean
     notif_pesan?: boolean
-    updated_at?: Date
-    /**
-     * @deprecated
-     */
-    auth_key?: string|null
+    updated_at?: Date;
 }
 
 export class Session extends Model<SessionAttribute> {
@@ -144,8 +140,7 @@ Session.init({
     notif_pesan:{
         type: DataTypes.BOOLEAN,
         defaultValue: true
-    },
-    auth_key: DataTypes.TEXT
+    }
 },{
     sequelize:db.db,
     modelName:'session',

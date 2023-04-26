@@ -19,6 +19,7 @@ import { ucwords } from "@portalnesia/utils";
 import Stack from "@mui/material/Stack";
 import Button from "@comp/Button";
 import Link from "@design/components/Link";
+import { getAnalytics, logEvent } from "@utils/firebase";
 
 type ResultData = {
     type: 'twibbon',
@@ -60,6 +61,12 @@ export default function SearchPages() {
         const search = url.searchParams.toString();
         return `${url.pathname}${search.length > 0 ? `?${search}` : ''}`
     }, [filter, q])
+
+    React.useEffect(() => {
+        if (typeof q === "string" && q.length > 0 && process.env.NEXT_PUBLIC_PN_ENV === "production") {
+            logEvent(getAnalytics(), "search", { search_term: decodeURIComponent(q) })
+        }
+    }, [q])
 
     return (
         <Pages title="Search" canonical={canonical}>
