@@ -10,7 +10,7 @@ import Typography from "@mui/material/Typography";
 import { adddesc, clean, truncate, ucwords, urlToDomain } from "@portalnesia/utils";
 import wrapper, { BackendError, useSelector } from "@redux/store";
 import { IPages } from "@type/general";
-import { useRouter } from "next/router";
+import Router, { useRouter } from "next/router";
 import React from "react";
 import Hidden from "@mui/material/Hidden";
 import Sidebar from "@design/components/Sidebar";
@@ -30,6 +30,7 @@ import Button from "@comp/Button";
 import Link from "@design/components/Link";
 import Divider from "@mui/material/Divider";
 import Scrollbar from "@design/components/Scrollbar";
+import Ads300 from "@comp/ads/Ads300";
 
 export const getServerSideProps = wrapper<NewsDetail>(async ({ params, redirect, fetchAPI }) => {
     const slug = params?.slug;
@@ -84,14 +85,21 @@ export default function NewsPages({ data: news, meta }: IPages<NewsDetail>) {
 
         setLiked(!!news.liked)
 
+        if (news.slug !== slug?.[1]) {
+            const url = new URL(window.location.href);
+            const new_url = new URL(news.link);
+            new_url.search = url.search;
+            Router.replace(href(new_url.toString()))
+        }
+
         return () => {
             clearTimeout(timeout);
         }
         /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    }, [news, slug])
+    }, [news, slug]);
 
     return (
-        <Pages title={meta?.title} desc={meta?.desc} canonical={`/news/${data?.source}/${encodeURIComponent(data?.title || "")}`} image={meta?.image}>
+        <Pages title={meta?.title} desc={meta?.desc} canonical={`/news/${data?.source}/${data?.slug}`} image={meta?.image}>
             <NewsArticleJsonLd
                 section={""}
                 keywords={""}

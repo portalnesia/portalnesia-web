@@ -62,12 +62,11 @@ export default function Pages({ children, title, desc, keyword, canonical: canon
     const { post } = useAPI();
     const setNotif = useNotification();
     const [loading, setLoading] = useState<'report'>();
-    const pushAlready = useRef(false);
     const { mutate: mutateNotification } = useNotificationSWR();
     const canonical = useMemo(() => {
-        if(canonicalProps === "404") return portalUrl(router.asPath)
+        if (canonicalProps === "404") return portalUrl(router.asPath)
         else return portalUrl(canonicalProps)
-    }, [canonicalProps,router.asPath]);
+    }, [canonicalProps, router.asPath]);
 
     const header = useMemo(() => {
         return {
@@ -141,7 +140,7 @@ export default function Pages({ children, title, desc, keyword, canonical: canon
     useEffect(() => {
         async function registerPushNotification(messaging: Messaging) {
             try {
-                const registration = await navigator.serviceWorker.getRegistration("/");
+                const registration = await navigator.serviceWorker.ready;
                 const permission = await Notification.requestPermission();
                 if (permission === 'granted') {
                     const token = await getToken(messaging, {
@@ -191,9 +190,8 @@ export default function Pages({ children, title, desc, keyword, canonical: canon
             })
         }
 
-        if (process.env.NODE_ENV === 'production') {
-            if (!pushAlready.current && appToken && user) {
-                pushAlready.current = true;
+        let timeout = setTimeout(() => {
+            if (process.env.NODE_ENV === 'production' && appToken && user) {
                 isSupported().then(supported => {
                     if (supported) {
                         const messaging = getMessaging(firebaseApp);
@@ -202,9 +200,14 @@ export default function Pages({ children, title, desc, keyword, canonical: canon
                     }
                 }).catch(() => { })
             }
+        }, 5000);
+
+        return () => {
+            clearTimeout(timeout);
         }
+
         /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    }, [post, appToken, user])
+    }, [post, appToken, user]);
 
     const onWidgetLoad = useCallback(() => {
         setTimeout(() => {
@@ -230,7 +233,7 @@ export default function Pages({ children, title, desc, keyword, canonical: canon
             <NextSeo
                 title={header.title}
                 description={header.desc}
-                {...(canonicalProps !== "404" ? {canonical} : {})}
+                {...(canonicalProps !== "404" ? { canonical } : {})}
                 nofollow={noIndex}
                 noindex={noIndex}
                 additionalMetaTags={[{
@@ -247,7 +250,7 @@ export default function Pages({ children, title, desc, keyword, canonical: canon
                     content: theme.palette.background.paper
                 }]}
                 openGraph={{
-                    ...(canonicalProps !== "404" ? {url:canonical} : {}),
+                    ...(canonicalProps !== "404" ? { url: canonical } : {}),
                     title: header.title,
                     description: header.desc,
                     images: [

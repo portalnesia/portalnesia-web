@@ -11,7 +11,7 @@ import useAPI, { ApiError, PaginationResponse } from "@design/hooks/api";
 import { useSWRPagination } from "@design/hooks/swr";
 import useResponsive from "@design/hooks/useResponsive";
 import { DRAWER_WIDTH, NAVBAR_HEIGHT } from "@layout/navbar.config";
-import type { ISupportRoom,IMessages } from "@model/message";
+import type { ISupportRoom, IMessages } from "@model/message";
 import { AddAPhoto, Close, MoreVert, NoPhotography, Send } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
@@ -42,45 +42,45 @@ import { EllipsisTypography } from "@design/components/Card";
 import dynamic from "next/dynamic";
 import Label from "@design/components/Label";
 
-const MenuItem = dynamic(()=>import("@mui/material/MenuItem"));
-const Dialog = dynamic(()=>import("@design/components/Dialog"));
-const Scrollbar = dynamic(()=>import("@design/components/Scrollbar"));
-const Table = dynamic(()=>import("@mui/material/Table"));
-const TableBody = dynamic(()=>import("@mui/material/TableBody"));
-const TableRow = dynamic(()=>import("@mui/material/TableRow"));
-const TableCell = dynamic(()=>import("@mui/material/TableCell"));
+const MenuItem = dynamic(() => import("@mui/material/MenuItem"));
+const Dialog = dynamic(() => import("@design/components/Dialog"));
+const Scrollbar = dynamic(() => import("@design/components/Scrollbar"));
+const Table = dynamic(() => import("@mui/material/Table"));
+const TableBody = dynamic(() => import("@mui/material/TableBody"));
+const TableRow = dynamic(() => import("@mui/material/TableRow"));
+const TableCell = dynamic(() => import("@mui/material/TableCell"));
 
 type ISupportPage = {
     support?: ISupportRoom
 }
 
-export const getServerSideProps = wrapper<ISupportPage>(async({redirect,resolvedUrl,session,params,fetchAPI})=>{
+export const getServerSideProps = wrapper<ISupportPage>(async ({ redirect, resolvedUrl, session, params, fetchAPI }) => {
     const support_id = params?.slug?.[0];
-    if(support_id) {
-        if(typeof support_id !== 'string') return redirect();
+    if (support_id) {
+        if (typeof support_id !== 'string') return redirect();
 
         try {
-            const support:ISupportRoom = await fetchAPI<ISupportRoom>(`/v2/support/${support_id}/check`);
-            if(!session && typeof support.userid !== 'undefined') return redirect(accountUrl(`login?redirect=${encodeURIComponent(portalUrl(resolvedUrl))}`));
+            const support: ISupportRoom = await fetchAPI<ISupportRoom>(`/v2/support/${support_id}/check`);
+            if (!session && typeof support.userid !== 'undefined') return redirect(accountUrl(`login?redirect=${encodeURIComponent(portalUrl(resolvedUrl))}`));
 
             return {
-                props:{
-                    data:{
+                props: {
+                    data: {
                         support
                     }
                 }
             }
-        } catch(e) {
-            if(e instanceof BackendError) {
-                if(e?.status === 404) return redirect();
+        } catch (e) {
+            if (e instanceof BackendError) {
+                if (e?.status === 404) return redirect();
             }
             throw e;
         }
     } else {
-        if(!session) return redirect(accountUrl(`login?redirect=${encodeURIComponent(portalUrl(resolvedUrl))}`));
+        if (!session) return redirect(accountUrl(`login?redirect=${encodeURIComponent(portalUrl(resolvedUrl))}`));
         return {
-            props:{
-                data:{}
+            props: {
+                data: {}
             }
         }
     }
@@ -91,98 +91,98 @@ function getLabel(status: string) {
     return <Label variant='filled' color={color}>{status}</Label>
 }
 
-export default function SupportPage({data:{support:supportServer}}: IPages<ISupportPage>) {
+export default function SupportPage({ data: { support: supportServer } }: IPages<ISupportPage>) {
     const router = useRouter();
-    const {ready,user} = useSelector(s=>({user:s.user,ready:s.appToken!==undefined}))
+    const { ready, user } = useSelector(s => ({ user: s.user, ready: s.appToken !== undefined }))
     const slug = router.query?.slug;
-    const mdDown = useResponsive('down','md');
+    const mdDown = useResponsive('down', 'md');
     const anchorRef = React.useRef(null);
-    const [img,setImg] = React.useState<string|null>(null);
+    const [img, setImg] = React.useState<string | null>(null);
     const [open, setOpen] = React.useState(false);
-    const [title,setTitle] = React.useState(()=>supportServer ? `${supportServer.subject} - Support` : 'Support');
-    const {data:supports,size,isLoadingMore,setSize,mutate} = useSWRPagination<PaginationResponse<ISupportRoom>>(`/v2/support`);
-    const [dataChat,setDataChat] = React.useState(supportServer);
-    const is432 = useResponsive('down',432);
+    const [title, setTitle] = React.useState(() => supportServer ? `${supportServer.subject} - Support` : 'Support');
+    const { data: supports, size, isLoadingMore, setSize, mutate } = useSWRPagination<PaginationResponse<ISupportRoom>>(`/v2/support`);
+    const [dataChat, setDataChat] = React.useState(supportServer);
+    const is432 = useResponsive('down', 432);
     const setNotif = useNotification();
-    const {put} = useAPI();
-    const [dialog,setDialog] = React.useState(false)
+    const { put } = useAPI();
+    const [dialog, setDialog] = React.useState(false)
 
-    const navbar = React.useMemo(()=>{
-        if(!supports) return [];
-        return supports.data.map(s=>{
+    const navbar = React.useMemo(() => {
+        if (!supports) return [];
+        return supports.data.map(s => {
             return {
-                primary: <EllipsisTypography ellipsis={1} sx={{mb:0.5}}>{s.subject}</EllipsisTypography>,
+                primary: <EllipsisTypography ellipsis={1} sx={{ mb: 0.5 }}>{s.subject}</EllipsisTypography>,
                 secondary: getLabel(s.status),
                 avatar: s.user?.picture ? <Image src={`${s.user.picture}&watermark=no&size=40`} alt={s.ticket.name} /> : s.ticket.name,
-                link:`/support/${s.id}`
+                link: `/support/${s.id}`
             }
         })
-    },[supports])
+    }, [supports])
 
-    const isActive = React.useCallback((item: INavbarChat)=>{
-        const linkUrl = new URL(Router.asPath,portalUrl())
-        const itemUrl = new URL(item.link,portalUrl());
-        
-        return new RegExp((itemUrl.pathname||'/'),'i').test(linkUrl.pathname||'/')
-    },[])
+    const isActive = React.useCallback((item: INavbarChat) => {
+        const linkUrl = new URL(Router.asPath, portalUrl())
+        const itemUrl = new URL(item.link, portalUrl());
 
-    const selected = React.useMemo(()=>{
-        if(supports) return supports?.data?.find(s=>s.id === slug?.[0])
-        else if(supportServer) return supportServer;
+        return new RegExp((itemUrl.pathname || '/'), 'i').test(linkUrl.pathname || '/')
+    }, [])
+
+    const selected = React.useMemo(() => {
+        if (supports) return supports?.data?.find(s => s.id === slug?.[0])
+        else if (supportServer) return supportServer;
         return undefined;
-    },[supports,slug,supportServer])
+    }, [supports, slug, supportServer])
 
-    const handleLoadmore = React.useCallback(()=>{
-        setSize(size+1);
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    },[size]);
+    const handleLoadmore = React.useCallback(() => {
+        setSize(size + 1);
+        /* eslint-disable-next-line react-hooks/exhaustive-deps */
+    }, [size]);
 
-    React.useEffect(()=>{
-        if(selected) setTitle(`${selected.subject} - Support`);
+    React.useEffect(() => {
+        if (selected) setTitle(`${selected.subject} - Support`);
         else {
             setTitle("Support");
             setOpen(false);
         }
-        if(selected) {
+        if (selected) {
             setDataChat(selected)
         }
-    },[selected])
+    }, [selected])
 
     const handleOpenOptions = React.useCallback(() => {
         setOpen(true);
-    },[]);
+    }, []);
 
-    const handleRemoveImage = React.useCallback(()=>{
+    const handleRemoveImage = React.useCallback(() => {
         setImg(null);
-    },[])
+    }, [])
 
-    const handleCloseSupport = React.useCallback(async()=>{
-        if(!selected) return;
+    const handleCloseSupport = React.useCallback(async () => {
+        if (!selected) return;
         try {
-            await put(`/v2/support/${selected.id}`,{},undefined,{success_notif:false});
-            setNotif("This ticket is closed. You may reply to this ticket to reopen it.",false);
+            await put(`/v2/support/${selected.id}`, {}, undefined, { success_notif: false });
+            setNotif("This ticket is closed. You may reply to this ticket to reopen it.", false);
             mutate();
-        } catch(e) {
-            if(e instanceof ApiError) setNotif(e.message,true)
+        } catch (e) {
+            if (e instanceof ApiError) setNotif(e.message, true)
         }
-    },[put,setNotif,mutate,selected])
+    }, [put, setNotif, mutate, selected])
 
-    const handleCloseOptions = React.useCallback((value?: 'detail'|'close') => () => {
-        if(value) {
-          if(value === 'close') handleCloseSupport();
-          if(value === 'detail') setDialog(true)
+    const handleCloseOptions = React.useCallback((value?: 'detail' | 'close') => () => {
+        if (value) {
+            if (value === 'close') handleCloseSupport();
+            if (value === 'detail') setDialog(true)
         }
         setOpen(false);
-    },[handleCloseSupport]);
+    }, [handleCloseSupport]);
 
     return (
         <Pages title={title} noIndex withoutShowTop canonical={`/support${typeof slug?.[0] === 'string' ? `/${slug?.[0]}` : ''}`}>
             {ready && (
-                <Box display={{xs:'block',md:'flex'}} minHeight='100%'>
+                <Box display={{ xs: 'block', md: 'flex' }} minHeight='100%'>
                     <NavbarChat title={is432 ? false : "Support"}>
                         {selected && (
                             <>
-                                <Fade in={img!==null}>
+                                <Fade in={img !== null}>
                                     <Tooltip title="Remove image">
                                         <IconButtonActive onClick={handleRemoveImage}>
                                             <NoPhotography />
@@ -197,25 +197,25 @@ export default function SupportPage({data:{support:supportServer}}: IPages<ISupp
                             </>
                         )}
                     </NavbarChat>
-                    <Slide in={(selected===undefined && mdDown) || !mdDown} direction='right'>
-                        <SidebarChat title={is432 ? false : "Support"} active={isActive} navbar={navbar} linkProps={{shallow:true}}>
+                    <Slide in={(selected === undefined && mdDown) || !mdDown} direction='right'>
+                        <SidebarChat title={is432 ? false : "Support"} active={isActive} navbar={navbar} linkProps={{ shallow: true }}>
                             <Stack alignItems='center' justifyContent='center' width="100%" px={2} mt={4}>
                                 {isLoadingMore ? (
                                     <Circular />
                                 ) : (supports && supports.can_load) ? (
-                                    <Button outlined color='inherit' sx={{width:'100%'}} onClick={handleLoadmore}>Load more</Button>
+                                    <Button outlined color='inherit' sx={{ width: '100%' }} onClick={handleLoadmore}>Load more</Button>
                                 ) : null}
                             </Stack>
                         </SidebarChat>
                     </Slide>
-                    <Container maxWidth={false} sx={{pt:`${NAVBAR_HEIGHT}px`,pl:'0!important',pr:'0!important',pb:'0!important',position:'relative'}}>
+                    <Container maxWidth={false} sx={{ pt: `${NAVBAR_HEIGHT}px`, pl: '0!important', pr: '0!important', pb: '0!important', position: 'relative' }}>
                         <Box>
-                            <Fade in={!selected} {...mdDown ? {timeout:{enter:2000}} : {}}>
-                                <Stack position='absolute' justifyContent='center' height={`calc(100vh - ${NAVBAR_HEIGHT+48+58}px)`} width='95%'>
+                            <Fade in={!selected} {...mdDown ? { timeout: { enter: 2000 } } : {}}>
+                                <Stack position='absolute' justifyContent='center' height={`calc(100vh - ${NAVBAR_HEIGHT + 48 + 58}px)`} width='95%'>
                                     <Typography>Please select a support messages to start messaging</Typography>
                                 </Stack>
                             </Fade>
-                            <Fade in={Boolean(selected)} onExited={()=>setDataChat(undefined)}>
+                            <Fade in={Boolean(selected)} onExited={() => setDataChat(undefined)}>
                                 <Box position='relative'>
                                     {dataChat && <ChatComp mutateRoom={mutate} img={img} setImg={setImg} selected={dataChat} user={user} />}
                                 </Box>
@@ -230,22 +230,22 @@ export default function SupportPage({data:{support:supportServer}}: IPages<ISupp
                         <MenuItem
                             key={'detail'}
                             onClick={handleCloseOptions('detail')}
-                            sx={{ py: 1, px: 2.5,mb:'0!important' }}
+                            sx={{ py: 1, px: 2.5, mb: '0!important' }}
                         >
                             Support Detail
                         </MenuItem>
                         <MenuItem
                             key={'close'}
-                            disabled={selected?.status==='close'}
+                            disabled={selected?.status === 'close'}
                             onClick={handleCloseOptions('close')}
-                            sx={{ py: 1, px: 2.5,mb:'0!important' }}
+                            sx={{ py: 1, px: 2.5, mb: '0!important' }}
                         >
                             Close
                         </MenuItem>
                     </Box>
                 </MenuPopover>
             </Portal>
-            <Dialog open={dialog && selected!==undefined} handleClose={()=>setDialog(false)} title="Support Detail">
+            <Dialog open={dialog && selected !== undefined} handleClose={() => setDialog(false)} title="Support Detail">
                 <Scrollbar>
                     <Table>
                         <TableBody>
@@ -263,7 +263,7 @@ export default function SupportPage({data:{support:supportServer}}: IPages<ISupp
                             </TableRow>
                             <TableRow>
                                 <TableCell>Status</TableCell>
-                                <TableCell sx={{textTransform:'capitalize'}}>{getLabel(selected?.status||"")}</TableCell>
+                                <TableCell sx={{ textTransform: 'capitalize' }}>{getLabel(selected?.status || "")}</TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>
@@ -276,129 +276,128 @@ export default function SupportPage({data:{support:supportServer}}: IPages<ISupp
 type ChatCompProps = {
     selected: ISupportRoom
     user: State['user']
-    img: string|null
-    setImg(img: string|null): void
+    img: string | null
+    setImg(img: string | null): void
     mutateRoom: KeyedMutator<any>
 }
-function ChatComp({selected,img,setImg,mutateRoom}: ChatCompProps) {
-    const {data,error,size,setSize,mutate,isLoadingMore,isLoading} = useSWRPagination<PaginationResponse<IMessages>>(`/v2/support/${selected.id_number}`)
-    const [message,setMessage] = React.useState("");
-    const [loading,setLoading] = React.useState(false);
+function ChatComp({ selected, img, setImg, mutateRoom }: ChatCompProps) {
+    const { data, error, size, setSize, mutate, isLoadingMore, isLoading } = useSWRPagination<PaginationResponse<IMessages>>(`/v2/support/${selected.id_number}`)
+    const [message, setMessage] = React.useState("");
+    const [loading, setLoading] = React.useState(false);
     const fileRef = React.useRef<File>();
     const inputEl = React.useRef<HTMLInputElement>(null);
     const inputMessageEl = React.useRef<HTMLTextAreaElement>(null);
-    const [hover,setHover] = React.useState(false)
-    const {post} = useAPI();
+    const [hover, setHover] = React.useState(false)
+    const { post } = useAPI();
     const savedSelected = React.useRef<ISupportRoom>();
-    const [showClose,setShowClose] = React.useState(false);
-    
+    const [showClose, setShowClose] = React.useState(false);
+
     const setNotif = useNotification();
 
-    const handleLoadmore = React.useCallback(()=>{
-        setSize(size+1);
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    },[size]);
+    const handleLoadmore = React.useCallback(() => {
+        setSize(size + 1);
+        /* eslint-disable-next-line react-hooks/exhaustive-deps */
+    }, [size]);
 
-    React.useEffect(()=>{
-        if(selected.id !== savedSelected.current?.id) {
+    React.useEffect(() => {
+        if (selected.id !== savedSelected.current?.id) {
             savedSelected.current = selected;
             setMessage("");
         }
-        if(selected.status==='close') setShowClose(true);
+        if (selected.status === 'close') setShowClose(true);
         else setShowClose(false)
-    },[selected])
+    }, [selected])
 
-    React.useEffect(()=>{
-        setTimeout(()=>{
-            window.scrollTo({left:0,top:document.body.scrollHeight})
-        },500);
-    },[isLoading,selected])
+    React.useEffect(() => {
+        setTimeout(() => {
+            window.scrollTo({ left: 0, top: document.body.scrollHeight })
+        }, 1000);
+    }, [isLoading, selected])
 
-    React.useEffect(()=>{
-        if(img === null) fileRef.current = undefined;
-    },[img]);
+    React.useEffect(() => {
+        if (img === null) fileRef.current = undefined;
+    }, [img]);
 
-    const handleImageChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>|React.DragEvent<HTMLElement>)=>{
-        const file = 'dataTransfer' in  e ? e?.dataTransfer?.files?.[0] : e?.target?.files?.[0]
-        if(file) {
-            if(file.size>5242880) setNotif("Maximum file size is 5 MB!",true);
-            if(file.type.match("image/*")) {
+    const handleImageChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement> | React.DragEvent<HTMLElement>) => {
+        const file = 'dataTransfer' in e ? e?.dataTransfer?.files?.[0] : e?.target?.files?.[0]
+        if (file) {
+            if (file.size > 5242880) setNotif("Maximum file size is 5 MB!", true);
+            if (file.type.match("image/*")) {
                 const reader = new FileReader();
-                reader.onload = (e)=>{
-                    if(typeof e.target?.result === 'string') {
+                reader.onload = (e) => {
+                    if (typeof e.target?.result === 'string') {
                         setImg(e.target.result)
                         fileRef.current = file;
                     }
                 };
                 reader.readAsDataURL(file);
             }
-            else setNotif("Only support images",true);
+            else setNotif("Only support images", true);
         }
-        if(inputEl.current) inputEl.current.value = '';
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    },[setNotif])
+        if (inputEl.current) inputEl.current.value = '';
+        /* eslint-disable-next-line react-hooks/exhaustive-deps */
+    }, [setNotif])
 
-    const handleDrag=React.useCallback((enter: boolean)=>(e: React.DragEvent<HTMLElement>)=>{
+    const handleDrag = React.useCallback((enter: boolean) => (e: React.DragEvent<HTMLElement>) => {
         e.preventDefault();
-        if(loading) return;
-        if(enter){
+        if (loading) return;
+        if (enter) {
             setHover(true)
         } else {
             setHover(false)
         }
-    },[loading])
+    }, [loading])
 
-    const handleMessageChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>)=>{
+    const handleMessageChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         setMessage(e.target.value)
-    },[])
+    }, [])
 
-    const handleDrop=React.useCallback((e: React.DragEvent<HTMLElement>)=>{
+    const handleDrop = React.useCallback((e: React.DragEvent<HTMLElement>) => {
         e.preventDefault();
         e.stopPropagation();
         setHover(false);
-        if(loading) return;
+        if (loading) return;
         handleImageChange(e);
-    },[loading,handleImageChange])
+    }, [loading, handleImageChange])
 
     /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    const handleSend = React.useCallback(submitForm(async()=>{
+    const handleSend = React.useCallback(submitForm(async () => {
         try {
-            if(!fileRef.current && message?.match(/\S/) === null) return setNotif("Messages cannot be empty",true);
+            if (!fileRef.current && message?.match(/\S/) === null) return setNotif("Messages cannot be empty", true);
             setLoading(true);
             const form = new FormData();
-            form.append('message',message);
-            if(fileRef.current) form.append('image',fileRef.current,fileRef.current.name);
-            
-            await post<IMessages>(`/v2/support/${selected.id}`,form,{
-                headers:{
-                    'Content-Type':'multipart/form-data'
+            form.append('message', message);
+            if (fileRef.current) form.append('image', fileRef.current, fileRef.current.name);
+
+            await post<IMessages>(`/v2/support/${selected.id}`, form, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
                 }
-            },{success_notif:false});
+            }, { success_notif: false });
             mutate();
             setMessage("");
             setImg(null)
-            fileRef.current=undefined;
-            if(selected.status !== 'customer reply') mutateRoom()
-            setTimeout(()=>{
-                window.scrollTo({left:0,top:document.body.scrollHeight,behavior:'smooth'})
+            fileRef.current = undefined;
+            if (selected.status !== 'customer reply') mutateRoom()
+            setTimeout(() => {
+                window.scrollTo({ left: 0, top: document.body.scrollHeight, behavior: 'smooth' })
                 setLoading(false)
-            },500)
-        } catch(e) {
-            if(e instanceof ApiError) setNotif(e.message,true);
+            }, 500)
+        } catch (e) {
+            if (e instanceof ApiError) setNotif(e.message, true);
             setLoading(false)
-            setTimeout(()=>inputMessageEl.current?.focus(),500);
+            setTimeout(() => inputMessageEl.current?.focus(), 500);
         }
-    }),[message,setNotif,post,mutate,selected,mutateRoom])
+    }), [message, setNotif, post, mutate, selected, mutateRoom])
 
-    const handleKeyPress=React.useCallback((e: React.KeyboardEvent<HTMLDivElement>)=>{
-        console.log(e)
-        if(e.key === 'Enter' && !e?.shiftKey && !isMobile) {
-            if(/\S+/.test(message)){
+    const handleKeyPress = React.useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
+        if (e.key === 'Enter' && !e?.shiftKey && !isMobile) {
+            if (/\S+/.test(message)) {
                 e.preventDefault();
                 handleSend();
             }
         }
-    },[message,handleSend])
+    }, [message, handleSend])
 
     return (
         <>
@@ -406,7 +405,7 @@ function ChatComp({selected,img,setImg,mutateRoom}: ChatCompProps) {
                 <Box zIndex={1} position='sticky' left={0} top={NAVBAR_HEIGHT} width='100%'>
                     <Stack direction='row' bgcolor='error.main' px={2} py={1}>
                         <Box flexGrow={1}><Typography>This ticket is closed. You may reply to this ticket to reopen it.</Typography></Box>
-                        <IconButton onClick={()=>setShowClose(false)}>
+                        <IconButton onClick={() => setShowClose(false)}>
                             <Close />
                         </IconButton>
                     </Stack>
@@ -415,24 +414,24 @@ function ChatComp({selected,img,setImg,mutateRoom}: ChatCompProps) {
             <Box position='relative' height='100%'
                 onDragEnter={handleDrag(true)}
             >
-                <Box minHeight={`calc(100vh - ${NAVBAR_HEIGHT+1}px)`} sx={{overflowY:'auto'}}>
+                <Box minHeight={`calc(100vh - ${NAVBAR_HEIGHT + 1}px)`} sx={{ overflowY: 'auto' }}>
                     <SWRPages loading={!data && !error}>
                         {data && data?.data?.length > 0 ? (
-                            <Stack data-test="ul" py={2} px={{xs:2,lg:4}} direction='column-reverse' alignItems='unset' sx={{
-                                "& > div":{
-                                    mb:3,
-                                    ":first-of-type":{
-                                        mb:0
+                            <Stack data-test="ul" py={2} px={{ xs: 2, lg: 4 }} direction='column-reverse' alignItems='unset' sx={{
+                                "& > div": {
+                                    mb: 3,
+                                    ":first-of-type": {
+                                        mb: 0
                                     },
-                                    position:'relative'
+                                    position: 'relative'
                                 }
                             }}>
-                                {data?.data?.map((d,i)=>(
-                                    <MessageComp key={`messages-${d.id}`} data={d} prev={data?.data?.[i-1]} />
+                                {data?.data?.map((d, i) => (
+                                    <MessageComp key={`messages-${d.id}`} data={d} prev={data?.data?.[i - 1]} />
                                 ))}
                                 {!data.can_load ? (
                                     <Box key='reach-end' textAlign='center'>
-                                        <Typography variant='caption' sx={{color:'text.disabled'}}>No more messages</Typography>
+                                        <Typography variant='caption' sx={{ color: 'text.disabled' }}>No more messages</Typography>
                                     </Box>
                                 ) : (
                                     <Box key='load-more' textAlign='center'>
@@ -451,24 +450,24 @@ function ChatComp({selected,img,setImg,mutateRoom}: ChatCompProps) {
                     </SWRPages>
                 </Box>
                 <Fade in={hover}>
-                    <Stack justifyContent='center' position='fixed' top={0} left={{xs:0,md:100,lg:DRAWER_WIDTH/2}} width='100%' height='100%' bgcolor={alpha('#000000',0.6)}
+                    <Stack justifyContent='center' position='fixed' top={0} left={{ xs: 0, md: 100, lg: DRAWER_WIDTH / 2 }} width='100%' height='100%' bgcolor={alpha('#000000', 0.6)}
                         onDragLeave={handleDrag(false)}
                         onDrop={handleDrop}
-                        onDragOver={e=>e.preventDefault()}
+                        onDragOver={e => e.preventDefault()}
                     >
-                        <Typography variant='h4' sx={{color:'#fff'}}>Drop your images now</Typography>
+                        <Typography variant='h4' sx={{ color: '#fff' }}>Drop your images now</Typography>
                     </Stack>
                 </Fade>
                 <Fade in={img !== null}>
-                    <Stack justifyContent='center' position='fixed' top={0} left={{xs:0,md:100,lg:DRAWER_WIDTH/2}} width='100%' height='100%' bgcolor={alpha('#000000',0.6)}>
-                        {img && <Image src={img} sx={{maxWidth:400,objectFit:'contain'}} alt='Uploaded image' />}
+                    <Stack justifyContent='center' position='fixed' top={NAVBAR_HEIGHT} left={{ xs: 0, md: 100, lg: DRAWER_WIDTH / 2 }} width='100%' height='calc(100% - 80px)' bgcolor={alpha('#000000', 0.6)}>
+                        {img && <Image src={img} sx={{ maxWidth: 400, objectFit: 'contain' }} alt='Uploaded image' />}
                     </Stack>
                 </Fade>
             </Box>
             <Box zIndex={1} position='sticky' left={0} bottom={0} width='100%'>
                 <form onSubmit={handleSend}>
                     <Box p={2} bgcolor='background.default' position='relative'>
-                        <input ref={inputEl} type="file" accept="image/*" style={{display:'none'}} onChange={handleImageChange} disabled={loading} />
+                        <input ref={inputEl} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageChange} disabled={loading} />
                         <Textarea
                             value={message}
                             placeholder={img ? "Enter caption..." : "Type a message..."}
@@ -483,15 +482,15 @@ function ChatComp({selected,img,setImg,mutateRoom}: ChatCompProps) {
                             onKeyDown={handleKeyPress}
                             required
                             InputProps={{
-                                sx:{
-                                    pr:7
+                                sx: {
+                                    pr: 7
                                 }
                             }}
                         />
-                        <Stack sx={{position:'absolute',right:20,top:25}} direction='row' spacing={1}>
-                            <Fade in={img===null && message.length === 0}>
+                        <Stack sx={{ position: 'absolute', right: 20, top: 25 }} direction='row' spacing={1}>
+                            <Fade in={img === null && message.length === 0}>
                                 <Tooltip title="Add image">
-                                    <IconButton disabled={loading} onClick={()=>inputEl.current?.click()}>
+                                    <IconButton disabled={loading} onClick={() => inputEl.current?.click()}>
                                         <AddAPhoto />
                                     </IconButton>
                                 </Tooltip>
@@ -513,125 +512,125 @@ type MessageCompProps = {
     data: IMessages
     prev?: IMessages
 }
-function MessageComp({data:d,prev}: MessageCompProps) {
+function MessageComp({ data: d, prev }: MessageCompProps) {
     const anchorRef = React.useRef();
-    const [open,setOpen] = React.useState(false);
+    const [open, setOpen] = React.useState(false);
     const dayjs = getDayJs(d.timestamp);
     const setNotif = useNotification();
 
     const handleOpenOptions = React.useCallback((e: React.MouseEvent<HTMLDivElement>) => {
         e.preventDefault();
         setOpen(true);
-    },[]);
+    }, []);
 
     const handleCloseOptions = React.useCallback((value?: 'copy') => () => {
-        if(value === 'copy') {
-            if(d.message) {
-                copyTextBrowser(d.message).then(()=>{
-                    setNotif("Text copied",'default')
+        if (value === 'copy') {
+            if (d.message) {
+                copyTextBrowser(d.message).then(() => {
+                    setNotif("Text copied", 'default')
                 })
             }
         }
         setOpen(false);
-    },[d,setNotif]);
+    }, [d, setNotif]);
 
     return (
         <React.Fragment key={`message-${d.id}`}>
             <Box data-test="li" sx={{
-                display:'block',
+                display: 'block',
                 ...(d.from !== 1 ? {
-                    flexDirection:'row-reverse'
+                    flexDirection: 'row-reverse'
                 } : {
-                    
+
                 })
             }}>
                 <Box data-test='chat' key='messages' sx={{
-                    flex:1,
+                    flex: 1,
                     ...(d.from !== 1 ? {
-                        display:'flex',
-                        justifyContent:'flex-end'
+                        display: 'flex',
+                        justifyContent: 'flex-end'
                     } : {})
                 }}>
                     <Box data-test='chatP' sx={{
-                        position:'relative',
-                        mb:1,
+                        position: 'relative',
+                        mb: 1,
                         ...(d.from === 1 ? {
-                            mr:'15%',
-                            ":first-of-type":{
-                                "::after":{
-                                    top:0,
-                                    left:-11,
-                                    content:'""',
-                                    position:'absolute',
-                                    borderBottom:'17px solid transparent',
-                                    borderRight:t=>`11px solid ${t.palette.background.paper}`
+                            mr: '15%',
+                            ":first-of-type": {
+                                "::after": {
+                                    top: 0,
+                                    left: -11,
+                                    content: '""',
+                                    position: 'absolute',
+                                    borderBottom: '17px solid transparent',
+                                    borderRight: t => `12px solid ${t.palette.background.paper}`
                                 },
-                                "& .chatSpan":{
-                                    borderTopLeftRadius:0
+                                "& .chatSpan": {
+                                    borderTopLeftRadius: 0
                                 }
                             }
                         } : {
-                            ml:'15%',
-                            ":first-of-type":{
-                                "::after":{
-                                    top:0,
-                                    right:-11,
-                                    content:'""',
-                                    position:'absolute',
-                                    borderBottom:'17px solid transparent',
-                                    borderLeft:t=>`11px solid ${t.palette.primary.darker}`
+                            ml: '15%',
+                            ":first-of-type": {
+                                "::after": {
+                                    top: 0,
+                                    right: -11,
+                                    content: '""',
+                                    position: 'absolute',
+                                    borderBottom: '17px solid transparent',
+                                    borderLeft: t => `12px solid ${t.palette.primary.darker}`
                                 },
-                                "& .chatSpan":{
-                                    borderTopRightRadius:0
+                                "& .chatSpan": {
+                                    borderTopRightRadius: 0
                                 }
                             }
                         })
                     }}>
                         <Box data-test='chatSpan' className='chatSpan' sx={{
-                            userSelect:'none',
-                            cursor:'pointer',
-                            minWidth:150,
-                            display:'inline-block',
-                            p:1,
-                            px:2,
-                            borderRadius:1,
-                            wordBreak:'break-word',
+                            userSelect: 'none',
+                            cursor: 'pointer',
+                            minWidth: 150,
+                            display: 'inline-block',
+                            p: 1,
+                            px: 2,
+                            borderRadius: 1,
+                            wordBreak: 'break-word',
                             ...(d.from === 1 ? {
-                                bgcolor:'background.paper',
+                                bgcolor: 'background.paper',
                             } : {
-                                bgcolor:'primary.darker',
-                                color:'#fff'
+                                bgcolor: 'primary.darker',
+                                color: '#fff'
                             })
                         }}
-                        ref={anchorRef}
-                        onContextMenu={handleOpenOptions}
+                            ref={anchorRef}
+                            onContextMenu={handleOpenOptions}
                         >
                             {d?.image && (
-                                <Image fancybox dataFancybox="chat" src={`${d.image}&size=200`} dataSrc={`${d.image}&watermark=no`} webp sx={{maxWidth:200,maxHeight:200,mb:1}} alt={d.message||undefined} />
+                                <Image fancybox dataFancybox="chat" src={`${d.image}&size=200`} dataSrc={`${d.image}&watermark=no`} webp sx={{ maxWidth: 200, maxHeight: 200, mb: 1 }} alt={d.message || undefined} />
                             )}
-                            <Markdown sx={{mb:1}} source={d.message||""} skipHtml />
+                            <Markdown sx={{ mb: 1 }} source={d.message || ""} skipHtml />
 
                             <Box data-test='info' sx={{
-                                display:'flex',
-                                alignItems:'center',
-                                "& svg":{
-                                    mr:'.25rem',
-                                    fontSize:13
+                                display: 'flex',
+                                alignItems: 'center',
+                                "& svg": {
+                                    mr: '.25rem',
+                                    fontSize: 13
                                 },
-                                "& .read":{
-                                    color:'#33b6f0 !important',
+                                "& .read": {
+                                    color: '#33b6f0 !important',
                                 },
-                                color:'text.disabled'
+                                color: 'text.disabled'
                             }}>
-                                <Typography variant='caption' sx={{color:'text.disabled'}}>{dayjs.pn_format('time')}</Typography>
+                                <Typography variant='caption' sx={{ color: 'text.disabled' }}>{dayjs.pn_format('time')}</Typography>
                             </Box>
                         </Box>
                     </Box>
                 </Box>
             </Box>
-            {(typeof prev !== 'undefined' && dayjs.isSame(prev?.timestamp,'day')) && (
+            {(typeof prev !== 'undefined' && dayjs.isSame(prev?.timestamp, 'day')) && (
                 <Box key='time' textAlign='center'>
-                    <Typography variant='caption' sx={{color:'text.disabled'}}>{dayjs.pn_format("fulldate")}</Typography>
+                    <Typography variant='caption' sx={{ color: 'text.disabled' }}>{dayjs.pn_format("fulldate")}</Typography>
                 </Box>
             )}
             <Portal>
@@ -640,7 +639,7 @@ function MessageComp({data:d,prev}: MessageCompProps) {
                         <MenuItem
                             key={'copy'}
                             onClick={handleCloseOptions('copy')}
-                            sx={{ py: 1, px: 2.5,mb:'0!important' }}
+                            sx={{ py: 1, px: 2.5, mb: '0!important' }}
                         >
                             Copy
                         </MenuItem>

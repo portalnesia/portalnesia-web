@@ -11,7 +11,6 @@ import { IPages } from "@type/general";
 import { useRouter } from "next/router";
 import React from "react";
 import { ChordDetail, ChordPagination } from "@model/chord";
-import dynamic from "next/dynamic";
 import Fab from "@mui/material/Fab";
 import Iconify from "@design/components/Iconify";
 import Portal from "@mui/material/Portal";
@@ -35,6 +34,8 @@ import Divider from "@mui/material/Divider";
 import Breadcrumbs from "@comp/Breadcrumbs";
 import useAPI from "@design/hooks/api";
 import { getAnalytics, logEvent } from "@utils/firebase";
+import Ads300 from "@comp/ads/Ads300";
+import AdsNative from "@comp/ads/AdsNative";
 
 export const getServerSideProps = wrapper<ChordDetail>(async ({ params, redirect, fetchAPI }) => {
     const slug = params?.slug;
@@ -343,8 +344,11 @@ export default function ChordPage({ data: chord, meta }: IPages<ChordDetail>) {
                                 {data && (
                                     <>
                                         <Box id='chord-content-container'>
+                                            <Stack mb={5}><AdsNative deps={[slug]} /></Stack>
+
                                             <Chord template={data?.text} transpose={transpose} sx={{ fontSize: fontsize + 9 }} />
 
+                                            <Stack mt={5}><Ads300 /></Stack>
                                             <Divider sx={{ my: 5 }} />
 
                                             <Box>

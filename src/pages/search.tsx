@@ -102,7 +102,7 @@ export default function SearchPages() {
 
                                         return (
                                             <Grid key={`${type}-${d.id}`} item xs={12} sm={6} md={4} lg={3}>
-                                                <CustomCard link={href(link)} title={title} image={image} image_query={image_query} />
+                                                <CustomCard lazy={false} link={href(link)} title={title} image={image} image_query={image_query} />
                                             </Grid>
                                         )
                                     })}

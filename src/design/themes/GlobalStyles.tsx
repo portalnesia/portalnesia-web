@@ -132,6 +132,11 @@ export default function GlobalStyles({ styles }: GlobalStylesProps) {
                         }
                     }
                 },
+                'p.underline, span.underline': {
+                    '&:hover': {
+                        textDecoration: 'underline'
+                    }
+                },
                 'a.a-blank[target="blank"], a.a-blank[target="_blank"], a[target="_blank"]:not(.no-blank), a[target="blank"]:not(.no-blank)': {
                     //display:'inline-flex',
                     alignItems: 'center',

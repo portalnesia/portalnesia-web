@@ -18,6 +18,7 @@ export interface CustomCardProps extends CardProps {
     children?: React.ReactElement | React.ReactElement[]
     ellipsis?: number
     sx?: SxProps<Theme>
+    lazy?: boolean;
 }
 
 export const EllipsisTypography = styled(NativeTypography, {
@@ -39,14 +40,14 @@ const CustomBox = styled('div', {
     } : {})
 }))
 
-export default function CustomCard({ title, link, image, children, ellipsis, sx, image_query, ...rest }: CustomCardProps) {
+export default function CustomCard({ title, link, image, children, ellipsis, sx, image_query, lazy = true, ...rest }: CustomCardProps) {
 
     return (
         <Card sx={{ width: '100%', height: '100%', ...sx }} {...rest}>
             <Link href={link} legacyBehavior passHref>
                 <CardActionArea component='a' className="no-underline" sx={{ width: '100%', height: '100%' }}>
                     {image !== undefined && (
-                        <Image webp src={`${image === null ? staticUrl(`/img/content?image=${encodeURIComponent('notfound.png')}`) : image}${image_query}`} alt={title} sx={{ width: '100%' }} />
+                        <Image webp lazy={lazy} src={`${image === null ? staticUrl(`/img/content?image=${encodeURIComponent('notfound.png')}`) : image}${image_query}`} alt={title} sx={{ width: '100%' }} />
                     )}
                     <CardContent sx={{ p: 2 }}>
                         <CustomBox childrenCard={children} ellipsis={ellipsis}>

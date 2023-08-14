@@ -25,6 +25,10 @@ export type ISeen = {
  */
 export type IDate = string
 
+export type LocalConfig = {
+    sess: string
+}
+
 declare global {
     interface Window {
         grecaptcha?: number

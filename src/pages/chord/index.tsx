@@ -12,7 +12,7 @@ import CustomCard from "@design/components/Card";
 import { getDayJs, href } from "@utils/main";
 import Container from "@comp/Container";
 import { ChordPagination } from "@model/chord";
-import Router,{ useRouter } from "next/router";
+import Router, { useRouter } from "next/router";
 import { ucwords } from "@portalnesia/utils";
 import Button from "@comp/Button";
 import MenuPopover from "@design/components/MenuPopover";
@@ -22,52 +22,53 @@ import Iconify from "@design/components/Iconify";
 import Scrollbar from "@design/components/Scrollbar";
 import Carousel from "@comp/Carousel";
 import Breadcrumbs from "@comp/Breadcrumbs";
+import Ads300 from "@comp/ads/Ads300";
 
-const selectArr: ('recent'|'popular')[] = ['recent','popular']
+const selectArr: ('recent' | 'popular')[] = ['recent', 'popular']
 
-export default function News() {
+export default function Chord() {
     const router = useRouter();
     const query = router.query
     const orderQuery = query?.order;
-    
-    const order = React.useMemo(()=>{
-        if(typeof orderQuery === 'string' && ['recent','popular'].includes(orderQuery.toLowerCase())) return orderQuery.toLowerCase();
-        return 'recent';
-    },[orderQuery])
 
-    const [page,setPage] = usePagination();
-    const {data,error} = useSWR<PaginationResponse<ChordPagination>>(`/v2/chord?page=${page}&per_page=24&order=${order}`);
-    const {data:recommendation,error:errRecommendation} = useSWR<ChordPagination[]>(`/v2/chord/recommendation`);
-    const [dOrder,setDOrder] = React.useState(false);
-    const [loadingPopover,setLoadingPopover] = React.useState(false);
+    const order = React.useMemo(() => {
+        if (typeof orderQuery === 'string' && ['recent', 'popular'].includes(orderQuery.toLowerCase())) return orderQuery.toLowerCase();
+        return 'recent';
+    }, [orderQuery])
+
+    const [page, setPage] = usePagination();
+    const { data, error } = useSWR<PaginationResponse<ChordPagination>>(`/v2/chord?page=${page}&per_page=24&order=${order}`);
+    const { data: recommendation, error: errRecommendation } = useSWR<ChordPagination[]>(`/v2/chord/recommendation`);
+    const [dOrder, setDOrder] = React.useState(false);
+    const [loadingPopover, setLoadingPopover] = React.useState(false);
     const orderRef = React.useRef(null);
 
-    const handleOrder=React.useCallback((order:'recent'|'popular')=>()=>{
+    const handleOrder = React.useCallback((order: 'recent' | 'popular') => () => {
         setLoadingPopover(true)
         setDOrder(false);
-        setTimeout(()=>{
+        setTimeout(() => {
             setLoadingPopover(false);
-            Router.push({pathname:'/chord',query:{order}},`/chord?order=${order}`,{shallow:true});
-        },500)        
-    },[])
+            Router.push({ pathname: '/chord', query: { order } }, `/chord?order=${order}`, { shallow: true });
+        }, 500)
+    }, [])
 
-    React.useEffect(()=>{
+    React.useEffect(() => {
         setDOrder(false);
-    },[order])
+    }, [order])
 
     return (
         <Pages title="Chord" canonical="/chord">
             <DefaultLayout>
                 <Breadcrumbs title="Chord" />
-                <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
+                <Box borderBottom={theme => `2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
                     <Typography variant='h4' component='h1'>Recommendation</Typography>
                 </Box>
 
-                <SWRPages loading={!recommendation&&!errRecommendation} error={error}>
+                <SWRPages loading={!recommendation && !errRecommendation} error={error}>
                     <Scrollbar>
                         {recommendation && recommendation?.length > 0 ? (
                             <Carousel>
-                                {recommendation.map(d=>(
+                                {recommendation.map(d => (
                                     <Box px={1} key={d.slug}>
                                         <CustomCard link={href(d.link)} title={`${d.artist} - ${d.title}`}>
                                             <Typography variant='caption'>{getDayJs(d.created).time_ago().format}</Typography>
@@ -82,22 +83,24 @@ export default function News() {
                         )}
                     </Scrollbar>
                 </SWRPages>
-                
-                <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} mt={7} pb={0.5} mb={2}>
-                    <Box sx={{display:"flex",flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
+
+                <Box borderBottom={theme => `2px solid ${theme.palette.divider}`} mt={7} pb={0.5} mb={2}>
+                    <Box sx={{ display: "flex", flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                         <Typography variant='h4' component='h1'>{order === 'recent' ? `Recent Chord` : 'Popular Chord'}</Typography>
-                        <Button disabled={(!data&&!error) || loadingPopover} ref={orderRef} color='inherit' text onClick={()=>setDOrder(true)} endIcon={<Iconify icon='fe:list-order' />}>{order}</Button>
+                        <Button disabled={(!data && !error) || loadingPopover} ref={orderRef} color='inherit' text onClick={() => setDOrder(true)} endIcon={<Iconify icon='fe:list-order' />}>{order}</Button>
                     </Box>
                 </Box>
 
-                <SWRPages loading={!data&&!error} error={error}>
+                <SWRPages loading={!data && !error} error={error}>
                     <Grid container spacing={2}>
-                        {data && data?.data?.length > 0 ? ( data.data.map(d=>(
-                            <Grid key={d.title} item xs={12} sm={6} md={4} lg={3}>
-                                <CustomCard link={href(d.link)} title={`${d.artist} - ${d.title}`}>
-                                    <Typography variant='caption'>{getDayJs(d.created).time_ago().format}</Typography>
-                                </CustomCard>
-                            </Grid>
+                        {data && data?.data?.length > 0 ? (data.data.map((d) => (
+                            <React.Fragment key={d.title}>
+                                <Grid item xs={12} sm={6} md={4} lg={3}>
+                                    <CustomCard lazy={false} link={href(d.link)} title={`${d.artist} - ${d.title}`}>
+                                        <Typography variant='caption'>{getDayJs(d.created).time_ago().format}</Typography>
+                                    </CustomCard>
+                                </Grid>
+                            </React.Fragment>
                         ))) : (
                             <Grid key={'no-data'} item xs={12}>
                                 <BoxPagination>
@@ -106,18 +109,18 @@ export default function News() {
                             </Grid>
                         )}
                         {(data) && (
-                            <Grid sx={{mt:2}} key={'pagination'} item xs={12}>
+                            <Grid sx={{ mt: 2 }} key={'pagination'} item xs={12}>
                                 <Pagination page={page} onChange={setPage} count={data?.total_page} />
                             </Grid>
                         )}
                     </Grid>
-                        
+
                 </SWRPages>
             </DefaultLayout>
-            <MenuPopover open={dOrder} onClose={()=>setDOrder(false)} anchorEl={orderRef.current} paperSx={{width:150}}>
+            <MenuPopover open={dOrder} onClose={() => setDOrder(false)} anchorEl={orderRef.current} paperSx={{ width: 150 }}>
                 <Box py={1}>
-                    {selectArr.map(s=>(
-                        <MenuItem key={s} sx={{ color: 'text.secondary',py:1 }} onClick={handleOrder(s)} selected={order === s}>
+                    {selectArr.map(s => (
+                        <MenuItem key={s} sx={{ color: 'text.secondary', py: 1 }} onClick={handleOrder(s)} selected={order === s}>
                             <ListItemText primary={ucwords(s)} />
                         </MenuItem>
                     ))}

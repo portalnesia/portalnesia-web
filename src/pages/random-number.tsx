@@ -13,123 +13,124 @@ import Stack from "@mui/material/Stack";
 import Button from "@comp/Button";
 import Divider from "@mui/material/Divider";
 import useNotification from "@design/components/Notification";
+import Ads300 from "@comp/ads/Ads300";
 
 export default function RandomNumberPages() {
-    const [result,setResult] = React.useState(0)
-    const [value,setValue] = React.useState({min:'0',max:'0'});
-    const [error,setError] = React.useState({min:false,max:false});
-    const [errText,setErrText] = React.useState<{min:string[],max:string[]}>({min:[],max:[]});
-    const [loading,setLoading] = React.useState(false);
-    const [animation,setAnimation] = React.useState(true);
+    const [result, setResult] = React.useState(0)
+    const [value, setValue] = React.useState({ min: '0', max: '0' });
+    const [error, setError] = React.useState({ min: false, max: false });
+    const [errText, setErrText] = React.useState<{ min: string[], max: string[] }>({ min: [], max: [] });
+    const [loading, setLoading] = React.useState(false);
+    const [animation, setAnimation] = React.useState(true);
     const setNotif = useNotification();
 
-    const handleChange=React.useCallback((name: 'max'|'min')=>(e: React.ChangeEvent<HTMLInputElement|HTMLTextAreaElement>)=>{
+    const handleChange = React.useCallback((name: 'max' | 'min') => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setError({
-            max:false,
-            min:false
+            max: false,
+            min: false
         });
         const val = e.target.value;
         const valNum = Number.parseInt(e.target.value);
         setValue({
             ...value,
-            [name]:val
+            [name]: val
         })
-        if(name==='min'){
+        if (name === 'min') {
             const valMax = Number(value.max);
-            if(val.length === 0 || valNum < 0 || valMax <= valNum) {
+            if (val.length === 0 || valNum < 0 || valMax <= valNum) {
                 setError({
                     ...error,
-                    min:true
+                    min: true
                 });
-                const text=[];
-                if(val.length === 0) text.push("Please specify a minimum number");
-                if(valNum < 0) text.push("The minimum number must be greater than 0")
-                if(valMax < valNum) text.push("The minimum number must be less than the maximum number")
-                if(valMax === valNum) text.push("The minimum number and the maximum number can not be the same number")
+                const text = [];
+                if (val.length === 0) text.push("Please specify a minimum number");
+                if (valNum < 0) text.push("The minimum number must be greater than 0")
+                if (valMax < valNum) text.push("The minimum number must be less than the maximum number")
+                if (valMax === valNum) text.push("The minimum number and the maximum number can not be the same number")
                 setErrText({
-                    max:[],
-                    min:text
+                    max: [],
+                    min: text
                 })
             } else {
                 setErrText({
-                    max:[],
-                    min:[]
+                    max: [],
+                    min: []
                 });
             }
-        } else if(name==='max'){
+        } else if (name === 'max') {
             const valMin = Number(value.min);
-            if(val.length === 0 || valNum > 10000 || valMin >= valNum) {
+            if (val.length === 0 || valNum > 10000 || valMin >= valNum) {
                 setError({
                     ...error,
-                    max:true
+                    max: true
                 });
-                const text=[];
-                if(val.length === 0) text.push("Please specify a maximum number");
-                if(valNum > 10000) text.push("The maximum number must be less than 10000")
-                if(valMin > valNum) text.push("The maximum number must be greater than the minimum number")
-                if(valMin === valNum) text.push("The minimum number and the maximum number can not be the same number")
+                const text = [];
+                if (val.length === 0) text.push("Please specify a maximum number");
+                if (valNum > 10000) text.push("The maximum number must be less than 10000")
+                if (valMin > valNum) text.push("The maximum number must be greater than the minimum number")
+                if (valMin === valNum) text.push("The minimum number and the maximum number can not be the same number")
                 setErrText({
-                    min:[],
-                    max:text
+                    min: [],
+                    max: text
                 })
             } else {
                 setErrText({
-                    min:[],
-                    max:[]
+                    min: [],
+                    max: []
                 });
             }
         }
-    },[value,error]);
+    }, [value, error]);
 
-    const handleReset=React.useCallback(()=>{
+    const handleReset = React.useCallback(() => {
         setResult(0)
         setValue({
-            min:'0',
-            max:'0'
+            min: '0',
+            max: '0'
         })
         setError({
-            min:false,
-            max:false
+            min: false,
+            max: false
         })
         setErrText({
-            min:[],
-            max:[]
+            min: [],
+            max: []
         })
-    },[])
+    }, [])
 
-    const handleGenerate=React.useCallback(()=>{
-        if(value.min.length === 0 || value.max.length === 0 || Number(value.min) >= Number(value.max) || Number(value.min) < 0 || Number(value.max) > 10000 || error.min || error.max) return setNotif("Minimum number or maximum number error",true);
-        let min=value.min,max=value.max,durasi=2000,started = new Date().getTime();
-        if(animation) {
+    const handleGenerate = React.useCallback(() => {
+        if (value.min.length === 0 || value.max.length === 0 || Number(value.min) >= Number(value.max) || Number(value.min) < 0 || Number(value.max) > 10000 || error.min || error.max) return setNotif("Minimum number or maximum number error", true);
+        let min = value.min, max = value.max, durasi = 2000, started = new Date().getTime();
+        if (animation) {
             setLoading(true);
-            let generator=setInterval(function(){
+            let generator = setInterval(function () {
                 if (new Date().getTime() - started > durasi) {
                     clearInterval(generator);
                     setLoading(false)
                 } else {
-                    let number=Math.floor(Math.random() * (+max+1 - +min)) + +min;
+                    let number = Math.floor(Math.random() * (+max + 1 - +min)) + +min;
                     setResult(number)
                 }
-            },50);
+            }, 50);
         } else {
-            const number=Math.floor(Math.random() * (+max+1 - +min)) + +min;
+            const number = Math.floor(Math.random() * (+max + 1 - +min)) + +min;
             setResult(number)
         }
-    },[value,setNotif,animation,error])
+    }, [value, setNotif, animation, error])
 
-    const handleFocus=React.useCallback((e: React.FocusEvent<HTMLInputElement|HTMLTextAreaElement>)=>{
+    const handleFocus = React.useCallback((e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         e.target.select();
-    },[])
+    }, [])
 
     return (
         <Pages title="Random Number Generator" canonical="/random-number">
             <DefaultLayout maxWidth='sm'>
-                <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={3}>
+                <Box borderBottom={theme => `2px solid ${theme.palette.divider}`} pb={0.5} mb={3}>
                     <Typography variant='h4' component='h1'>Random Number Generator</Typography>
                 </Box>
 
                 <Box textAlign='center' mb={3}>
-                    <Typography sx={{fontSize:54}}>{result}</Typography>
+                    <Typography sx={{ fontSize: 54 }}>{result}</Typography>
                 </Box>
 
                 <Box>
@@ -146,10 +147,10 @@ export default function RandomNumberPages() {
                                 error={error.min}
                                 onFocus={handleFocus}
                                 helperText={
-                                    errText.min.map((err)=>(
+                                    errText.min.map((err) => (
                                         <React.Fragment key={err}>
                                             <Span>{err}</Span>
-                                            <br/>
+                                            <br />
                                         </React.Fragment>
                                     ))
                                 }
@@ -167,10 +168,10 @@ export default function RandomNumberPages() {
                                 error={error.max}
                                 onFocus={handleFocus}
                                 helperText={
-                                    errText.max.map((err)=>(
+                                    errText.max.map((err) => (
                                         <React.Fragment key={err}>
                                             <Span>{err}</Span>
-                                            <br/>
+                                            <br />
                                         </React.Fragment>
                                     ))
                                 }
@@ -179,15 +180,19 @@ export default function RandomNumberPages() {
                         <Grid item xs={12}>
                             <FormGroup>
                                 <FormControlLabel control={
-                                    <Switch disabled={loading} checked={animation} onChange={event=>setAnimation(event.target.checked)} color="primary" />
+                                    <Switch disabled={loading} checked={animation} onChange={event => setAnimation(event.target.checked)} color="primary" />
                                 }
-                                label="Animation" />
+                                    label="Animation" />
                             </FormGroup>
                         </Grid>
                     </Grid>
                 </Box>
 
-                <Divider sx={{my:3}} />
+                <Divider sx={{ my: 3 }} />
+
+                <Stack mb={3}>
+                    <Ads300 />
+                </Stack>
 
                 <Stack direction='row' justifyContent='space-between' alignItems='center'>
                     <Button disabled={loading} loading={loading} onClick={handleGenerate} icon='submit'>Generate</Button>

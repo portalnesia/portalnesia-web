@@ -12,5 +12,5 @@ freewheel.tv, 369249, RESELLER # 41b5eef6
 rubiconproject.com, 15476, RESELLER, 0bfd66d529a55807 # 41b5eef6
 smartadserver.com, 2776, RESELLER # 41b5eef6
 pubmatic.com, 156830, RESELLER # 41b5eef6
-google.com, pub-5617098146054077, RESELLER, f08c47fec0942fa0 # 41b5eef6
+google.com, pub-5345145600516995, DIRECT, f08c47fec0942fa0
 advertising.com, 24831, RESELLER # 41b5eef6

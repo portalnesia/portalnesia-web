@@ -33,6 +33,7 @@ import Chip from "@comp/Chip";
 import useAPI from "@design/hooks/api";
 import { getAnalytics } from "@utils/firebase";
 import { logEvent } from 'firebase/analytics'
+import Ads300 from "@comp/ads/Ads300";
 
 export const getServerSideProps = wrapper<BlogDetail>(async ({ params, redirect, fetchAPI }) => {
     const slug = params?.slug;

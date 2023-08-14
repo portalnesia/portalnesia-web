@@ -23,6 +23,9 @@ import { BoxPagination } from './Pagination'
 import SocialEmbed from '@comp/SocialEmbed'
 import { Em, Figcaption, Figure } from './Dom'
 import Divider from '@mui/material/Divider'
+import AdsNative from '@comp/ads/AdsNative'
+import Ads300 from '@comp/ads/Ads300'
+import Stack from '@mui/material/Stack'
 
 export const editorStyles = (theme: Theme) => ({
     '& pre code': {
@@ -129,11 +132,11 @@ const parseOption = (opt: { preview?: boolean }): HTMLReactParserOptions => ({
         if (node?.type === 'tag' && node?.name === 'div') {
             if (node?.attribs?.['data-portalnesia-action']) {
                 if (node?.attribs?.['data-portalnesia-action'] == 'ads') {
-                    return domToReact(node?.children, parseOption(opt)) as any;
-                    //const type=node?.attribs?.['data-ads'];
-                    //if(type=='300') return <AdsRect />
-                    //else if(type=='468') return <AdsBanner1 />
-                    //else if(type=='728') return <AdsBanner2 />
+                    // return domToReact(node?.children, parseOption(opt)) as any;
+                    const type = node?.attribs?.['data-ads'];
+                    if (type == '468') return <Stack my={3}><AdsNative /></Stack>
+                    else return <Stack my={3}><Ads300 /></Stack>
+                    // else if(type=='728') return <AdsBanner2 />
                     //else if(type=='button') return <AdsBanner3 />
                 }
             } else if (/table\-responsive/.test(node?.attribs?.class || "")) {
@@ -199,7 +202,7 @@ const parseOption = (opt: { preview?: boolean }): HTMLReactParserOptions => ({
                     const parentClass = parent?.attribs?.class;
                     const href = node?.attribs?.href
                     return (
-                        <Box display='flex' justifyContent='center' my={3}>
+                        <>
                             {parentClass === "twitter-tweet" ? (
                                 <SocialEmbed type="twitter" url={href} width={500} />
                             ) : parentClass === "instagram-media" ? (
@@ -207,9 +210,25 @@ const parseOption = (opt: { preview?: boolean }): HTMLReactParserOptions => ({
                             ) : parentClass === "tiktok-embed" ? (
                                 <SocialEmbed type="tiktok" url={href} width={500} />
                             ) : null}
-                        </Box>
+                        </>
                     )
                 }
+            }
+        }
+        if (node?.type === "tag" && node?.name === "iframe") {
+            const src = node?.attribs?.['src'];
+            if (/tiktok\.com/.test(src)) {
+                return <SocialEmbed type="tiktok" url={src} width={500} />
+            } else if (/(twitter|x)\.com/.test(src)) {
+                return <SocialEmbed type="twitter" url={src} width={500} />
+            } else if (/instagram\.com/.test(src)) {
+                return <SocialEmbed type="instagram" url={src} width={500} />
+            } else if (/facebook\.com/.test(src)) {
+                return <SocialEmbed type="facebook" url={src} width={500} />
+            } else if (/(youtube\.com|youtu\.be)/.test(src)) {
+                return <SocialEmbed type="youtube" url={src} />
+            } else if (/spotify\.com/.test(src)) {
+                return <SocialEmbed type="spotify" url={src} />
             }
         }
         // PICTURE
@@ -234,7 +253,7 @@ const parseOption = (opt: { preview?: boolean }): HTMLReactParserOptions => ({
                 )
             }
         }
-        if (node?.type === 'tag' && node?.name === 'em') {
+        if (node?.type === 'tag' && (node?.name === 'em' || node?.name === 'i')) {
             if (node?.parent?.children && node?.parent?.children?.length > 2) {
                 const child = node?.parent?.children[0] as Element;
                 if (child.name === "img") {
@@ -342,10 +361,6 @@ const parseOption = (opt: { preview?: boolean }): HTMLReactParserOptions => ({
         }
         // SCRIPT
         if (node?.type === "script" && node?.name === 'script') {
-            /*const src = node?.attribs?.src;
-            if(src) {
-              return <Script src={src} strategy='lazyOnload' />
-            }*/
             return <></>;
         }
 

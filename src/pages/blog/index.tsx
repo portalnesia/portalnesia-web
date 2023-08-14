@@ -32,7 +32,7 @@ export default function News() {
                     <Grid container spacing={2}>
                         {data && data?.data?.length > 0 ? (data.data.map(d => (
                             <Grid key={d.title} item xs={12} sm={6} md={4} lg={3}>
-                                <CustomCard link={href(d.link)} title={d.title} image={d.image} image_query="&export=banner&size=300">
+                                <CustomCard lazy={false} link={href(d.link)} title={d.title} image={d.image} image_query="&export=banner&size=300">
                                     <Stack direction='row' justifyContent='space-between'>
                                         <Typography variant='caption'>{`By ${truncate(d.user.name, 20)}`}</Typography>
                                         <Typography variant='caption'>{getDayJs(d.last_modified || d.created).time_ago().format}</Typography>

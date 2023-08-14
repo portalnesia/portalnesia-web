@@ -16,6 +16,8 @@ import PaperBlock from "@design/components/PaperBlock";
 import Image from "@comp/Image";
 import useAPI from "@design/hooks/api";
 import { Span } from "@design/components/Dom";
+import Ads300 from "@comp/ads/Ads300";
+import AdsNative from "@comp/ads/AdsNative";
 
 type UrlCustom = UrlPagination & ({
     meta: {
@@ -130,7 +132,7 @@ export default function LinkPages({ data, meta }: IPages<UrlCustom | ({ url: str
             const base_url = "https://link-to.net/926051/" + Math.random() * 1000 + "/dynamic/";
             const href = base_url + "?r=" + Buffer.from(encodeURI(data.url)).toString("base64");
             window.open(href, '_blank', 'noopener,noreferrer,popup=0');
-            window.location.href = 'https://civadsoo.net/afu.php?zoneid=3824553'
+            window.location.href = 'https://turnstileunavailablesite.com/xmnx0vva0?key=2755538a6a40f5d84b50de5828fae4a5'
         } else {
             window.open(data.long_url, '_blank', 'noopener,noreferrer,popup=0');
             await get(`/v2/url-shortener/${data.id}/update`, { success_notif: false });
@@ -180,7 +182,7 @@ export default function LinkPages({ data, meta }: IPages<UrlCustom | ({ url: str
                         </Grid>
                     ) : (
                         <>
-                            <Grid item xs={12} md={6}>
+                            <Grid item xs={12} md={5}>
                                 <PaperBlock title="Thumbnails">
                                     <Box display='flex' justifyContent='center' alignItems='center' textAlign='center'>
                                         <Box maxWidth='80%'>
@@ -189,10 +191,13 @@ export default function LinkPages({ data, meta }: IPages<UrlCustom | ({ url: str
                                     </Box>
                                 </PaperBlock>
                             </Grid>
-                            <Grid item xs={12} md={6}>
+                            <Grid item xs={12} md={7}>
                                 <Box borderBottom={theme => `2px solid ${theme.palette.divider}`} pb={0.5} mb={5}>
                                     <Typography variant='h3' component='h1'>{meta?.title}</Typography>
                                 </Box>
+                                <Stack my={3}>
+                                    <Ads300 deps={[data]} />
+                                </Stack>
                                 {meta?.desc && (
                                     <Box mb={5}>
                                         <Typography>{meta?.desc}</Typography>
@@ -203,6 +208,9 @@ export default function LinkPages({ data, meta }: IPages<UrlCustom | ({ url: str
                                     <Typography gutterBottom><Span sx={{ color: 'error.main' }}>*</Span> You are about to be redirected to another page. We are not responsible for the content of that page or the consequences it may have on you.</Typography>
                                     <Typography><Span sx={{ color: 'error.main' }}>*</Span> See website thumbnails to make sure that the website you are going to is right.</Typography>
                                 </Box>
+                                <Stack my={3}>
+                                    <AdsNative deps={[data]} />
+                                </Stack>
                                 <Stack direction='row' spacing={4}>
                                     <Link href={"/"} passHref legacyBehavior><Button sx={{ width: '100%' }} component='a' outlined color='inherit'>Homepage</Button></Link>
                                     <Button sx={{ width: '100%' }} onClick={handleRedirect}>Redirect</Button>

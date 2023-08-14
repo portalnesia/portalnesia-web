@@ -1,47 +1,34 @@
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from '@redux/store'
-import { State } from '@type/redux'
 import firebase, { ReCaptchaV3Provider, initializeAppCheck, onTokenChanged, getAppCheckToken } from '@utils/firebase'
 import { useRouter } from 'next/router'
-import { Unsubscribe } from 'firebase/app-check';
 import config from '@src/config'
-import { getCookie } from 'cookies-next'
 import useDarkTheme from '@design/hooks/useDarkTheme'
-
-/**
- * GET FIREBASE APP CHECK TOKEN
- */
-async function getAppToken(callback: (token: string) => void) {
-    if (process.env.NODE_ENV === 'development') {
-        (self as any).FIREBASE_APPCHECK_DEBUG_TOKEN = process.env.NEXT_PUBLIC_APP_CHECK_DEBUG;
-    }
-    const provider = new ReCaptchaV3Provider(config.recaptcha);
-    const appCheck = initializeAppCheck(firebase, { provider, isTokenAutoRefreshEnabled: true });
-
-    const tokenUnsubcribe = onTokenChanged(appCheck, (token) => {
-        callback(token.token);
-    })
-
-    const token = await getAppCheckToken(appCheck);
-
-    return {
-        token: token.token,
-        unsubcribe: tokenUnsubcribe
-    };
-}
+import LocalStorage from '@utils/local-storage'
+import { uuid } from '@portalnesia/utils'
+import { LocalConfig } from '@type/general'
 
 export default function useInit() {
     const router = useRouter();
-    const appToken = useSelector(s => s.appToken);
     const dispatch = useDispatch();
     const [adBlock, setAdBlock] = useState(false);
     const { checkTheme, setHighlightJs } = useDarkTheme();
     const isReady = router.isReady
 
     useEffect(() => {
-        let unsubcribe: Unsubscribe | undefined;
-        function onTokenIsChanged(token: string) {
-            dispatch({ type: "CUSTOM", payload: { appToken: token } })
+        if (process.env.NODE_ENV === 'development') {
+            (self as any).FIREBASE_APPCHECK_DEBUG_TOKEN = process.env.NEXT_PUBLIC_APP_CHECK_DEBUG;
+        }
+        const provider = new ReCaptchaV3Provider(config.recaptcha);
+        const appCheck = initializeAppCheck(firebase, { provider, isTokenAutoRefreshEnabled: true });
+        const unsubcribe = onTokenChanged(appCheck, (token) => {
+            dispatch({ type: "CUSTOM", payload: { appToken: token.token } });
+        });
+
+        const localConfig = LocalStorage.get<LocalConfig>("config");
+        if (!localConfig || !localConfig.sess) {
+            const session = localConfig.sess || uuid();
+            LocalStorage.set("config", { ...localConfig, sess: session });
         }
 
         /**
@@ -53,12 +40,8 @@ export default function useInit() {
             try {
                 const theme = checkTheme();
                 setHighlightJs(theme.redux_theme);
-                let token: { token: string, unsubcribe: Unsubscribe } | undefined;
-                if (!appToken) {
-                    token = await getAppToken(onTokenIsChanged);
-                    unsubcribe = token.unsubcribe;
-                }
-                dispatch({ type: "CUSTOM", payload: { theme: theme.theme, redux_theme: theme.redux_theme, ...token ? { appToken: token.token } : {} } });
+                const token = await getAppCheckToken(appCheck);
+                dispatch({ type: "CUSTOM", payload: { appToken: token.token, theme: theme.theme, redux_theme: theme.redux_theme } });
             } catch (e) {
                 console.error(e);
             }
@@ -82,7 +65,7 @@ export default function useInit() {
             if (unsubcribe) unsubcribe();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [checkTheme, appToken])
+    }, [checkTheme])
 
     useEffect(() => {
         if (isReady) {
