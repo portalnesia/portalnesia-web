@@ -1,12 +1,13 @@
-import {Model} from 'sequelize';
+import { Model } from 'sequelize';
 import db from './db'
-import {staticUrl} from '@utils/main'
+import { staticUrl } from '@utils/main'
 import type { IDate, ISeen } from '@type/general';
 import { DataTypes, Op, Sequelize } from 'sequelize';
 
 export type NewsPagination = {
     id: number,
     title: string,
+    slug: string,
     source: string,
     link: string,
     source_link: string,
@@ -19,7 +20,7 @@ export type NewsPagination = {
 export interface NewsDetail extends NewsPagination {
     text: string;
     liked?: boolean;
-    comment_count?:ISeen;
+    comment_count?: ISeen;
     dilihat?: number;
 }
 

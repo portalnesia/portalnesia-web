@@ -25,106 +25,107 @@ import { staticUrl } from "@utils/main";
 import Breadcrumbs from "@comp/Breadcrumbs";
 import { getAnalytics, logEvent } from "@utils/firebase";
 import Link from "@design/components/Link";
+import Ads300 from "@comp/ads/Ads300";
 
-const Backdrop = dynamic(()=>import("@design/components/Backdrop"))
-const Dialog = dynamic(()=>import("@design/components/Dialog"))
-const Image = dynamic(()=>import("@comp/Image"))
+const Backdrop = dynamic(() => import("@design/components/Backdrop"))
+const Dialog = dynamic(() => import("@design/components/Dialog"))
+const Image = dynamic(() => import("@comp/Image"))
 
-export const getServerSideProps = wrapper<TwibbonDetail>(async({params,redirect,fetchAPI})=>{
+export const getServerSideProps = wrapper<TwibbonDetail>(async ({ params, redirect, fetchAPI }) => {
     const slug = params?.slug;
-    if(typeof slug !== 'string') return redirect();
+    if (typeof slug !== 'string') return redirect();
 
     try {
         const url = `/v2/twibbon/${slug}`;
         const data: TwibbonDetail = await fetchAPI<TwibbonDetail>(url);
 
-        const desc = truncate(clean(data?.description||""),200);
+        const desc = truncate(clean(data?.description || ""), 200);
 
         return {
-            props:{
-                data:data,
-                meta:{
+            props: {
+                data: data,
+                meta: {
                     title: data?.title,
                     desc,
                     image: staticUrl(`img/twibbon/${data.slug}`)
                 }
             }
         }
-    } catch(e) {
-        if(e instanceof BackendError) {
-            if(e?.status === 404) return redirect();
+    } catch (e) {
+        if (e instanceof BackendError) {
+            if (e?.status === 404) return redirect();
         }
         throw e;
     }
 })
 
-export default function TwibbonPages({data:twibbon,meta}: IPages<TwibbonDetail>) {
+export default function TwibbonPages({ data: twibbon, meta }: IPages<TwibbonDetail>) {
     const router = useRouter();
     const slug = router.query?.slug;
-    const {data,error} = useSWR<TwibbonDetail>(`/v2/twibbon/${slug}`,{fallbackData:twibbon});
+    const { data, error } = useSWR<TwibbonDetail>(`/v2/twibbon/${slug}`, { fallbackData: twibbon });
     const croppie = React.useRef<Croppie>(null);
     const inputEl = React.useRef<HTMLInputElement>(null)
-    const [dialog,setDialog] = React.useState(false);
-    const [cropData,setCropData] = React.useState("");
-    const [imageLoaded,setImageLoaded] = React.useState(false);
-    const [loading,setLoading] = React.useState(false);
+    const [dialog, setDialog] = React.useState(false);
+    const [cropData, setCropData] = React.useState("");
+    const [imageLoaded, setImageLoaded] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
     const setNotif = useNotification();
 
-    const handleRotate=React.useCallback(()=>{
+    const handleRotate = React.useCallback(() => {
         croppie.current?.rotate(-90);
-    },[])
+    }, [])
 
-    const handleLoadImage=React.useCallback(async(e: React.ChangeEvent<HTMLInputElement>)=>{
-        if(e?.target?.files?.[0]) {
+    const handleLoadImage = React.useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e?.target?.files?.[0]) {
             await croppie?.current?.loadImage(e);
             setImageLoaded(true);
         }
-        if(inputEl.current) inputEl.current.value = '';
-    },[])
+        if (inputEl.current) inputEl.current.value = '';
+    }, [])
 
-    const handleCrop = React.useCallback(async()=>{
+    const handleCrop = React.useCallback(async () => {
         try {
             setLoading(true)
             const canvas = await croppie.current?.cropImage();
-            canvas?.toBlob(blob=>{
-                if(blob) {
+            canvas?.toBlob(blob => {
+                if (blob) {
                     const url = (window.webkitURL || window.URL).createObjectURL(blob);
                     setCropData(url)
                     setDialog(true);
                     setLoading(false)
                 } else {
-                    setNotif("Something went wrong",true);
+                    setNotif("Something went wrong", true);
                     setLoading(false)
                 }
             })
-        } catch(err) {
-            if(err instanceof Error) setNotif(err.message,true)
+        } catch (err) {
+            if (err instanceof Error) setNotif(err.message, true)
             setLoading(false)
         }
-    },[setNotif])
+    }, [setNotif])
 
-    React.useEffect(()=>{
-        let timeout = setTimeout(()=>{
+    React.useEffect(() => {
+        let timeout = setTimeout(() => {
             const analytics = getAnalytics();
-            logEvent(analytics,"select_content",{
-                content_type:"twibbon",
-                item_id:`${twibbon.id}`
+            logEvent(analytics, "select_content", {
+                content_type: "twibbon",
+                item_id: `${twibbon.id}`
             })
-        },5000)
+        }, 5000)
 
-        return ()=>{
+        return () => {
             clearTimeout(timeout);
         }
-    },[twibbon])
+    }, [twibbon])
 
     return (
         <Pages title={meta?.title} desc={meta?.desc} canonical={`/twibbon/${data?.slug}`} image={meta?.image}>
             <DefaultLayout>
                 {data && <Breadcrumbs title={data.title} routes={[{
-                    label:"Twibbon",
-                    link:"/twibbon"
+                    label: "Twibbon",
+                    link: "/twibbon"
                 }]} />}
-                <SWRPages loading={!data&&!error} error={error}>
+                <SWRPages loading={!data && !error} error={error}>
                     <Grid container spacing={4}>
                         <Grid item xs={12} md={4}>
                             <Sidebar id='twibbon-content'>
@@ -133,21 +134,21 @@ export default function TwibbonPages({data:twibbon,meta}: IPages<TwibbonDetail>)
                                         <>
                                             {data && (
                                                 <Stack mb={1} direction='row' justifyContent='space-between' alignItems='center' spacing={1}>
-                                                    <ShareAction campaign="twibbon" variant='button' posId={data.id} buttonProps={{outlined:true,color:'inherit',sx:{width:'100%'}}} />
-                                                    <ReportAction variant="button" buttonProps={{outlined:true,color:'inherit',sx:{width:'100%'}}} report={{type:"konten",information:{konten:{type:"twibbon",id:data.id}}}} />
+                                                    <ShareAction campaign="twibbon" variant='button' posId={data.id} buttonProps={{ outlined: true, color: 'inherit', sx: { width: '100%' } }} />
+                                                    <ReportAction variant="button" buttonProps={{ outlined: true, color: 'inherit', sx: { width: '100%' } }} report={{ type: "konten", information: { konten: { type: "twibbon", id: data.id } } }} />
                                                 </Stack>
                                             )}
-                                            <Link href="/dashboard/twibbon/new" passHref legacyBehavior><Button component='a' icon='add' sx={{width:'100%'}}>Create Twibbon</Button></Link>
+                                            <Link href="/dashboard/twibbon/new" passHref legacyBehavior><Button component='a' icon='add' sx={{ width: '100%' }}>Create Twibbon</Button></Link>
                                         </>
-                                        
+
                                     }
                                 >
-                                    <List component="ol" sx={{listStyle:'numeric',listStylePosition:'inside'}}>
-                                        <Li>Click the <Span className='underline' sx={{color:'customColor.link',fontWeight:'bold'}} onClick={()=>inputEl.current?.click()}>Select Image</Span> button.</Li>
+                                    <List component="ol" sx={{ listStyle: 'numeric', listStylePosition: 'inside' }}>
+                                        <Li>Click the <Span className='underline' sx={{ color: 'customColor.link', fontWeight: 'bold', cursor: "pointer" }} onClick={() => inputEl.current?.click()}>Select Image</Span> button.</Li>
                                         <Li>Choose the photo.</Li>
-                                        <Li>You can edit photos by <Span sx={{fontWeight:'bold'}}>sliding the slider</Span>.</Li>
-                                        <Li>When you have finished editing, click the <Span sx={{fontWeight:'bold'}}>Preview</Span> button.</Li>
-                                        <Li>To download click <Span sx={{fontWeight:'bold'}}>Download</Span> button.</Li>
+                                        <Li>You can edit photos by <Span sx={{ fontWeight: 'bold' }}>sliding the slider</Span>.</Li>
+                                        <Li>When you have finished editing, click the <Span sx={{ fontWeight: 'bold' }}>Preview</Span> button.</Li>
+                                        <Li>To download click <Span sx={{ fontWeight: 'bold' }}>Download</Span> button.</Li>
                                         <Li>Done</Li>
                                     </List>
                                 </PaperBlock>
@@ -155,8 +156,8 @@ export default function TwibbonPages({data:twibbon,meta}: IPages<TwibbonDetail>)
                         </Grid>
                         <Grid item xs={12} md={8}>
                             <Box id='twibbon-content'>
-                                <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={5}>
-                                    <Typography variant='h3' component='h1'>{data?.title||meta?.title}</Typography>
+                                <Box borderBottom={theme => `2px solid ${theme.palette.divider}`} pb={0.5} mb={5}>
+                                    <Typography variant='h3' component='h1'>{data?.title || meta?.title}</Typography>
                                 </Box>
 
                                 <Box>
@@ -164,16 +165,20 @@ export default function TwibbonPages({data:twibbon,meta}: IPages<TwibbonDetail>)
                                         ref={croppie}
                                         background={data ? `/content/img/twibbon/${data.slug}` : undefined}
                                     />
-                                    
-                                    
+
+
                                     {imageLoaded && (
                                         <Box mt={1} textAlign='center'>
                                             <Button tooltip="Rotate" color="inherit" outlined onClick={handleRotate} icon='rotate'>Rotate</Button>
                                         </Box>
                                     )}
 
-                                    <Stack sx={{mt:4}} direction='row' justifyContent='space-between' alignItems='center'>
-                                        <Button outlined color='inherit' icon='addphoto' onClick={()=>inputEl.current?.click()}>Select Image</Button>
+                                    <Stack my={4}>
+                                        <Ads300 deps={[data?.id]} />
+                                    </Stack>
+
+                                    <Stack direction='row' justifyContent='space-between' alignItems='center'>
+                                        <Button outlined color='inherit' icon='addphoto' onClick={() => inputEl.current?.click()}>Select Image</Button>
                                         <Button icon='preview' onClick={handleCrop}>Preview</Button>
                                     </Stack>
                                 </Box>
@@ -182,14 +187,14 @@ export default function TwibbonPages({data:twibbon,meta}: IPages<TwibbonDetail>)
                     </Grid>
                 </SWRPages>
             </DefaultLayout>
-            <input ref={inputEl} type='file' accept="image/*" style={{display:'none'}} onChange={handleLoadImage} />
+            <input ref={inputEl} type='file' accept="image/*" style={{ display: 'none' }} onChange={handleLoadImage} />
             <Backdrop open={loading} />
-            <Dialog open={dialog} handleClose={()=>setDialog(false)} title={data?.title||meta?.title} maxWidth='sm' fullScreen={false}
+            <Dialog open={dialog} handleClose={() => setDialog(false)} title={data?.title || meta?.title} maxWidth='sm' fullScreen={false}
                 actions={
-                    <Button component='a' href={cropData} download={`${data?.title||meta?.title} - Portalnesia Twibbon.png`} icon='download'>Download</Button>
+                    <Button component='a' href={cropData} download={`${data?.title || meta?.title} - Portalnesia Twibbon.png`} icon='download'>Download</Button>
                 }
             >
-                <Image src={cropData} alt={data?.title||meta?.title||""} sx={{width:'100%'}} />
+                <Image src={cropData} alt={data?.title || meta?.title || ""} sx={{ width: '100%' }} />
             </Dialog>
         </Pages>
     )

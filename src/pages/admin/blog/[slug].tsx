@@ -150,8 +150,9 @@ export default function EditBlogAdmin({data,meta}: IPages<IBlogEdit>) {
     const handleSubmit = React.useCallback(submitForm(async()=>{
         try {
             setLoading(true)
+            const text = input?.format === 'html' ? editorRef.current?.getData() : input?.text;
             const recaptcha = await captchaRef.current?.execute();
-            await put(`/v2/blog/${data.slug}`,{...input,recaptcha},{},{success_notif:true});
+            await put(`/v2/blog/${data.slug}`,{...input,text,recaptcha},{},{success_notif:true});
             setCanChange(true)
         } catch(e) {
             if(e instanceof ApiError) setNotif(e.message,true)

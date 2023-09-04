@@ -1,89 +1,87 @@
-import {ComponentType, FC, useEffect, useState} from 'react'
-import io,{Socket as ISocket} from 'socket.io-client'
-import { useRouter } from 'next/router';
-import { useSelector,useDispatch } from '@redux/store';
-import type { State } from '@type/redux';
+import { ComponentType, FC, useEffect, useState } from 'react'
+import io, { Socket as ISocket } from 'socket.io-client'
 import useAPI from '@design/hooks/api';
 
-export type {ISocket}
+export type { ISocket }
 
-let loading=false,socket: ISocket|undefined=undefined;
+let loading = false, socket: ISocket | undefined = undefined;
 export default function useSocket() {
-    const {get} = useAPI();
-    const [mySocket,setMySocket] = useState(socket);
+    const { get } = useAPI();
+    const [mySocket, setMySocket] = useState(socket);
 
-    useEffect(()=>{
+    useEffect(() => {
         function onConnection() {
-            loading=false;
+            loading = false;
         }
         function onDisconnect() {
-            loading=false;
+            socket = undefined;
+            loading = false;
             setMySocket(undefined);
             getSocket();
         }
         async function getSocket() {
-            if(!socket && typeof window !== 'undefined' && !loading) {
-                loading=true;
+            if (!socket && typeof window !== 'undefined' && !loading) {
+                loading = true;
                 try {
                     const token = await get<string>(`/v2/internal/socket`);
-                    const sockets = io(`${process.env.NEXT_PUBLIC_API_URL}/v2`,{transports: ['websocket'],auth:{token}});
-                    sockets.once('connect',onConnection);
-                    sockets.once('disconnect',onDisconnect);
+                    const sockets = io(`${process.env.NEXT_PUBLIC_API_URL}/v2`, { transports: ['websocket'], auth: { token } });
+                    sockets.once('connect', onConnection);
+                    sockets.once('disconnect', onDisconnect);
 
                     socket = sockets;
                     setMySocket(sockets);
                 } catch {
-                    loading=false;
+                    loading = false;
                 }
             }
         }
-        
+
         getSocket();
-    },[get])
+    }, [get])
 
     return mySocket;
 }
 
-export function Socket({onRef}: {onRef?:(ref: ISocket)=>void}) {
+export function Socket({ onRef }: { onRef?: (ref: ISocket) => void }) {
     const socket = useSocket();
 
-    useEffect(()=>{
-        if(socket && onRef) {
-          onRef(socket);
+    useEffect(() => {
+        if (socket && onRef) {
+            onRef(socket);
         }
-    },[socket,onRef])
+    }, [socket, onRef])
 
-    useEffect(()=>{
+    useEffect(() => {
         function onReconnect() {
-          socket?.emit('konek')
+            socket?.emit('konek')
         }
-        socket?.on('reconnect',onReconnect)
-        socket?.on('connect',onReconnect)
-        return ()=>{
-          socket?.off('reconnect',onReconnect)
-          socket?.off('connect',onReconnect)
+        socket?.on('reconnect', onReconnect)
+        socket?.on('connect', onReconnect)
+        return () => {
+            socket?.off('reconnect', onReconnect)
+            socket?.off('connect', onReconnect)
         }
-    },[socket])
+    }, [socket])
 
     return null;
 }
 
-export function withSocket<P extends object>(Component: ComponentType<P>): FC<P & ({socket?: ISocket})> {
+export function withSocket<P extends object>(Component: ComponentType<P>): FC<P & ({ socket?: ISocket })> {
     /* eslint-disable-next-line react/display-name */
-    return (props: P)=>{
+    return (props: P) => {
         const socket = useSocket();
 
-        useEffect(()=>{
+        useEffect(() => {
             function onReconnect() {
-              socket?.emit('konek')
+                socket?.emit('konek')
             }
-            socket?.on('reconnect',onReconnect)
-            socket?.on('connect',onReconnect)
-            return ()=>{
-              socket?.off('reconnect',onReconnect)
-              socket?.off('connect',onReconnect)
+            socket?.on('reconnect', onReconnect)
+            socket?.on('connect', onReconnect)
+            return () => {
+                socket?.off('reconnect', onReconnect)
+                socket?.off('connect', onReconnect)
             }
-        },[socket])
+        }, [socket])
 
         return <Component {...props as P} socket={socket} />
     }

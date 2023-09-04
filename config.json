@@ -1,23 +1,23 @@
 {
-    "title":"Portalnesia",
-    "logo":"https://content.portalnesia.com/icon/PN-Logo-Only-Green.png",
-    "meta":{
-        "title":"Portalnesia",
-        "tagline":"Portalnya Indonesia",
-        "description":"Portalnesia - Website Multifungsi,  Chord - Kunci Gitar dengan Transpose Auto Scroll, Baca Utas Twitter, Twitter Thread Reader, Membuat Twibbon, Pasang Twibbon, Berita Terbaru Terhangat Terkini, Download dari Youtube Twitter Soundcloud Instagram,  Buat Kuis Anda, Events, Perpendek URL",
-        "keywords":"account, short url, website,  media, chord, downloader, profil, twibbon, news, berita, random number generator, number generator, soundcloud downloader, youtube downloader, twitter downloader, instagram downloader, twitter menfess, twitter thread reader, streaming, tv indonesia, quiz, kuis, events, jadwal kegiatan, kunci gitar, chord gitar"
+    "title": "Portalnesia",
+    "logo": "https://content.portalnesia.com/icon/PN-Logo-Only-Green.png",
+    "meta": {
+        "title": "Portalnesia",
+        "tagline": "Portalnya Indonesia",
+        "description": "Portalnesia - Website Multifungsi,  Chord - Kunci Gitar dengan Transpose Auto Scroll, Baca Utas Twitter, Twitter Thread Reader, Membuat Twibbon, Pasang Twibbon, Berita Terbaru Terhangat Terkini, Download dari Youtube Twitter Soundcloud Instagram,  Buat Kuis Anda, Events, Perpendek URL",
+        "keywords": "account, short url, website,  media, chord, downloader, profil, twibbon, news, berita, random number generator, number generator, soundcloud downloader, youtube downloader, twitter downloader, instagram downloader, twitter menfess, twitter thread reader, streaming, tv indonesia, quiz, kuis, events, jadwal kegiatan, kunci gitar, chord gitar"
     },
-    "url":{
-        "static":"https://content.portalnesia.com",
-        "link":"https://link.portalnesia.com",
-        "deep":"https://go.portalnesia.com",
-        "account":"https://accounts.portalnesia.com",
+    "url": {
+        "static": "https://content.portalnesia.com",
+        "link": "https://link.portalnesia.com",
+        "deep": "https://go.portalnesia.com",
+        "account": "https://accounts.portalnesia.com",
         "status": "https://status.portalnesia.com",
-        "short":"http://kakek.c1.biz",
-        "datas":"https://datas.portalnesia.com"
+        "short": "http://prtl.c1.biz",
+        "datas": "https://datas.portalnesia.com"
     },
-    "recaptcha":"6LdeqPYUAAAAAL-nPJZjgAE0gYD5DeyH7-i-_Hee",
-    "firebase":{
+    "recaptcha": "6LdeqPYUAAAAAL-nPJZjgAE0gYD5DeyH7-i-_Hee",
+    "firebase": {
         "apiKey": "AIzaSyAQ7u4UWLyPZ9dgL9cwtBbXs4GX3th00Bg",
         "authDomain": "portalnesia.firebaseapp.com",
         "databaseURL": "https://portalnesia.firebaseio.com",
@@ -27,13 +27,13 @@
         "appId": "1:152584550462:web:9e87f640a14eb1130d796f",
         "measurementId": "G-V1ZMDC79KP"
     },
-    "contact":{
-        "email":"support@portalnesia.com",
-        "facebook":"Portalnesia",
-        "instagram":"portalnesia.id",
-        "twitter":"@Portalnesia1",
-        "line":"@540ytcnc",
-        "telegram":"@portalnesia_bot"
+    "contact": {
+        "email": "support@portalnesia.com",
+        "facebook": "Portalnesia",
+        "instagram": "portalnesia.id",
+        "twitter": "@Portalnesia1",
+        "line": "@540ytcnc",
+        "telegram": "@portalnesia_bot"
     },
-    "vapidKey":"BCchOVH17v-HJon-RqIZE-bWVcvVT9F2KFb73kwDwBzvlyLxG_gYMYJ_TpcCPyif4t42NSYibviJHHxjUb5nXOY"
+    "vapidKey": "BCchOVH17v-HJon-RqIZE-bWVcvVT9F2KFb73kwDwBzvlyLxG_gYMYJ_TpcCPyif4t42NSYibviJHHxjUb5nXOY"
 }

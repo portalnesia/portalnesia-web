@@ -113,18 +113,18 @@ app.prepare().then(()=>{
     }));
     server.use(helmet.xssFilter());
 
-    server.use('/user/*/photo_profile',useDataProxy)
+    server.use('/user/*/photo_profile',useApiProxy)
     server.use('/email/preview/*',useDataProxy);
     server.get('/sitemap.xml', useApiProxy);
     server.use('/news/feed', useApiProxy);
     server.use('/blog/feed', useApiProxy);
     server.use('/chord/feed', useApiProxy);
     server.use('/content', useContentProxy);
-    server.use('/telegram/oauth', useDataProxy);
+    // server.use('/telegram/oauth', useDataProxy);
     server.use('/line', useDataProxy);
-    server.use('/print', useDataProxy);
+    // server.use('/print', useDataProxy);
     //server.use('/file-manager/images', exampleProxy);
-    server.use('/media/embed', useDataProxy);
+    // server.use('/media/embed', useDataProxy);
     
     server.use('/login', accountRedirect('/login'));
     server.use('/logout', accountRedirect('/logout'));

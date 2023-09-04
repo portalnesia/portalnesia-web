@@ -23,112 +23,115 @@ import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import SWRPages from "@comp/SWRPages";
+import Ads300 from "@comp/ads/Ads300";
+import Stack from "@mui/material/Stack";
+import AdsNative from "@comp/ads/AdsNative";
 
-const Dialog = dynamic(()=>import("@design/components/Dialog"))
-const InputAdornment = dynamic(()=>import("@mui/material/InputAdornment"))
-const List = dynamic(()=>import("@mui/material/List"))
-const ListItemButton = dynamic(()=>import("@mui/material/ListItemButton"))
-const ListItemText = dynamic(()=>import("@mui/material/ListItemText"))
-const Pagination = dynamic(()=>import("@design/components/Pagination"))
+const Dialog = dynamic(() => import("@design/components/Dialog"))
+const InputAdornment = dynamic(() => import("@mui/material/InputAdornment"))
+const List = dynamic(() => import("@mui/material/List"))
+const ListItemButton = dynamic(() => import("@mui/material/ListItemButton"))
+const ListItemText = dynamic(() => import("@mui/material/ListItemText"))
+const Pagination = dynamic(() => import("@design/components/Pagination"))
 
 
 type IEpsg = {
-    code:string,
-    name:string|null,
-    area: string|null
+    code: string,
+    name: string | null,
+    area: string | null
 }
 
 const placeholder = "Decimal values formats, example:\r\n- 18.5;54.2\r\n- 113.4 46.78\r\n- 16.9,67.8\r\n\r\nGeodetic or GPS formats, example:\r\n- 41°26'47\"N 71°58'36\"W\r\n- 42d26'47\"N;72d58'36\"W\r\n- 43d26'46\"N,73d56'55\"W"
 export default function TransformCoordinate() {
-    const [srcEpsg,setSrcEpsg]=React.useState({from:'4326',to:'4326'})
-    const [textEpsg,setTextEpsg]=React.useState({from:'WGS 84 (EPSG:4326)',to:'WGS 84 (EPSG:4326)'})
-    const [switchVal,setSwitch]=React.useState({switch:false,add_input:false})
-    const [input,setInput]=React.useState("")
-    const [output,setOutput]=React.useState("")
-    const [loading,setLoading]=React.useState(false)
-    const [dialog,setDialog]=React.useState<'input'|'output'|null>(null)
-    const [page,setPage] = usePagination(1);
-    const [search,setSearch]=React.useState("");
-    const [q,setQ] = React.useState("");
+    const [srcEpsg, setSrcEpsg] = React.useState({ from: '4326', to: '4326' })
+    const [textEpsg, setTextEpsg] = React.useState({ from: 'WGS 84 (EPSG:4326)', to: 'WGS 84 (EPSG:4326)' })
+    const [switchVal, setSwitch] = React.useState({ switch: false, add_input: false })
+    const [input, setInput] = React.useState("")
+    const [output, setOutput] = React.useState("")
+    const [loading, setLoading] = React.useState(false)
+    const [dialog, setDialog] = React.useState<'input' | 'output' | null>(null)
+    const [page, setPage] = usePagination(1);
+    const [search, setSearch] = React.useState("");
+    const [q, setQ] = React.useState("");
     const setNotif = useNotification();
-    const {post} = useAPI();
-    const {data:epsg,error:errEpsg} = useSWR<PaginationResponse<IEpsg>>( !dialog ? null : `/v2/geodata/epsg?page=${page}&q=${encodeURIComponent(q)}`);
+    const { post } = useAPI();
+    const { data: epsg, error: errEpsg } = useSWR<PaginationResponse<IEpsg>>(!dialog ? null : `/v2/geodata/epsg?page=${page}&q=${encodeURIComponent(q)}`);
 
-    const closeDialog=React.useCallback(()=>{
+    const closeDialog = React.useCallback(() => {
         setDialog(null)
-    },[])
+    }, [])
 
-    const openDialog=React.useCallback((type:'input'|'output')=>()=>{
+    const openDialog = React.useCallback((type: 'input' | 'output') => () => {
         setDialog(type)
-        setPage(undefined,1)
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    },[])
+        setPage(undefined, 1)
+        /* eslint-disable-next-line react-hooks/exhaustive-deps */
+    }, [])
 
-    const captchaRef=React.useRef<Recaptcha>(null)
+    const captchaRef = React.useRef<Recaptcha>(null)
 
-    const handleSubmit=React.useCallback(async(e: React.FormEvent<HTMLFormElement>)=>{
+    const handleSubmit = React.useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
             setLoading(true);
             const recaptcha = await captchaRef.current?.execute();
-            const result = await post<string[]>(`/v2/geodata/transform-coordinates`,{input,...switchVal,...srcEpsg,recaptcha});
-            if(result?.length > 0) setOutput(result?.join("\n"));
-        } catch(e) {
-            if(e instanceof ApiError) {
-                setNotif(e.message,true)
+            const result = await post<string[]>(`/v2/geodata/transform-coordinates`, { input, ...switchVal, ...srcEpsg, recaptcha });
+            if (result?.length > 0) setOutput(result?.join("\n"));
+        } catch (e) {
+            if (e instanceof ApiError) {
+                setNotif(e.message, true)
             }
         } finally {
             setLoading(false)
         }
-    },[setNotif,post,input,switchVal,srcEpsg]);
+    }, [setNotif, post, input, switchVal, srcEpsg]);
 
-    const handleSearch=React.useCallback((e: React.FormEvent<HTMLFormElement>)=>{
+    const handleSearch = React.useCallback((e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setPage(undefined,1);
+        setPage(undefined, 1);
         setQ(search)
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    },[search])
+        /* eslint-disable-next-line react-hooks/exhaustive-deps */
+    }, [search])
 
-    const removeSearch=React.useCallback(()=>{
+    const removeSearch = React.useCallback(() => {
         setQ("")
         setSearch("")
-        setPage(undefined,1)
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    },[])
+        setPage(undefined, 1)
+        /* eslint-disable-next-line react-hooks/exhaustive-deps */
+    }, [])
 
-    const handleDataClick=React.useCallback((type:'input'|'output',dt: IEpsg)=>()=>{
-        if(type==='input') {
+    const handleDataClick = React.useCallback((type: 'input' | 'output', dt: IEpsg) => () => {
+        if (type === 'input') {
             setSrcEpsg({
                 ...srcEpsg,
-                from:dt.code
+                from: dt.code
             })
             setTextEpsg({
                 ...textEpsg,
-                from:`${dt.name} (EPSG:${dt.code})`
+                from: `${dt.name} (EPSG:${dt.code})`
             })
             closeDialog()
         } else {
             setSrcEpsg({
                 ...srcEpsg,
-                to:dt.code
+                to: dt.code
             })
             setTextEpsg({
                 ...textEpsg,
-                to:`${dt.name} (EPSG:${dt.code})`
+                to: `${dt.name} (EPSG:${dt.code})`
             })
             closeDialog()
         }
-    },[closeDialog,srcEpsg,textEpsg])
+    }, [closeDialog, srcEpsg, textEpsg])
 
-    const handleCopy = React.useCallback((data: string)=>()=>{
+    const handleCopy = React.useCallback((data: string) => () => {
         copyTextBrowser(data);
-        setNotif('Text copied','default');
-    },[setNotif])
+        setNotif('Text copied', 'default');
+    }, [setNotif])
 
     return (
         <Pages title="Transform Coordinate - Geodata" canonical="/geodata/transform">
             <DefaultLayout>
-                <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
+                <Box borderBottom={theme => `2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
                     <Typography variant='h4' component='h1'>Transform Coordinate</Typography>
                 </Box>
                 <Box>
@@ -136,7 +139,9 @@ export default function TransformCoordinate() {
                     <Typography paragraph>{`It is necessary to set appropriate input coordinate system and to set desired output coordinate system to which you want to transform the input coordinate pairs.`}</Typography>
                 </Box>
 
-                <Divider sx={{my:3}} />
+                <Stack my={3}><AdsNative /></Stack>
+
+                <Divider sx={{ my: 3 }} />
 
                 <Box width='100%'>
                     <Grid container spacing={4}>
@@ -153,7 +158,7 @@ export default function TransformCoordinate() {
                     </Grid>
                 </Box>
 
-                <Divider sx={{my:3}} />
+                <Divider sx={{ my: 3 }} />
 
                 <form onSubmit={handleSubmit}>
                     <Box>
@@ -163,18 +168,18 @@ export default function TransformCoordinate() {
                                 <Textarea
                                     fullWidth
                                     value={input}
-                                    onChange={e=>setInput(e.target.value)}
+                                    onChange={e => setInput(e.target.value)}
                                     multiline
                                     rows={15}
                                     required
                                     placeholder={placeholder}
                                     disabled={loading}
                                 />
-                                <FormGroup key='input-switch' sx={{mt:1}}>
+                                <FormGroup key='input-switch' sx={{ mt: 1 }}>
                                     <FormControlLabel control={
-                                        <Switch disabled={loading} checked={switchVal.switch} onChange={event=>setSwitch({...switchVal,switch:event.target.checked})} color="primary" />
+                                        <Switch disabled={loading} checked={switchVal.switch} onChange={event => setSwitch({ ...switchVal, switch: event.target.checked })} color="primary" />
                                     }
-                                    label="Switch X <--> Y" />
+                                        label="Switch X <--> Y" />
                                 </FormGroup>
                             </Grid>
                             <Grid item xs={12} md={6}>
@@ -182,49 +187,52 @@ export default function TransformCoordinate() {
                                 <Textarea
                                     fullWidth
                                     value={output}
-                                    InputProps={{readOnly:true}}
+                                    InputProps={{ readOnly: true }}
                                     multiline
                                     rows={15}
                                     disabled={loading}
                                     onFocus={handleCopy(output)}
                                 />
-                                <FormGroup key='output-switch' sx={{mt:1}}>
+                                <FormGroup key='output-switch' sx={{ mt: 1 }}>
                                     <FormControlLabel control={
-                                        <Switch disabled={loading} checked={switchVal.add_input} onChange={event=>setSwitch({...switchVal,add_input:event.target.checked})} color="primary" />
+                                        <Switch disabled={loading} checked={switchVal.add_input} onChange={event => setSwitch({ ...switchVal, add_input: event.target.checked })} color="primary" />
                                     }
-                                    label="Include input coordinates" />
+                                        label="Include input coordinates" />
                                 </FormGroup>
                             </Grid>
                         </Grid>
                     </Box>
 
-                    <Divider sx={{my:3}} />
+                    <Divider sx={{ my: 3 }} />
 
                     <Box>
-                        <Typography><Span sx={{color:'error.main',fontWeight:'bold'}}>Beware!</Span>{` Inserted values pairs needs to be in order X-coordinate and then Y-coordinate. If you are inserting latitude/longitude values in decimal format, then the longitude should be first value of the pair (X-coordinate) and latitude the second value (Y-coordinate). Otherwise you can use choice "Switch XY" bellow the input text area window.`}</Typography>
+                        <Typography><Span sx={{ color: 'error.main', fontWeight: 'bold' }}>Beware!</Span>{` Inserted values pairs needs to be in order X-coordinate and then Y-coordinate. If you are inserting latitude/longitude values in decimal format, then the longitude should be first value of the pair (X-coordinate) and latitude the second value (Y-coordinate). Otherwise you can use choice "Switch XY" bellow the input text area window.`}</Typography>
 
-                        <Box mt={4} textAlign={'center'}>
+                        <Stack my={4}>
+                            <Ads300 />
+                        </Stack>
+                        <Box textAlign={'center'}>
                             <Button icon='submit' disabled={loading} loading={loading} type='submit'>Transform</Button>
                         </Box>
                     </Box>
                 </form>
             </DefaultLayout>
 
-            <Dialog open={dialog!==null} handleClose={closeDialog} title="Coordinate Reference System" content={{sx:{px:0}}} sx={{px:0}}>
+            <Dialog open={dialog !== null} handleClose={closeDialog} title="Coordinate Reference System" content={{ sx: { px: 0 } }} sx={{ px: 0 }}>
                 <Box mb={2} px={3}>
                     <form onSubmit={handleSearch}>
                         <TextField
                             fullWidth
                             variant='outlined'
                             value={search}
-                            onChange={e=>setSearch(e.target.value)}
+                            onChange={e => setSearch(e.target.value)}
                             placeholder="Type EPSG or name or area to search..."
-                            {...(search.length>0 ? {
-                                InputProps:{
-                                    endAdornment:(
+                            {...(search.length > 0 ? {
+                                InputProps: {
+                                    endAdornment: (
                                         <InputAdornment position='end'>
                                             <IconButton
-                                                onMouseDown={e=>e.preventDefault()}
+                                                onMouseDown={e => e.preventDefault()}
                                                 edge="end"
                                                 onClick={removeSearch}
                                             >
@@ -240,14 +248,14 @@ export default function TransformCoordinate() {
                 <SWRPages loading={!epsg && !errEpsg} error={errEpsg}>
                     {dialog && epsg && epsg?.data?.length > 0 ? (
                         <List>
-                            {epsg?.data?.map(e=>(
-                                <ListItemButton key={e.code} sx={{px:3}} divider onClick={handleDataClick(dialog,e)}>
+                            {epsg?.data?.map(e => (
+                                <ListItemButton key={e.code} sx={{ px: 3 }} divider onClick={handleDataClick(dialog, e)}>
                                     <ListItemText
-                                        primary={<Typography sx={{fontSize:'1rem'}}>{e.code}</Typography>}
+                                        primary={<Typography sx={{ fontSize: '1rem' }}>{e.code}</Typography>}
                                         secondary={
                                             <>
-                                                <Typography sx={{fontSize:14}}>{e.name}</Typography>
-                                                <Typography sx={{fontSize:14}}>{e.area}</Typography>
+                                                <Typography sx={{ fontSize: 14 }}>{e.name}</Typography>
+                                                <Typography sx={{ fontSize: 14 }}>{e.area}</Typography>
                                             </>
                                         }
                                     />
@@ -261,10 +269,11 @@ export default function TransformCoordinate() {
                     )}
 
                     <Box px={3}>
-                        <Pagination page={page} count={epsg?.total_page||1} onChange={setPage} />
+                        <Pagination page={page} count={epsg?.total_page || 1} onChange={setPage} />
                     </Box>
                 </SWRPages>
             </Dialog>
+            <Recaptcha ref={captchaRef} />
         </Pages>
     )
 }

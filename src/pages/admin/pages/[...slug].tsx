@@ -173,12 +173,13 @@ export default function EditPagesAdmin({data,meta}: IPages<IBlogEdit>) {
     const handleSubmit = React.useCallback(submitForm(async()=>{
         try {
             setLoading(true)
+            const text = input?.format === 'html' ? editorRef.current?.getData() : input?.text;
             const recaptcha = await captchaRef.current?.execute();
             if(slug?.[0] !== "new") {
-                await put(`/v2/blog/${data.slug}`,{...input,recaptcha},{},{success_notif:true});
+                await put(`/v2/blog/${data.slug}`,{...input,text,recaptcha},{},{success_notif:true});
                 setCanChange(true)
             } else {
-                const res = await post<{slug?:string}>("/v2/blog?type=pages",{...input,recaptcha},{},{success_notif:true});
+                const res = await post<{slug?:string}>("/v2/blog?type=pages",{...input,text,recaptcha},{},{success_notif:true});
                 setCanChange(true)
                 if(res?.slug) {
                     setTimeout(()=>{

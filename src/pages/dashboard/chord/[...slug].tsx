@@ -119,14 +119,12 @@ export default function EditChordPages({data,meta}: IPages<IChordEdit>) {
 
     const handleArtistChange=React.useCallback((_:any, newValue: string|null) => {
         if(slug?.[0]==='new') {
-            setCanChange(false)
-            let val = ""
+            setCanChange(false);
             if(typeof newValue === 'string') {
                 setValue({
                     ...value,
-                    artist:"",
+                    artist:newValue,
                 });
-                val = newValue
             } else {
                 setValue({
                     ...value,

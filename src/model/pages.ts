@@ -1,30 +1,30 @@
-import {Model} from 'sequelize';
+import { Model } from 'sequelize';
 import db from './db'
 import { DataTypes } from 'sequelize'
-import type {User,UserPagination} from './user'
-import type { ISeen,IDate,Without } from '@type/general';
+import type { User, UserPagination } from './user'
+import type { ISeen, IDate, Without } from '@type/general';
 import { analyzeStaticUrl } from '@utils/main';
 
 export const types = {
-    pages:'',
-    developer:''
+    pages: '',
+    developer: ''
 }
 export type TypesTypes = keyof typeof types;
 
 export type PagesAttribute = {
     id?: number,
     slug: string
-    type: 'blog'|'pages'|'developer'
+    type: 'blog' | 'pages' | 'developer'
     title: string
-    text: string|null
-    photo: string|null
+    text: string | null
+    photo: string | null
     datetime?: Date
-    datetime_edit?: Date|null
+    datetime_edit?: Date | null
     userid: number
     userid_edit: number
     kategori: number
-    tag: string|null
-    format: "html"|"markdown"
+    tag: string | null
+    format: "html" | "markdown"
     block?: boolean
     publish?: boolean
     sudah_publish?: boolean
@@ -32,28 +32,28 @@ export type PagesAttribute = {
     dilihat_bulanan?: number
 }
 
-export const BLOG_CATEGORY = ["uncategory","tutorial","blog"];
+export const BLOG_CATEGORY = ["uncategory", "tutorial", "blog"];
 
 export type BlogPagination = {
-    id:number,
-    title:string,
+    id: number,
+    title: string,
     created: IDate,
-    image: string,
-    slug:string,
-    link:string,
-    seen:ISeen,
+    image: string | null,
+    slug: string,
+    link: string,
+    seen: ISeen,
     category: string,
     tags: string[],
     publish: boolean,
-    last_modified:IDate|null;
-    user:UserPagination
+    last_modified: IDate | null;
+    user: UserPagination
     block?: boolean
-    type?: string|null
+    type?: string | null
 }
 
 export interface BlogDetail extends BlogPagination {
     text: string;
-    format:string;
+    format: string;
     block: boolean;
     liked?: boolean;
     comment_count?: ISeen;
@@ -63,7 +63,7 @@ export interface BlogDashboard extends BlogDetail {
 
 }
 
-export type PagesDetail = Without<BlogDetail,'tags'|'category'|'block'|'liked'|'comment_count'>
+export type PagesDetail = Without<BlogDetail, 'tags' | 'category' | 'block' | 'liked' | 'comment_count'>
 
 /*export class Pages extends Model<PagesAttribute,BlogPagination> {
     content_type?: 'blog' | 'pages' | 'news' | 'chord' | 'url' | 'thread' | 'files' | undefined = 'blog';

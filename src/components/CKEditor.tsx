@@ -57,6 +57,24 @@ const Div = styled("div")(({theme})=>({
         '.ck.ck-toolbar-dropdown>.ck-dropdown__panel': {
             maxWidth: 400
         },
+    },
+    '& h1':{
+        fontSize:'1.5rem'
+    },
+    '& h2':{
+        fontSize:'1.25rem'
+    },
+    '& h3':{
+        fontSize:'1.125rem'
+    },
+    '& h4':{
+        fontSize:'1.125rem'
+    },
+    '& h5':{
+        fontSize:'1.125rem'
+    },
+    '& h6':{
+        fontSize:'1.125rem'
     }
 }))
 
@@ -104,7 +122,6 @@ export default function CKEditor(props: EditorProps) {
     },[])
 
     const openBrowser = React.useCallback(()=>{
-        console.log("OPEN")
         setBrowser(true)
     },[])
 
@@ -120,10 +137,6 @@ export default function CKEditor(props: EditorProps) {
     const handleSave=React.useCallback(()=>{
         if(onSave) onSave();
     },[onSave])
-
-    React.useEffect(()=>{
-        //console.log(PortalnesiaEditor.defaultConfig)
-    },[])
 
     return (
         <>

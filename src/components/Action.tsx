@@ -15,6 +15,7 @@ import MenuPopover from '@design/components/MenuPopover'
 import MenuItem from '@mui/material/MenuItem'
 import Stack from '@mui/material/Stack'
 import { IReport } from '@type/redux'
+import Box from '@mui/material/Box'
 
 export type LikeActionProps={
     /**
@@ -263,12 +264,14 @@ export type ShareActionProps={
                 open={openMenu}
                 onClose={handleCloseMenu}
             >
-                <MenuItem key={'facebook'} onClick={handleMenuClick('facebook')}>Facebook</MenuItem>
-                <MenuItem key={'twitter'} onClick={handleMenuClick('twitter')}>Twitter</MenuItem>
-                <MenuItem key={'line'} onClick={handleMenuClick('line')}>Line</MenuItem>
-                <MenuItem key={'whatsapp'} onClick={handleMenuClick('whatsapp')}>Whatsapp</MenuItem>
-                <MenuItem key={'telegram'} onClick={handleMenuClick('telegram')}>Telegram</MenuItem>
-                <MenuItem key={'copy'} onClick={handleMenuClick('copy')}>Copy URL</MenuItem>
+                <Box py={1}>
+                    <MenuItem key={'facebook'} onClick={handleMenuClick('facebook')}>Facebook</MenuItem>
+                    <MenuItem key={'twitter'} onClick={handleMenuClick('twitter')}>Twitter</MenuItem>
+                    <MenuItem key={'line'} onClick={handleMenuClick('line')}>Line</MenuItem>
+                    <MenuItem key={'whatsapp'} onClick={handleMenuClick('whatsapp')}>Whatsapp</MenuItem>
+                    <MenuItem key={'telegram'} onClick={handleMenuClick('telegram')}>Telegram</MenuItem>
+                    <MenuItem key={'copy'} onClick={handleMenuClick('copy')}>Copy URL</MenuItem>
+                </Box>
             </MenuPopover>
         </>
     );

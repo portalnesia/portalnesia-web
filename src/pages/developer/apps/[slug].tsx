@@ -534,11 +534,15 @@ function UriComponent({value,onChange,label,...props}: UriComponentProps) {
     const [input,setInput] = React.useState('');
 
     const handleKeyDown = React.useCallback((e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>)=>{
-        if(e?.keyCode === 13 && /\S/.test(input)) {
+        if(e.key === 'Enter' && /\S/.test(input)) {
           if(e?.stopPropagation) e?.stopPropagation();
           if(e?.preventDefault) e?.preventDefault();
 
-          if(!isURL(input)) return setNotif("Please provide a valid URI",true);
+          try {
+            new URL(input);
+          } catch {
+            return setNotif("Please provide a valid URI",true);
+          }
 
           const a = [...(value||[])]
           a.push(input);
@@ -573,6 +577,7 @@ function UriComponent({value,onChange,label,...props}: UriComponentProps) {
                         {value.length < 5 && (
                             <Grid key={`textarea`} item xs="auto" zeroMinWidth>
                                 <InputBase
+                                    multiline
                                     value={input || ''}
                                     onChange={e=>setInput(e.target.value)}
                                     onKeyDown={handleKeyDown}
@@ -581,7 +586,7 @@ function UriComponent({value,onChange,label,...props}: UriComponentProps) {
                                         ...props?.sx,
                                         mt:0.5
                                     }}
-                                    placeholder="Enter new uri"
+                                    placeholder="Press enter to add uri"
                                     {...props}
                                 />
                             </Grid>

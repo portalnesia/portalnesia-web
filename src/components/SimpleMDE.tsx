@@ -33,6 +33,24 @@ const Div = styled("div")(()=>({
     '& .editor-preview pre': {
         background:'unset !important',
         margin:'1em 0 !important'
+    },
+    '& .cm-s-easymde .cm-header-1':{
+        fontSize:'1.5rem'
+    },
+    '& .cm-s-easymde .cm-header-2':{
+        fontSize:'1.25rem'
+    },
+    '& .cm-s-easymde .cm-header-3':{
+        fontSize:'1.125rem'
+    },
+    '& .cm-s-easymde .cm-header-4':{
+        fontSize:'1.125rem'
+    },
+    '& .cm-s-easymde .cm-header-5':{
+        fontSize:'1.125rem'
+    },
+    '& .cm-s-easymde .cm-header-6':{
+        fontSize:'1.125rem'
     }
 }))
 
@@ -131,10 +149,11 @@ export default function Simple(props: SimpleMDEProps) {
                     name: "guide",
                     action: function(){
                         return window.open(portalUrl('/blog/markdown-guide'))
-                },
-                className: "fa fa-question-circle",
-                title: "Markdown Guide",
-            }];
+                    },
+                    className: "fa fa-question-circle",
+                    title: "Markdown Guide",
+                }
+            ];
         } else {
             opt.toolbar=["heading-1","heading-2","heading-3","unordered-list","ordered-list","horizontal-rule","|","bold", "italic", "quote","code","|","link","preview","side-by-side","fullscreen",{
                 name: "guide",

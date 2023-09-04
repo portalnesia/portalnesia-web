@@ -139,6 +139,7 @@ export default function getBrowserInfo() {
     if(typeof browser.ua !== 'undefined') delete browser.ua
   
     let sysInfo: IBrowserInfo={
+      webVersion:version,
       ...(typeof browser==="object" ? {...browser} : {}),
       isBrowser:true,
       cookieEnabled: navigator.cookieEnabled,
@@ -159,7 +160,6 @@ export default function getBrowserInfo() {
       support_css3_3d: funcs.support_css3_3d(),
       support_geolocation: funcs.support_geolocation(),
       plugins: funcs.getPluginName(),
-      webVersion:version
     };
     return sysInfo;
 }

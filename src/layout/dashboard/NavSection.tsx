@@ -111,6 +111,7 @@ export function NavItem({ item, active,linkProps,onClick,rootSx }: NavItemProps)
                     onClick={onClick}
                     component='a'
                     disableGutters
+                    className="no-underline"
                     key={name}
                     sx={{
                       ...(isActiveSub && activeSubStyle)

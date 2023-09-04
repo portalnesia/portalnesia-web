@@ -60,7 +60,7 @@ export const FooterRoot = styled('div')(({theme})=>({
     textDecoration:'underline'
   },
   '& span':{
-    overflowWrap:'break-word',
+    overflowWrap:'normal',
     lineHeight:1.3125,
     color:theme.palette.text.secondary,
     whiteSpace:'pre-wrap',
@@ -83,15 +83,16 @@ export const FooterChild = styled('div')(({theme})=>({
   color:theme.palette.text.secondary,
   lineHeight:'20px',
   fontSize:13,
-  overflowWrap:'break-word',
+  fontWeight: 500,
+  overflowWrap:'normal',
   margin:'2px 0',
   padding:0,
   paddingRight:10,
-  whiteSpace:'pre-wrap',
+  whiteSpace:'nowrap',
 }))
 
 export const FooterAChild = styled('a')<{home?:boolean}>(({theme,home})=>({
-  overflowWrap:'break-word',
+  overflowWrap:'normal',
   padding:0,
   whiteSpace:'pre-wrap',
   ...(home ? {

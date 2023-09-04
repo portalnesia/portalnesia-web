@@ -20,14 +20,14 @@ export interface PNConfig extends Record<string,string> {
 }
 
 const sequelizeProd = new Sequelize({
-    dialect:'mysql',
+    dialect:'mariadb',
     database: process.env.DB_DATABASE,
     username: process.env.DB_USER,
     password: process.env.DB_PASS,
     host: process.env.HOST,
     timezone:'+07:00',
     logging:false,
-    dialectModule: require("mysql2")
+    dialectModule: require("mariadb")
 });
 
 class DB {
