@@ -70,7 +70,8 @@ export default function ImagesCheckerPages() {
         setResult([])
     }, [])
 
-    const handleSubmit = React.useCallback(async () => {
+    const handleSubmit = React.useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
         setResult([])
         if (file === null && url.trim().match(/^https?\:\/\//i) === null) setNotif("Please select image first", true);
         else {
@@ -115,67 +116,69 @@ export default function ImagesCheckerPages() {
     return (
         <Pages title="Images Checker" canonical="/images-checker">
             <DefaultLayout maxWidth='sm'>
-                <Box borderBottom={theme => `2px solid ${theme.palette.divider}`} pb={0.5} mb={3}>
-                    <Typography variant='h4' component='h1'>Images Checker</Typography>
-                </Box>
-                <Box>
-                    <Typography paragraph>{`This online tool will help you to check if your image contains NSFW (Not Safe To Work) or not. Using 5 categories: Sexy, Neutral, Porn, Drawing, or Hentai.`}</Typography>
-                </Box>
+                <form onSubmit={handleSubmit}>
+                    <Box borderBottom={theme => `2px solid ${theme.palette.divider}`} pb={0.5} mb={3}>
+                        <Typography variant='h4' component='h1'>Images Checker</Typography>
+                    </Box>
+                    <Box>
+                        <Typography paragraph>{`This online tool will help you to check if your image contains NSFW (Not Safe To Work) or not. Using 5 categories: Sexy, Neutral, Porn, Drawing, or Hentai.`}</Typography>
+                    </Box>
 
-                <Stack mt={3} mb={5}>
-                    <AdsNative />
-                </Stack>
+                    <Stack mt={3} mb={5}>
+                        <AdsNative />
+                    </Stack>
 
-                <Box>
-                    <DragableFiles file={Boolean(file)} id='picture-input' label="Drag images or click here to select images" type="file" accept="image/*" handleChange={handleChange}>
-                        <Box display='flex' justifyContent='center' alignItems='center' textAlign='center'>
-                            {dataFile && (
-                                <Image src={dataFile} sx={{ width: '100%', maxWidth: 400 }} alt="Image" />
-                            )}
-                        </Box>
-                    </DragableFiles>
-                </Box>
+                    <Box>
+                        <DragableFiles file={Boolean(file)} id='picture-input' label="Drag images or click here to select images" type="file" accept="image/*" handleChange={handleChange}>
+                            <Box display='flex' justifyContent='center' alignItems='center' textAlign='center'>
+                                {dataFile && (
+                                    <Image src={dataFile} sx={{ width: '100%', maxWidth: 400 }} alt="Image" />
+                                )}
+                            </Box>
+                        </DragableFiles>
+                    </Box>
 
-                <Divider sx={{ my: 5 }} />
+                    <Divider sx={{ my: 5 }} />
 
-                <Box mb={5}>
-                    <Typography paragraph>You can also use an image URL for analysis</Typography>
-                    <TextField
-                        label='Image URL'
-                        value={url}
-                        onChange={e => setUrl(e.target.value)}
-                        fullWidth
-                        placeholder="https://"
-                    />
-                </Box>
+                    <Box mb={5}>
+                        <Typography paragraph>You can also use an image URL for analysis</Typography>
+                        <TextField
+                            label='Image URL'
+                            value={url}
+                            onChange={e => setUrl(e.target.value)}
+                            fullWidth
+                            placeholder="https://"
+                        />
+                    </Box>
 
-                <Stack my={3}>
-                    <Ads300 />
-                </Stack>
+                    <Stack my={3}>
+                        <Ads300 />
+                    </Stack>
 
-                <Div ref={resultRef}>
-                    {result.length > 0 && (
-                        <React.Fragment>
-                            <Divider sx={{ my: 5 }} />
-                            <Typography variant='h6'>Result:</Typography>
-                            <List>
-                                {result.map(r => (
-                                    <ListItem key={r.category} divider sx={{ px: 0 }}>
-                                        <ListItemText
-                                            primary={<Typography sx={{ fontSize: 16 }}>{ucwords(r.category)}</Typography>}
-                                            secondary={<Typography>{`Probability: ${r.probability}`}</Typography>}
-                                        />
-                                    </ListItem>
-                                ))}
-                            </List>
-                        </React.Fragment>
-                    )}
-                </Div>
+                    <Div ref={resultRef}>
+                        {result.length > 0 && (
+                            <React.Fragment>
+                                <Divider sx={{ my: 5 }} />
+                                <Typography variant='h6'>Result:</Typography>
+                                <List>
+                                    {result.map(r => (
+                                        <ListItem key={r.category} divider sx={{ px: 0 }}>
+                                            <ListItemText
+                                                primary={<Typography sx={{ fontSize: 16 }}>{ucwords(r.category)}</Typography>}
+                                                secondary={<Typography>{`Probability: ${r.probability}`}</Typography>}
+                                            />
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            </React.Fragment>
+                        )}
+                    </Div>
 
-                <Stack sx={{ mt: 5 }} direction='row' justifyContent='space-between' alignItems='center'>
-                    <Button icon='submit' onClick={handleSubmit}>Analysis</Button>
-                    <Button color='error' onClick={inputRemove}>Reset</Button>
-                </Stack>
+                    <Stack sx={{ mt: 5 }} direction='row' justifyContent='space-between' alignItems='center'>
+                        <Button icon='submit' type="submit">Analysis</Button>
+                        <Button color='error' onClick={inputRemove}>Reset</Button>
+                    </Stack>
+                </form>
             </DefaultLayout>
             <Recaptcha ref={captchaRef} />
             <Backdrop open={loading} progress={progress} loading />
