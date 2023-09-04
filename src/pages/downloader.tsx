@@ -60,10 +60,8 @@ type IResult = {
 export default function DownloaderPages() {
     const router = useRouter();
     const socket = useSocket();
-    const [captchaReady, setCaptchaReady] = React.useState(false);
-    const urlParams = router.query?.url;
     const [loading, setLoading] = React.useState(false);
-    const [value, setValue] = React.useState(typeof urlParams === "string" ? decodeURIComponent(urlParams) : "");
+    const [value, setValue] = React.useState(typeof router.query?.url === "string" ? decodeURIComponent(router.query?.url || "") : "");
     const [error, setError] = React.useState<string | null>(null)
     const [data, setData] = React.useState<IResult | null>(null)
 
@@ -153,23 +151,6 @@ export default function DownloaderPages() {
     }, [setNotif, post, checkValue])
 
     React.useEffect(() => {
-        async function init() {
-            if (typeof urlParams === "string") {
-                const input = decodeURIComponent(urlParams)
-                setValue(input);
-                if (captchaReady) {
-                    submitDownload(input);
-                }
-            } else {
-                setValue("");
-                setData(null);
-                setError(null);
-            }
-        }
-        init();
-    }, [urlParams, submitDownload, captchaReady])
-
-    React.useEffect(() => {
         function onYoutubeDownloader(dt: { error: boolean, finish: boolean, progress: number, url: string | null }) {
             if (dt?.progress >= 100) {
                 setBdProgress(100);
@@ -202,19 +183,9 @@ export default function DownloaderPages() {
         e.preventDefault();
         setData(null);
         if (error === null) {
-            const url = encodeURIComponent(value)
-            if (Router.asPath === `/downloader?url=${url}`) {
-                submitDownload(value);
-            } else {
-                Router.replace({
-                    pathname: '/downloader',
-                    query: {
-                        url
-                    }
-                }, `/downloader?url=${url}`, { shallow: true });
-            }
+            submitDownload(value);
         }
-    }, [error, value, submitDownload])
+    }, [error, value])
 
     return (
         <Pages title="Media Downloader" canonical="/downloader">
@@ -315,7 +286,7 @@ export default function DownloaderPages() {
                     </Box>
                 </form>
             </DefaultLayout>
-            <Backdrop open={backdrop} {...(bdProgress > 0 ? { progress: bdProgress } : {})} loading={bdLink === null}>
+            <Backdrop open={backdrop} {...(bdProgress > 0 ? { progress: bdProgress } : {})} loading={bdLink === null && bdMsg !== "An error occured"}>
                 <Box my={2} display='block'>
                     <Typography variant='h6'>{bdLink !== null ? "File ready" : bdMsg}</Typography>
                 </Box>
@@ -332,7 +303,7 @@ export default function DownloaderPages() {
                     </Box>
                 )}
             </Backdrop>
-            <Recaptcha ref={captchaRef} onReady={() => setCaptchaReady(true)} />
+            <Recaptcha ref={captchaRef} />
         </Pages>
     )
 }

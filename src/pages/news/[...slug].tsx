@@ -72,31 +72,31 @@ export default function NewsPages({ data: news, meta }: IPages<NewsDetail>) {
 
     React.useEffect(() => {
         let timeout: NodeJS.Timer | undefined;
-        if (appToken) {
-            timeout = setTimeout(() => {
-                get(`/v2/news/${slug?.[0]}/${slug?.[1]}/update`).catch(() => { })
-                const analytics = getAnalytics();
-                logEvent(analytics, "select_content", {
-                    content_type: "news",
-                    item_id: `${news.id}`
-                })
-            }, 10000)
-        }
-
-        setLiked(!!news.liked)
 
         if (news.slug !== slug?.[1]) {
             const url = new URL(window.location.href);
             const new_url = new URL(news.link);
             new_url.search = url.search;
             Router.replace(href(new_url.toString()))
+        } else {
+            if (appToken) {
+                timeout = setTimeout(() => {
+                    get(`/v2/news/${slug?.[0]}/${slug?.[1]}/update`).catch(() => { })
+                    const analytics = getAnalytics();
+                    logEvent(analytics, "select_content", {
+                        content_type: "news",
+                        item_id: `${news.id}`
+                    })
+                }, 10000)
+            }
+
+            setLiked(!!news.liked)
         }
 
         return () => {
             clearTimeout(timeout);
         }
-        /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    }, [news, slug]);
+    }, [news, slug, appToken, get]);
 
     return (
         <Pages title={meta?.title} desc={meta?.desc} canonical={`/news/${data?.source}/${data?.slug}`} image={meta?.image}>

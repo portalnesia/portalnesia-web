@@ -91,8 +91,7 @@ export default function BlogPages({ data: blog, meta }: IPages<BlogDetail>) {
         return () => {
             clearTimeout(timeout);
         }
-        /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    }, [blog, appToken]);
+    }, [blog, appToken, get]);
 
     return (
         <Pages title={meta?.title} desc={meta?.desc} canonical={`/blog/${data?.slug}`} image={meta?.image}>

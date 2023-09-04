@@ -60,6 +60,8 @@ export default function useAPI() {
     const getHeaders = React.useCallback((config?: AxiosRequestConfig) => {
         const localConfig = LocalStorage.get<LocalConfig>("config");
         const opt: AxiosRequestConfig = {
+            withCredentials: true,
+            ...config,
             headers: {
                 ...(!user && localConfig && localConfig.sess ? {
                     'X-Session-Id': localConfig.sess
@@ -69,8 +71,6 @@ export default function useAPI() {
                 } : {}),
                 ...config?.headers,
             },
-            withCredentials: true,
-            ...config,
         }
         return opt;
     }, [appToken, user])
