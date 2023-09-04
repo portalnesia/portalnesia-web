@@ -273,8 +273,7 @@ export default function ChordPage({ data: chord, meta }: IPages<ChordDetail>) {
         return () => {
             clearTimeout(timeout);
         }
-        /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    }, [chord, appToken]);
+    }, [chord, appToken, get]);
 
     return (
         <Pages title={meta?.title} desc={meta?.desc} canonical={`/chord/${data?.slug}`} image={meta?.image}>

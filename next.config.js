@@ -120,7 +120,7 @@ const withPWA = require('next-pwa')({
         },
         {
             urlPattern: /\.(?:json|xml|csv)$/i,
-            handler: 'NetworkFirst',
+            handler: 'StaleWhileRevalidate',
             options: {
                 cacheName: 'static-data-assets',
                 expiration: {

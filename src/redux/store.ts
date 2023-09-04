@@ -148,7 +148,11 @@ export default function wrapper<P extends {}>(callback: Callback<P>) {
                                 userid: session.userid
                             } : {}),
                             token: process.env.INTERNAL_SERVER_SECRET
-                        })
+                        }),
+                        "Cookie": Object.entries(ctx.req.cookies).reduce((acc, [key, value]) => {
+                            if (value) acc.push(`${key}=${value}`)
+                            return acc;
+                        }, [] as string[]).join("; ")
                     }
                 })
                 const data = await resp.json() as ResponseData<D>;
