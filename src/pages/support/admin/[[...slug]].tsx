@@ -93,7 +93,7 @@ function getLabel(status: string) {
 
 export default function SupportPage({ data: { support: supportServer } }: IPages<ISupportPage>) {
     const router = useRouter();
-    const { ready, user } = useSelector(s => ({ user: s.user, ready: s.appToken !== undefined }))
+    const { ready, user } = useSelector(s => ({ user: s.user, ready: s.ready }))
     const slug = router.query?.slug;
     const mdDown = useResponsive('down', 'md');
     const anchorRef = React.useRef(null);

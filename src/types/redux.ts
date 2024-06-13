@@ -1,6 +1,6 @@
 import type { ContentCommentType } from "@model/comment";
 import type { IMe } from "@model/user";
-import {HYDRATE} from 'next-redux-wrapper';
+import { HYDRATE } from 'next-redux-wrapper';
 
 type ReportType = ContentCommentType | 'quiz' | 'twibbon'
 
@@ -29,9 +29,9 @@ export type ReportInformation = {
 }
 
 export type KontenReport = {
-    type:"konten",
-    information:{
-        konten:{
+    type: "konten",
+    information: {
+        konten: {
             type: ReportType,
             id: number
         }
@@ -39,26 +39,26 @@ export type KontenReport = {
 }
 
 export type FeedbackReport = {
-    type:"feedback"
+    type: "feedback"
 }
 
 export type APIReport = {
-    type:"api"
-    information:{
+    type: "api"
+    information: {
         api: string
     }
 }
 
 export type UserReport = {
-    type:"user",
-    information:{
-        user:number
+    type: "user",
+    information: {
+        user: number
     }
 }
 
 export type KomentarReport = {
-    type:"komentar",
-    information:{
+    type: "komentar",
+    information: {
         komentar: number
     }
 }
@@ -66,13 +66,13 @@ export type KomentarReport = {
 export type IReport = KontenReport | FeedbackReport | KomentarReport | APIReport | UserReport
 
 export type State = {
-    theme:'auto'|'light'|'dark',
-    redux_theme:'light'|'dark',
+    theme: 'auto' | 'light' | 'dark',
+    redux_theme: 'light' | 'dark',
     user?: IMe | null,
-    appToken?: string
-    hotkeys:{
-        disabled:boolean
-        dialog: 'keyboard'|'feedback'|undefined
+    ready: boolean
+    hotkeys: {
+        disabled: boolean
+        dialog: 'keyboard' | 'feedback' | undefined
     }
     report?: IReport
 }
@@ -87,6 +87,6 @@ export type ActionType = {
     type: 'REDUX_THEME',
     payload: State['redux_theme']
 } | {
-    type:'CUSTOM',
+    type: 'CUSTOM',
     payload: Partial<State>
 }

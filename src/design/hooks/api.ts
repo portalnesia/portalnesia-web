@@ -6,6 +6,8 @@ import API from '@utils/axios'
 import useNotification from '@design/components/Notification'
 import LocalStorage from '@utils/local-storage'
 import { LocalConfig } from '@type/general'
+import { getAppCheck } from '@utils/firebase'
+import { getToken } from 'firebase/app-check'
 
 type ApiErrorTypes = boolean | {
     name: string,
@@ -46,6 +48,7 @@ export class ApiError extends Error {
         this.name = "ApiError";
     }
 }
+export class AppCheckError extends Error { }
 type ApiOptions = {
     success_notif?: boolean
 }
@@ -55,28 +58,38 @@ const defaultOptions: ApiOptions = {
 
 export default function useAPI() {
     const setNotif = useNotification();
-    const { appToken, user } = useSelector(s => ({ appToken: s.appToken, user: s.user }));
+    const { user } = useSelector(s => ({ user: s.user }));
 
-    const getHeaders = React.useCallback((config?: AxiosRequestConfig) => {
-        const localConfig = LocalStorage.get<LocalConfig>("config");
-        const opt: AxiosRequestConfig = {
-            withCredentials: true,
-            ...config,
-            headers: {
-                ...(!user && localConfig && localConfig.sess ? {
-                    'X-Session-Id': localConfig.sess
-                } : {}),
-                ...(appToken ? {
-                    'X-App-Token': appToken
-                } : {}),
-                ...config?.headers,
-            },
+    const getHeaders = React.useCallback(async (config?: AxiosRequestConfig) => {
+        try {
+            const appCheck = getAppCheck();
+            const appToken = await getToken(appCheck);
+            const localConfig = LocalStorage.get<LocalConfig>("config");
+            const opt: AxiosRequestConfig = {
+                withCredentials: true,
+                ...config,
+                headers: {
+                    ...(!user && localConfig && localConfig.sess ? {
+                        'X-Session-Id': localConfig.sess
+                    } : {}),
+                    ...(appToken ? {
+                        'X-App-Token': appToken.token
+                    } : {}),
+                    ...config?.headers,
+                },
+            }
+            return opt;
+        } catch (err) {
+            console.error("Get app token error", err)
+            if (err instanceof Error) throw new AppCheckError(err.message)
+            else throw err;
         }
-        return opt;
-    }, [appToken, user])
+    }, [user])
 
     const catchError = React.useCallback((e: any, options: ApiOptions) => {
-        if (e instanceof CatchApiError) {
+        if (e instanceof AppCheckError) {
+            return e.message;
+        } if (e instanceof CatchApiError) {
             if (typeof e?.message === 'string') {
                 return e.message;
             }
@@ -110,7 +123,7 @@ export default function useAPI() {
             ...(option ? option : {})
         }
         try {
-            const opt = getHeaders();
+            const opt = await getHeaders();
             const res = await API.get<ResponseData<R>>(url, opt);
 
             if (res?.data?.error) {
@@ -133,7 +146,7 @@ export default function useAPI() {
             ...(option ? option : {})
         }
         try {
-            const opt = getHeaders();
+            const opt = await getHeaders();
             const res = await API.delete<ResponseData<R>>(url, opt);
 
             if (res?.data?.error) {
@@ -155,8 +168,8 @@ export default function useAPI() {
             ...(option ? option : {})
         }
         const dt = data === null ? {} : data;
-        const opt = getHeaders(config);
         try {
+            const opt = await getHeaders(config);
             const res = await API.post<ResponseData<R>>(url, dt, opt);
 
             if (res?.data?.error) {
@@ -178,8 +191,8 @@ export default function useAPI() {
             ...(option ? option : {})
         }
         const dt = data === null ? {} : data
-        const opt = getHeaders(config);
         try {
+            const opt = await getHeaders(config);
             const res = await API.put<ResponseData<R>>(url, dt, opt);
 
             if (res?.data?.error) {
@@ -201,8 +214,8 @@ export default function useAPI() {
             ...(option ? option : {})
         }
         const dt = data === null ? {} : data
-        const opt = getHeaders(config);
         try {
+            const opt = await getHeaders(config);
             const res = await API.patch<ResponseData<R>>(url, dt, opt);
 
             if (res?.data?.error) {

@@ -54,7 +54,7 @@ export default function Pages({ children, title, desc, keyword, canonical: canon
     const router = useRouter();
     const { adBlock } = useInit();
     const dispatch = useDispatch();
-    const { appToken, report, user } = useSelector(s => ({ appToken: s.appToken, report: s.report, user: s.user }));
+    const { readyRedux, report, user } = useSelector(s => ({ readyRedux: s.ready, report: s.report, user: s.user }));
     const theme = useTheme();
     const [showToTop, setShowToTop] = useState(false);
     const { atasKeyMap, bawahKeyMap, keysDialog, setKeysDialog } = useHotKeys(true)
@@ -86,12 +86,12 @@ export default function Pages({ children, title, desc, keyword, canonical: canon
     }, [dispatch])
 
     useEffect(() => {
-        if (!appToken || report) {
+        if (!readyRedux || report) {
             document.body.classList.add("scroll-disabled")
         } else {
             document.body.classList.remove("scroll-disabled")
         }
-    }, [appToken, report]);
+    }, [readyRedux, report]);
 
     useEffect(() => {
         function onScroll() {
@@ -161,6 +161,7 @@ export default function Pages({ children, title, desc, keyword, canonical: canon
                 const options: NotificationOptions = {
                     body: payload?.notification?.body,
                     icon: payload?.notification?.icon,
+                    // @ts-ignore
                     image: payload?.notification?.image,
                     data: { click_action, ...payload?.data },
                     requireInteraction: true
@@ -191,7 +192,7 @@ export default function Pages({ children, title, desc, keyword, canonical: canon
         }
 
         let timeout = setTimeout(() => {
-            if (process.env.NODE_ENV === 'production' && appToken && user) {
+            if (process.env.NODE_ENV === 'production' && readyRedux && user) {
                 isSupported().then(supported => {
                     if (supported) {
                         const messaging = getMessaging(firebaseApp);
@@ -207,7 +208,7 @@ export default function Pages({ children, title, desc, keyword, canonical: canon
         }
 
         /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    }, [post, appToken, user]);
+    }, [post, readyRedux, user]);
 
     const onWidgetLoad = useCallback(() => {
         setTimeout(() => {
@@ -227,7 +228,7 @@ export default function Pages({ children, title, desc, keyword, canonical: canon
 
     return (
         <div>
-            {!appToken ? (
+            {!readyRedux ? (
                 <SplashScreen />
             ) : <Socket />}
             <NextSeo

@@ -66,7 +66,7 @@ export default function BlogPages({ data: blog, meta }: IPages<BlogDetail>) {
     usePageContent(meta);
     const router = useRouter();
     const slug = router.query?.slug;
-    const appToken = useSelector(s => s.appToken);
+    const readyRedux = useSelector(s => s.ready);
     const { data, error, mutate } = useSWR<BlogDetail>(`/v2/blog/${slug}`, { fallbackData: blog });
     const { data: recommendation, error: errRecommendation } = useSWR<BlogPagination[]>(data ? `/v2/blog/recommendation/${data.id}` : null);
     const { content } = useTableContent({ data })
@@ -75,7 +75,7 @@ export default function BlogPages({ data: blog, meta }: IPages<BlogDetail>) {
 
     React.useEffect(() => {
         let timeout: NodeJS.Timer | undefined;
-        if (appToken) {
+        if (readyRedux) {
             timeout = setTimeout(() => {
                 get(`/v2/blog/${blog.slug}/update`).catch(() => { })
                 const analytics = getAnalytics();
@@ -91,7 +91,7 @@ export default function BlogPages({ data: blog, meta }: IPages<BlogDetail>) {
         return () => {
             clearTimeout(timeout);
         }
-    }, [blog, appToken, get]);
+    }, [blog, readyRedux, get]);
 
     return (
         <Pages title={meta?.title} desc={meta?.desc} canonical={`/blog/${data?.slug}`} image={meta?.image}>

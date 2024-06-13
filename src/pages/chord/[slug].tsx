@@ -86,7 +86,7 @@ export default function ChordPage({ data: chord, meta }: IPages<ChordDetail>) {
     const router = useRouter();
     const slug = router.query?.slug;
     const { data, error } = useSWR<ChordDetail>(`/v2/chord/${slug}`, { fallbackData: chord });
-    const appToken = useSelector(s => s.appToken);
+    const readyRedux = useSelector(s => s.ready);
     const { data: recommendation, error: errRecommendation } = useSWR<IRecommendation>(data ? `/v2/chord/recommendation/${data.id}` : null);
     const [transpose, setTranspose] = React.useState(0);
     const [fontsize, setFontsize] = React.useState(5);
@@ -257,7 +257,7 @@ export default function ChordPage({ data: chord, meta }: IPages<ChordDetail>) {
 
     React.useEffect(() => {
         let timeout: NodeJS.Timer | undefined;
-        if (appToken) {
+        if (readyRedux) {
             timeout = setTimeout(() => {
                 get(`/v2/chord/${chord.slug}/update`).catch(() => { })
                 const analytics = getAnalytics();
@@ -273,7 +273,7 @@ export default function ChordPage({ data: chord, meta }: IPages<ChordDetail>) {
         return () => {
             clearTimeout(timeout);
         }
-    }, [chord, appToken, get]);
+    }, [chord, readyRedux, get]);
 
     return (
         <Pages title={meta?.title} desc={meta?.desc} canonical={`/chord/${data?.slug}`} image={meta?.image}>

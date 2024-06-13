@@ -59,7 +59,7 @@ const MENU_OPTIONS = (user?: IMe | null): IMenu[] => ([
 export default function AccountPopover() {
     const router = useRouter();
     const pathname = router.pathname;
-    const { user: userRedux, appToken } = useSelector<Pick<State, 'user' | 'appToken'>>(s => ({ user: s.user, appToken: s.appToken }));
+    const { user: userRedux, ready: readyRedux } = useSelector<Pick<State, 'user' | 'ready'>>(s => ({ user: s.user, ready: s.ready }));
     const [user, setUser] = useState<State['user']>(userRedux);
     const dispatch = useDispatch();
     const anchorRef = useRef(null);
@@ -87,7 +87,7 @@ export default function AccountPopover() {
     }, [dispatch, handleClose])
 
     useEffect(() => {
-        if (userRedux === undefined && appToken) {
+        if (userRedux === undefined && readyRedux) {
             if (data !== undefined) {
                 setUser(data);
                 dispatch({ type: "CUSTOM", payload: { user: data } });
@@ -95,7 +95,7 @@ export default function AccountPopover() {
             else mutate();
         }
         /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    }, [data, appToken]);
+    }, [data, readyRedux]);
 
     return (
         <>

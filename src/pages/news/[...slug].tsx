@@ -63,7 +63,7 @@ export default function NewsPages({ data: news, meta }: IPages<NewsDetail>) {
     usePageContent(news);
     const router = useRouter();
     const slug = router.query?.slug;
-    const appToken = useSelector(s => s.appToken);
+    const readyRedux = useSelector(s => s.ready);
     const { data, error } = useSWR<NewsDetail>(`/v2/news/${slug?.[0]}/${slug?.[1]}`, { fallbackData: news });
     const { data: recommendation, error: errRecommendation } = useSWR<NewsPagination[]>(data ? `/v2/news/recommendation/${data.id}` : null);
     const { get } = useAPI();
@@ -79,7 +79,7 @@ export default function NewsPages({ data: news, meta }: IPages<NewsDetail>) {
             new_url.search = url.search;
             Router.replace(href(new_url.toString()))
         } else {
-            if (appToken) {
+            if (readyRedux) {
                 timeout = setTimeout(() => {
                     get(`/v2/news/${slug?.[0]}/${slug?.[1]}/update`).catch(() => { })
                     const analytics = getAnalytics();
@@ -96,7 +96,7 @@ export default function NewsPages({ data: news, meta }: IPages<NewsDetail>) {
         return () => {
             clearTimeout(timeout);
         }
-    }, [news, slug, appToken, get]);
+    }, [news, slug, readyRedux, get]);
 
     return (
         <Pages title={meta?.title} desc={meta?.desc} canonical={`/news/${data?.source}/${data?.slug}`} image={meta?.image}>
