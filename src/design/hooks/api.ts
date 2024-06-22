@@ -1,13 +1,13 @@
 import React, { useCallback } from 'react'
 import axios, { AxiosRequestConfig, AxiosError } from 'axios'
-import { useSelector, useDispatch } from '@redux/store'
-import { State } from '@type/redux'
+import { useSelector } from '@redux/store'
 import API from '@utils/axios'
 import useNotification from '@design/components/Notification'
 import LocalStorage from '@utils/local-storage'
 import { LocalConfig } from '@type/general'
 import { getAppCheck } from '@utils/firebase'
 import { getToken } from 'firebase/app-check'
+import { EventEmitter } from "events"
 
 type ApiErrorTypes = boolean | {
     name: string,
@@ -56,14 +56,46 @@ const defaultOptions: ApiOptions = {
     success_notif: true
 }
 
+class AppTokenProvider {
+    loading = false;
+    ev: EventEmitter;
+
+    constructor() {
+        this.ev = new EventEmitter();
+        this.getToken = this.getToken.bind(this);
+    }
+
+    getToken() {
+        return new Promise<string>((resolve, reject) => {
+            if (!this.loading) {
+                this.loading = true;
+                const appCheck = getAppCheck();
+                getToken(appCheck).then((token) => {
+                    resolve(token.token);
+                    this.ev.emit("token", token.token);
+                }).catch((err) => {
+                    console.error("Get app token error", err)
+                    if (err instanceof Error) reject(new AppCheckError(err.message))
+                    else reject(err);
+                }).finally(() => {
+                    this.loading = false;
+                })
+            } else {
+                this.ev.once('token', resolve)
+            }
+        })
+    }
+}
+
+const tokenProvider = new AppTokenProvider();
+
 export default function useAPI() {
     const setNotif = useNotification();
     const { user } = useSelector(s => ({ user: s.user }));
 
     const getHeaders = React.useCallback(async (config?: AxiosRequestConfig) => {
         try {
-            const appCheck = getAppCheck();
-            const appToken = await getToken(appCheck);
+            const appToken = await tokenProvider.getToken();
             const localConfig = LocalStorage.get<LocalConfig>("config");
             const opt: AxiosRequestConfig = {
                 withCredentials: true,
@@ -73,7 +105,7 @@ export default function useAPI() {
                         'X-Session-Id': localConfig.sess
                     } : {}),
                     ...(appToken ? {
-                        'X-App-Token': appToken.token
+                        'X-App-Token': appToken
                     } : {}),
                     ...config?.headers,
                 },
@@ -81,8 +113,7 @@ export default function useAPI() {
             return opt;
         } catch (err) {
             console.error("Get app token error", err)
-            if (err instanceof Error) throw new AppCheckError(err.message)
-            else throw err;
+            throw err;
         }
     }, [user])
 
