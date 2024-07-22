@@ -8,6 +8,7 @@ import dynamic from 'next/dynamic';
 // @ts-ignore
 import { Fancybox as NativeFancybox } from "@fancyapps/ui/dist/fancybox.esm.js";
 import "@fancyapps/ui/dist/fancybox.css";
+import ContextMenuHandler from '@utils/contextmenu'
 
 const Menu = dynamic(() => import('@mui/material/Menu'))
 const MenuItem = dynamic(() => import('@mui/material/MenuItem'));
@@ -79,12 +80,28 @@ const Image = React.forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
     const [menu, setMenu] = React.useState(false);
     const imgRef = React.useRef<HTMLAnchorElement | null>(null);
 
-    const onRightClick: React.MouseEventHandler<HTMLImageElement> = React.useCallback((event: React.MouseEvent<HTMLImageElement>) => {
+    const rightClickFunction = React.useCallback((e: React.MouseEvent<HTMLAnchorElement> | React.TouchEvent<HTMLAnchorElement>) => {
         //event.stopPropagation()
-        event.preventDefault()
+        e.preventDefault()
         setMenu(!menu)
-        setAnchorEl([event.clientX - 2, event.clientY - 4]);
+
+        if ('touches' in e) {
+            setAnchorEl([e.touches[0].clientX - 2, e.touches[0].clientY - 4])
+        } else {
+            setAnchorEl([e.clientX - 2, e.clientY - 4]);
+        }
     }, [menu])
+
+    const onRightClick = React.useMemo(() => {
+        const handler = new ContextMenuHandler(rightClickFunction);
+        return {
+            onTouchStart: handler.onTouchStart,
+            onContextMenu: handler.onContextMenu,
+            onTouchCancel: handler.onTouchCancel,
+            onTouchMove: handler.onTouchMove,
+            onTouchEnd: handler.onTouchEnd,
+        }
+    }, [rightClickFunction])
 
     const onClose = React.useCallback(() => {
         setMenu(false)
@@ -149,14 +166,14 @@ const Image = React.forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
         return (
             <>
                 {fancybox ? (
-                    <ButtonBase component='a' ref={(ref) => imgRef.current = ref} data-fancybox={dataFancybox} data-src={withPng ? pngDataSrc : (dataSrc || src)} data-options="{'protect':'true'}" {...(caption || alt ? { 'data-caption': caption || alt } : {})} sx={sx}  {...(dataSrc !== src ? { ['data-thumb']: src } : {})}>
+                    <ButtonBase component='a' ref={(ref) => imgRef.current = ref} data-fancybox={dataFancybox} data-src={withPng ? pngDataSrc : (dataSrc || src)} data-options="{'protect':'true'}" {...(caption || alt ? { 'data-caption': caption || alt } : {})} sx={sx}  {...(dataSrc !== src ? { ['data-thumb']: src } : {})} {...onRightClick}>
                         <picture>
                             {!withPng && <source type='image/webp' srcSet={webpSrc} />}
                             <source type={withPng ? 'image/png' : 'image/jpeg'} srcSet={withPng ? pngSrc : src} />
                             {lazy ? (
-                                <LazyImageStyle src={withPng ? pngSrc : src} className={`no-drag ${className ? ' ' + className : ''}`} onContextMenu={onRightClick} {...(alt ? { alt: alt } : {})} sx={sx} {...rest} />
+                                <LazyImageStyle src={withPng ? pngSrc : src} className={`no-drag ${className ? ' ' + className : ''}`} {...(alt ? { alt: alt } : {})} sx={sx} {...rest} />
                             ) : (
-                                <ImageStyle ref={ref} src={withPng ? pngSrc : src} className={`no-drag ${className ? ' ' + className : ''}`} onContextMenu={onRightClick} {...(alt ? { alt: alt } : {})} sx={sx} {...rest} />
+                                <ImageStyle ref={ref} src={withPng ? pngSrc : src} className={`no-drag ${className ? ' ' + className : ''}`} {...(alt ? { alt: alt } : {})} sx={sx} {...rest} />
                             )}
                         </picture>
                     </ButtonBase>
@@ -187,11 +204,11 @@ const Image = React.forwardRef<HTMLImageElement, ImageProps>((props, ref) => {
         return (
             <>
                 {fancybox ? (
-                    <ButtonBase component='a' ref={(ref) => imgRef.current = ref} data-fancybox={dataFancybox} data-src={withPng ? pngDataSrc : (dataSrc || src)} data-options="{'protect':'true'}" {...(caption || alt ? { 'data-caption': caption || alt } : {})} sx={sx} {...(dataSrc !== src ? { ['data-thumb']: src } : {})}>
+                    <ButtonBase component='a' ref={(ref) => imgRef.current = ref} data-fancybox={dataFancybox} data-src={withPng ? pngDataSrc : (dataSrc || src)} data-options="{'protect':'true'}" {...(caption || alt ? { 'data-caption': caption || alt } : {})} sx={sx} {...(dataSrc !== src ? { ['data-thumb']: src } : {})} {...onRightClick}>
                         {lazy ? (
-                            <LazyImageStyle src={withPng ? `${src}&output=png` : src} className={`no-drag${className ? ' ' + className : ''}`} onContextMenu={onRightClick} {...(alt ? { alt: alt } : {})} sx={sx} {...rest} />
+                            <LazyImageStyle src={withPng ? `${src}&output=png` : src} className={`no-drag${className ? ' ' + className : ''}`} {...(alt ? { alt: alt } : {})} sx={sx} {...rest} />
                         ) : (
-                            <ImageStyle ref={ref} src={withPng ? `${src}&output=png` : src} className={`no-drag${className ? ' ' + className : ''}`} onContextMenu={onRightClick} {...(alt ? { alt: alt } : {})} sx={sx} {...rest} />
+                            <ImageStyle ref={ref} src={withPng ? `${src}&output=png` : src} className={`no-drag${className ? ' ' + className : ''}`} {...(alt ? { alt: alt } : {})} sx={sx} {...rest} />
                         )}
 
                     </ButtonBase>

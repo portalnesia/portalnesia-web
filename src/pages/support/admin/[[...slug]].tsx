@@ -43,6 +43,7 @@ import dynamic from "next/dynamic";
 import Label from "@design/components/Label";
 import { Span } from "@design/components/Dom";
 import Link from "@design/components/Link";
+import ContextMenuHandler, { CallbackEvent } from "@utils/contextmenu";
 
 const MenuItem = dynamic(() => import("@mui/material/MenuItem"));
 const Dialog = dynamic(() => import("@design/components/Dialog"));
@@ -518,10 +519,21 @@ function MessageComp({ data: d, prev }: MessageCompProps) {
     const dayjs = getDayJs(d.timestamp);
     const setNotif = useNotification();
 
-    const handleOpenOptions = React.useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const handleOpenOptionsFunction = React.useCallback((e: CallbackEvent<HTMLDivElement>) => {
         e.preventDefault();
         setOpen(true);
     }, []);
+
+    const handleOpenOptions = React.useMemo(() => {
+        const handler = new ContextMenuHandler(handleOpenOptionsFunction);
+        return {
+            onTouchStart: handler.onTouchStart,
+            onContextMenu: handler.onContextMenu,
+            onTouchCancel: handler.onTouchCancel,
+            onTouchMove: handler.onTouchMove,
+            onTouchEnd: handler.onTouchEnd,
+        }
+    }, [handleOpenOptionsFunction])
 
     const handleCloseOptions = React.useCallback((value?: 'copy') => () => {
         if (value === 'copy') {
@@ -603,7 +615,7 @@ function MessageComp({ data: d, prev }: MessageCompProps) {
                             })
                         }}
                             ref={anchorRef}
-                            onContextMenu={handleOpenOptions}
+                            {...handleOpenOptions}
                         >
                             {d?.image && (
                                 <Image fancybox dataFancybox="chat" src={`${d.image}&size=200`} dataSrc={`${d.image}&watermark=no`} webp sx={{ maxWidth: 200, maxHeight: 200, mb: 1 }} alt={d.message || undefined} />
