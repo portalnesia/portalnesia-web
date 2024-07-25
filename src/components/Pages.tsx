@@ -249,6 +249,12 @@ export default function Pages({ children, title, desc, keyword, canonical: canon
                 }, {
                     name: "theme-color",
                     content: theme.palette.background.paper
+                }, {
+                    name: "og:image:secure_url",
+                    content: header.image
+                }, {
+                    name: "og:image:type",
+                    content: "image/png"
                 }]}
                 openGraph={{
                     ...(canonicalProps !== "404" ? { url: canonical } : {}),
