@@ -26,6 +26,7 @@ import { AxiosRequestConfig } from 'axios';
 import Fade from '@mui/material/Fade';
 import Alert from '@mui/material/Alert';
 import { isMobile } from 'react-device-detect';
+import ContextMenuHandler, { CallbackEvent } from '@utils/contextmenu';
 
 const MenuPopover = dynamic(() => import('@design/components/MenuPopover'));
 const DragableFiles = dynamic(() => import('@design/components/DragableFiles'));
@@ -452,13 +453,29 @@ function PortalnesiaFiles({ data: dt, index: i, onClick, onRightClick, disabled,
         if (onClick) onClick({ ...dt, index: i })
     }, [onClick, dt, i])
 
-    const handleRightClick = React.useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    const handleRightClickFunction = React.useCallback((e: CallbackEvent<HTMLButtonElement>) => {
         e.stopPropagation()
         e.preventDefault()
+
         setOpen(true)
-        setAnchorEl([e.clientX + 20, e.clientY - 4]);
+        if ('touches' in e) {
+            setAnchorEl([e.touches[0].clientX + 20, e.touches[0].clientY - 4])
+        } else {
+            setAnchorEl([e.clientX + 20, e.clientY - 4]);
+        }
         if (onRightClick) onRightClick(dt, i)
     }, [onRightClick, dt, i])
+
+    const handleRightClick = React.useMemo(() => {
+        const handler = new ContextMenuHandler(handleRightClickFunction);
+        return {
+            onTouchStart: handler.onTouchStart,
+            onContextMenu: handler.onContextMenu,
+            onTouchCancel: handler.onTouchCancel,
+            onTouchMove: handler.onTouchMove,
+            onTouchEnd: handler.onTouchEnd,
+        }
+    }, [handleRightClickFunction]);
 
     const handleContextClose = React.useCallback((withDelete?: boolean) => () => {
         setOpen(false);
@@ -474,7 +491,7 @@ function PortalnesiaFiles({ data: dt, index: i, onClick, onRightClick, disabled,
 
     return (
         <>
-            <CardActionArea title={dt?.title} disabled={disabled} onClick={handleClick} onContextMenu={handleRightClick} sx={{ p: 0.5, position: 'relative' }}>
+            <CardActionArea title={dt?.title} disabled={disabled} onClick={handleClick} {...handleRightClick} sx={{ p: 0.5, position: 'relative' }}>
                 <SelectedArea />
                 <ImageListItem>
                     <Image webp src={`${dt.thumbs}&size=200&watermark=no`} alt={dt.title} style={{ width: '100%', maxHeight: 300, objectFit: 'contain' }} />

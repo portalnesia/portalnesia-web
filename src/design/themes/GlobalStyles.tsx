@@ -209,10 +209,12 @@ export default function GlobalStyles({ styles }: GlobalStylesProps) {
                     WebkitAppRegion: 'no-drag',
                     MozUserSelect: 'none',
                     msUserSelect: "none",
-                    userSelect: 'none'
+                    userSelect: 'none',
+                    WebkitTouchCallout: "none",
                 },
                 '.no-context': {
-                    pointerEvents: "none"
+                    pointerEvents: "none",
+                    WebkitTouchCallout: "none",
                 },
                 'div.fancybox__container': {
                     zIndex: '9999 !important'

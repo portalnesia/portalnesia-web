@@ -5,7 +5,7 @@ import { QuizDetail, QuizResponsePagination } from "@model/quiz";
 import wrapper, { BackendError, useSelector } from "@redux/store";
 import { IPages } from "@type/general";
 import { portalUrl, staticUrl } from "@utils/main";
-import Router,{ useRouter } from "next/router";
+import Router, { useRouter } from "next/router";
 import React from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -40,38 +40,38 @@ import { Circular } from "@design/components/Loading";
 import TablePagination from "@mui/material/TablePagination";
 import FormControl from "@mui/material/FormControl";
 
-const Dialog = dynamic(()=>import("@design/components/Dialog"))
-const FormControlLabel = dynamic(()=>import("@mui/material/FormControlLabel"));
-const RadioGroup = dynamic(()=>import("@mui/material/RadioGroup"));
-const Radio = dynamic(()=>import("@mui/material/Radio"));
+const Dialog = dynamic(() => import("@design/components/Dialog"))
+const FormControlLabel = dynamic(() => import("@mui/material/FormControlLabel"));
+const RadioGroup = dynamic(() => import("@mui/material/RadioGroup"));
+const Radio = dynamic(() => import("@mui/material/Radio"));
 
-export const getServerSideProps = wrapper<Pick<QuizDetail,'id_number'|'id'|'title'>>(async({params,redirect,fetchAPI})=>{
+export const getServerSideProps = wrapper<Pick<QuizDetail, 'id_number' | 'id' | 'title'>>(async ({ params, redirect, fetchAPI }) => {
     const slug = params?.slug;
-    if(typeof slug !== 'string') return redirect();
+    if (typeof slug !== 'string') return redirect();
 
     try {
         const data: QuizDetail = await fetchAPI<QuizDetail>(`/v2/quiz/${slug}`);
-        
+
         return {
-            props:{
-                data:{
-                    id:data?.id,
-                    id_number:data?.id_number,
-                    title:data?.title
+            props: {
+                data: {
+                    id: data?.id,
+                    id_number: data?.id_number,
+                    title: data?.title
                 },
-                meta:{
+                meta: {
                     title: data?.title,
-                    image:staticUrl(`ogimage/quiz/${data.id}`)
+                    image: staticUrl(`ogimage/quiz/${data.id}`)
                 }
             }
         }
-    } catch(e) {
-        if(e instanceof BackendError) {
-            if(e?.status === 404) return redirect();
+    } catch (e) {
+        if (e instanceof BackendError) {
+            if (e?.status === 404) return redirect();
         }
         throw e;
     }
-    
+
 })
 
 type AnswerResponse = {
@@ -86,34 +86,34 @@ type AnswerResponse = {
     }
 }
 let loadingCache = false;
-export default function QuizDetailPage({data:dataServer,meta}: IPages<Pick<QuizDetail,'id_number'|'id'|'title'>>) {
+export default function QuizDetailPage({ data: dataServer, meta }: IPages<Pick<QuizDetail, 'id_number' | 'id' | 'title'>>) {
     const router = useRouter();
     const slug = router.query?.slug;
     const questionQuery = router.query?.question;
-    const {user,appToken} = useSelector(s=>({user:s.user,appToken:s.appToken}));
-    const {post}=useAPI();
+    const { user, readyRedux } = useSelector(s => ({ user: s.user, readyRedux: s.ready }));
+    const { post } = useAPI();
     const setNotif = useNotification();
-    const [data,setData]=React.useState<QuizDetail|null>(null)
-    const [question,setQuestion]=React.useState<string|null>(null)
-    const [choise,setChoise]=React.useState<string[]>([]);
-    const [loading,setLoading]=React.useState(false)
-    const [disable,setDisable]=React.useState(false)
-    const [dialog,setDialog]=React.useState<{redirect:number,announce: string,button: string}|undefined>(undefined)
-    const [input,setInput]=React.useState("");
-    const {page:pageResponse,rowsPerPage,onPageChange,...responsePage} = useTablePagination(1,10);
-    const {data:response,error:errResponse} = useSWR<PaginationResponse<QuizResponsePagination>>(data && data?.public ? `/v2/quiz/${data.id}/response?page=${pageResponse}&per_page=${rowsPerPage}` : null);
-    const [ready,setReady] = React.useState(false)
+    const [data, setData] = React.useState<QuizDetail | null>(null)
+    const [question, setQuestion] = React.useState<string | null>(null)
+    const [choise, setChoise] = React.useState<string[]>([]);
+    const [loading, setLoading] = React.useState(false)
+    const [disable, setDisable] = React.useState(false)
+    const [dialog, setDialog] = React.useState<{ redirect: number, announce: string, button: string } | undefined>(undefined)
+    const [input, setInput] = React.useState("");
+    const { page: pageResponse, rowsPerPage, onPageChange, ...responsePage } = useTablePagination(1, 10);
+    const { data: response, error: errResponse } = useSWR<PaginationResponse<QuizResponsePagination>>(data && data?.public ? `/v2/quiz/${data.id}/response?page=${pageResponse}&per_page=${rowsPerPage}` : null);
+    const [ready, setReady] = React.useState(false)
 
-    const handleRedirect = React.useCallback((question: number)=>()=>{
+    const handleRedirect = React.useCallback((question: number) => () => {
         //setLoading(true)
         //setDisable(true)
-        Router.replace(`/quiz/${slug}${question!==0 ? `?question=${question}` : ''}`,undefined,{shallow:true,scroll:true});
-    },[slug])
+        Router.replace(`/quiz/${slug}${question !== 0 ? `?question=${question}` : ''}`, undefined, { shallow: true, scroll: true });
+    }, [slug])
 
-    const submitAnswer=React.useCallback(async(dt?: Record<string,any>,question?: string|null,callback?: ()=>void)=>{
+    const submitAnswer = React.useCallback(async (dt?: Record<string, any>, question?: string | null, callback?: () => void) => {
         try {
             setDisable(true)
-            const klq = LocalStorage.get('klq','array');
+            const klq = LocalStorage.get('klq', 'array');
             const klqu = LocalStorage.get('klqu');
             const klqq = LocalStorage.get('klqq');
 
@@ -124,191 +124,191 @@ export default function QuizDetailPage({data:dataServer,meta}: IPages<Pick<QuizD
                 klqq
             }
 
-            const res = await post<AnswerResponse>(`/v2/quiz/${slug}${question ? `/${question}`:''}`,data,undefined,{success_notif:false});
-            
+            const res = await post<AnswerResponse>(`/v2/quiz/${slug}${question ? `/${question}` : ''}`, data, undefined, { success_notif: false });
+
             setInput("");
 
-            if(typeof res.question !== 'undefined') setQuestion(res.question)
-            
-            if(typeof res.choise !== 'undefined') setChoise(res.choise)
-            
-            if(typeof res?.setting === 'object') {
+            if (typeof res.question !== 'undefined') setQuestion(res.question)
+
+            if (typeof res.choise !== 'undefined') setChoise(res.choise)
+
+            if (typeof res?.setting === 'object') {
                 const setting = res?.setting;
-                Object.keys(setting).forEach((key)=>{
+                Object.keys(setting).forEach((key) => {
                     const s = key as keyof typeof setting
-                    if(setting?.[s]) LocalStorage.set(s,setting?.[s]);
+                    if (setting?.[s]) LocalStorage.set(s, setting?.[s]);
                 })
             }
 
-            if(typeof callback ==='function') callback()
+            if (typeof callback === 'function') callback()
 
-            if(typeof res?.announce === 'string') {
+            if (typeof res?.announce === 'string') {
                 setDialog({
-                    redirect:res.redirect,
-                    announce:res.announce,
-                    button:(res.redirect===1 ? "Start" : "OK")
+                    redirect: res.redirect,
+                    announce: res.announce,
+                    button: (res.redirect === 1 ? "Start" : "OK")
                 })
-            } else if(typeof res.redirect !== 'undefined') handleRedirect(res.redirect)()
-        } catch(e) {
-            if(e instanceof ApiError) setNotif(e.message,true)
+            } else if (typeof res.redirect !== 'undefined') handleRedirect(res.redirect)()
+        } catch (e) {
+            if (e instanceof ApiError) setNotif(e.message, true)
         } finally {
             setDisable(false)
         }
-    },[slug,post,setNotif,handleRedirect])
+    }, [slug, post, setNotif, handleRedirect])
 
-    const initData = React.useCallback(async()=>{
+    const initData = React.useCallback(async () => {
         try {
             setLoading(true)
             const query = {
-                klq:LocalStorage.get('klq','array'),
-                klqu:LocalStorage.get('klqu'),
-                klqq:LocalStorage.get('klqq')
+                klq: LocalStorage.get('klq', 'array'),
+                klqu: LocalStorage.get('klqu'),
+                klqq: LocalStorage.get('klqq')
             }
-            const res = await post(`/v2/quiz/answer/${slug}`,query,undefined,{success_notif:false});
+            const res = await post(`/v2/quiz/answer/${slug}`, query, undefined, { success_notif: false });
             setData(res);
-            if(res?.my_name!==null) setInput(res.my_name)
+            if (res?.my_name !== null) setInput(res.my_name)
             setReady(true);
-        } catch(e) {
+        } catch (e) {
             //if(e instanceof ApiError) setNotif(e.message,true)
         } finally {
             setLoading(false)
             loadingCache = false;
         }
-    },[post,slug])
+    }, [post, slug])
 
     /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    const handleStart = React.useCallback(submitForm(()=>{
-        if(!data) return;
-        submitAnswer({name:input},undefined,()=>{
+    const handleStart = React.useCallback(submitForm(() => {
+        if (!data) return;
+        submitAnswer({ name: input }, undefined, () => {
             setData({
                 ...data,
-                my_name:input
+                my_name: input
             })
         })
-    }),[submitAnswer,input,data])
+    }), [submitAnswer, input, data])
 
     /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    const handleAnswer=React.useCallback(submitForm(()=>{
-        if(typeof questionQuery !== 'string') return;
-        if(input?.length<1) setNotif("You have not given an answer",true)
-        else submitAnswer({answer:input},questionQuery)
-    }),[input,submitAnswer,questionQuery])
+    const handleAnswer = React.useCallback(submitForm(() => {
+        if (typeof questionQuery !== 'string') return;
+        if (input?.length < 1) setNotif("You have not given an answer", true)
+        else submitAnswer({ answer: input }, questionQuery)
+    }), [input, submitAnswer, questionQuery])
 
-    React.useEffect(()=>{
-        if(questionQuery) router.replace(`/quiz/${slug}`,undefined,{shallow:true});
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    },[])
+    React.useEffect(() => {
+        if (questionQuery) router.replace(`/quiz/${slug}`, undefined, { shallow: true });
+        /* eslint-disable-next-line react-hooks/exhaustive-deps */
+    }, [])
 
-    const valueLinear=React.useMemo(()=>{
-        if(!data) return 0;
-        if(typeof questionQuery === 'string') {
+    const valueLinear = React.useMemo(() => {
+        if (!data) return 0;
+        if (typeof questionQuery === 'string') {
             const questionNumber = Number.parseInt(questionQuery)
-            return Math.round(questionNumber*100/(data?.total_question||0))
+            return Math.round(questionNumber * 100 / (data?.total_question || 0))
         } else {
-            return Math.round((data?.progress||0)/(data?.total_question||0))
+            return Math.round((data?.progress || 0) / (data?.total_question || 0))
         }
-    },[questionQuery,data])
+    }, [questionQuery, data])
 
-    const getNumber = React.useCallback((i:number)=>{
-        return ((pageResponse-1)*rowsPerPage)+i+1
-    },[pageResponse,rowsPerPage])
+    const getNumber = React.useCallback((i: number) => {
+        return ((pageResponse - 1) * rowsPerPage) + i + 1
+    }, [pageResponse, rowsPerPage])
 
-    React.useEffect(()=>{
+    React.useEffect(() => {
 
-        let timeout = setTimeout(()=>{
+        let timeout = setTimeout(() => {
             const analytics = getAnalytics();
-            logEvent(analytics,"select_content",{
-                content_type:"quiz",
-                item_id:`${dataServer.id_number}`
+            logEvent(analytics, "select_content", {
+                content_type: "quiz",
+                item_id: `${dataServer.id_number}`
             })
-        },5000)
+        }, 5000)
 
-        return ()=>{
+        return () => {
             clearTimeout(timeout);
-            loadingCache=false;
+            loadingCache = false;
             setReady(false);
         }
-    },[dataServer])
+    }, [dataServer])
 
-    React.useEffect(()=>{
+    React.useEffect(() => {
         setDialog(undefined)
         setDisable(false)
 
         async function init() {
             try {
-                if(appToken && typeof questionQuery==='undefined' && !loadingCache && !ready) {
+                if (readyRedux && typeof questionQuery === 'undefined' && !loadingCache && !ready) {
                     loadingCache = true;
-                    onPageChange({},0)
+                    onPageChange({}, 0)
                     await initData()
                 }
-            } catch {}
+            } catch { }
         }
         init();
-    },[questionQuery,ready,initData,onPageChange,appToken])
+    }, [questionQuery, ready, initData, onPageChange, readyRedux])
 
     return (
         <Pages title={meta?.title} desc={meta?.desc} canonical={`/quiz/${dataServer?.id}`} image={meta?.image}>
             <DefaultLayout>
                 <SWRPages loading={loading} error={undefined}>
-                    <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={5}>
-                        <Typography variant='h3' component='h1'>{data?.title||dataServer?.title}</Typography>
+                    <Box borderBottom={theme => `2px solid ${theme.palette.divider}`} pb={0.5} mb={5}>
+                        <Typography variant='h3' component='h1'>{data?.title || dataServer?.title}</Typography>
                     </Box>
-                    
+
                     <Grid container spacing={4} justifyContent='center'>
                         <Hidden mdUp>
                             {(data && typeof questionQuery === 'undefined') ? (
                                 <CustomSidebar data={data} />
                             ) : null}
                         </Hidden>
-                        <Grid item {...(typeof questionQuery === 'string' ? {xs:12} : {xs:12,md:8})}>
+                        <Grid item {...(typeof questionQuery === 'string' ? { xs: 12 } : { xs: 12, md: 8 })}>
                             <Box id='quiz-content'>
                                 <Box>
                                     {typeof questionQuery === 'string' ? (
                                         <form onSubmit={handleAnswer}>
                                             <Stack direction='row' spacing={1} mb={5}>
-                                                <LinearProgress sx={{flexGrow:1}} variant='determinate' value={valueLinear} />
-                                                <Typography variant='body2'>{`${questionQuery||0} / ${data?.total_question||0}`}</Typography>
+                                                <LinearProgress sx={{ flexGrow: 1 }} variant='determinate' value={valueLinear} />
+                                                <Typography variant='body2'>{`${questionQuery || 0} / ${data?.total_question || 0}`}</Typography>
                                             </Stack>
                                             <Typography gutterBottom variant='h6'>{questionQuery}. {question}</Typography>
                                             <FormControl required component='fieldset'>
-                                                <RadioGroup value={input} onChange={(e)=>setInput(e.target.value)}>
-                                                    {choise?.map((dt)=>(
+                                                <RadioGroup value={input} onChange={(e) => setInput(e.target.value)}>
+                                                    {choise?.map((dt) => (
                                                         <FormControlLabel key={dt} disabled={disable} value={dt} control={<Radio />} label={dt} />
                                                     ))}
                                                 </RadioGroup>
                                             </FormControl>
-                                            
-                                            <Divider sx={{my:5}} />
+
+                                            <Divider sx={{ my: 5 }} />
 
                                             <Stack direction='row' justifyContent='space-between'>
                                                 <div />
-                                                <Button type='submit' disabled={loading||disable} loading={disable} icon='submit'>{questionQuery === data?.total_question?.toString() ? "Send" : "Next"}</Button>
+                                                <Button type='submit' disabled={loading || disable} loading={disable} icon='submit'>{questionQuery === data?.total_question?.toString() ? "Send" : "Next"}</Button>
                                             </Stack>
                                         </form>
                                     ) : (
                                         <form onSubmit={handleStart}>
                                             <LinearProgress variant='determinate' value={valueLinear} />
-                                            <Typography sx={{mt:1}}>{`Total question: ${data?.total_question}`}</Typography>
+                                            <Typography sx={{ mt: 1 }}>{`Total question: ${data?.total_question}`}</Typography>
                                             <Box mt={4}>
                                                 <TextField
                                                     label="Name"
                                                     fullWidth
                                                     required
                                                     value={input}
-                                                    onChange={(e)=>setInput(e.target.value)}
+                                                    onChange={(e) => setInput(e.target.value)}
                                                     disabled={data?.is_answered}
                                                 />
                                             </Box>
                                             <Stack mt={2} direction='row' spacing={1} justifyContent='space-between'>
                                                 <Link href="/dashboard/quiz" passHref legacyBehavior><Button component="a" outlined color='inherit'>Create My Quiz</Button></Link>
-                                                <Button icon='submit' type='submit' disabled={loading||disable||data?.is_answered && data?.progress===data?.total_question} loading={disable}>Start</Button>
+                                                <Button icon='submit' type='submit' disabled={loading || disable || data?.is_answered && data?.progress === data?.total_question} loading={disable}>Start</Button>
                                             </Stack>
                                         </form>
                                     )}
 
                                     {(data?.public && typeof questionQuery === 'undefined') && (
                                         <Box mt={10}>
-                                            <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
+                                            <Box borderBottom={theme => `2px solid ${theme.palette.divider}`} pb={0.5} mb={2}>
                                                 <Typography variant='h3' component='h1'>Response</Typography>
                                             </Box>
 
@@ -322,13 +322,13 @@ export default function QuizDetailPage({data:dataServer,meta}: IPages<Pick<QuizD
                                                         </TableRow>
                                                     </TableHead>
                                                     <TableBody>
-                                                        <TableSWRPages loading={!response&&!errResponse} error={errResponse} colSpan={3}>
-                                                            {response && response?.data.length > 0 ? response?.data.map((d,i)=>(
+                                                        <TableSWRPages loading={!response && !errResponse} error={errResponse} colSpan={3}>
+                                                            {response && response?.data.length > 0 ? response?.data.map((d, i) => (
                                                                 <TableRow key={d.id}>
                                                                     <TableCell>{getNumber(i)}</TableCell>
                                                                     <TableCell>
                                                                         {user?.id === data?.user?.id ? (
-                                                                            <Link href={`/quiz/${data?.id}/response/${d.id}`} passHref><Span sx={{color:'customColor.link'}}>{d?.name}</Span></Link>
+                                                                            <Link href={`/quiz/${data?.id}/response/${d.id}`} passHref><Span sx={{ color: 'customColor.link' }}>{d?.name}</Span></Link>
                                                                         ) : d?.name}
                                                                     </TableCell>
                                                                     <TableCell align='right'>{d?.score}</TableCell>
@@ -342,7 +342,7 @@ export default function QuizDetailPage({data:dataServer,meta}: IPages<Pick<QuizD
                                                     </TableBody>
                                                 </Table>
                                             </Scrollbar>
-                                            <TablePagination page={pageResponse-1} rowsPerPage={rowsPerPage} onPageChange={onPageChange} count={response?.total||0} {...responsePage} />
+                                            <TablePagination page={pageResponse - 1} rowsPerPage={rowsPerPage} onPageChange={onPageChange} count={response?.total || 0} {...responsePage} />
                                         </Box>
                                     )}
                                 </Box>
@@ -356,12 +356,12 @@ export default function QuizDetailPage({data:dataServer,meta}: IPages<Pick<QuizD
                     </Grid>
                 </SWRPages>
             </DefaultLayout>
-            <Dialog open={dialog!==undefined} title="Information" fullScreen={false} maxWidth="xs" titleWithClose={false}
+            <Dialog open={dialog !== undefined} title="Information" fullScreen={false} maxWidth="xs" titleWithClose={false}
                 actions={
                     dialog && <Button onClick={handleRedirect(dialog?.redirect)}>{dialog?.button}</Button>
                 }
             >
-                {dialog && dialog?.announce.split("\n").map((dt)=>(
+                {dialog && dialog?.announce.split("\n").map((dt) => (
                     <Typography key={dt} gutterBottom>{dt}</Typography>
                 ))}
             </Dialog>
@@ -373,18 +373,18 @@ type CustomSidebarProps = {
     data: QuizDetail
 
 }
-function CustomSidebar({data}: CustomSidebarProps) {
+function CustomSidebar({ data }: CustomSidebarProps) {
     const setNotif = useNotification();
 
-    const handleCopy = React.useCallback(async()=>{
+    const handleCopy = React.useCallback(async () => {
         await copyTextBrowser(portalUrl(`/quiz/${data.id}?utm_medium=copy+url&utm_campaign=quiz`))
-        setNotif("URL Copied",'default');
-    },[setNotif,data])
+        setNotif("URL Copied", 'default');
+    }, [setNotif, data])
 
     return (
         <Grid item xs={12} md={4}>
             <Sidebar id='quiz-content'>
-                <ProfileWidget src={data?.user?.picture} name={data?.user?.name} paperProps={{sx:{mb:5}}}
+                <ProfileWidget src={data?.user?.picture} name={data?.user?.name} paperProps={{ sx: { mb: 5 } }}
                     title={
                         <Stack>
                             <Typography key='quiz' variant="body2" component='p'>Quiz by</Typography>
@@ -398,22 +398,22 @@ function CustomSidebar({data}: CustomSidebarProps) {
                         <TextField
                             value={portalUrl(`/quiz/${data.id}`)}
                             fullWidth
-                            InputProps={{readOnly:true,sx:{cursor:"pointer"}}}
+                            InputProps={{ readOnly: true, sx: { cursor: "pointer" } }}
                             onClick={handleCopy}
-                            sx={{cursor:"pointer"}}
-                            inputProps={{style:{cursor:"pointer"}}}
+                            sx={{ cursor: "pointer" }}
+                            inputProps={{ style: { cursor: "pointer" } }}
                         />
                         <Stack direction='row' spacing={1} width='100%'>
-                            <ReportAction buttonProps={{outlined:true,color:'inherit',sx:{width:'100%'}}} variant="button" report={{
-                                type:"konten",
-                                information:{
-                                    konten:{
-                                        type:"quiz",
-                                        id:data.id_number
+                            <ReportAction buttonProps={{ outlined: true, color: 'inherit', sx: { width: '100%' } }} variant="button" report={{
+                                type: "konten",
+                                information: {
+                                    konten: {
+                                        type: "quiz",
+                                        id: data.id_number
                                     }
                                 }
                             }} />
-                            <ShareAction campaign='quiz' posId={data?.id_number} variant="button" buttonProps={{outlined:true,color:'inherit',sx:{width:'100%'}}} />
+                            <ShareAction campaign='quiz' posId={data?.id_number} variant="button" buttonProps={{ outlined: true, color: 'inherit', sx: { width: '100%' } }} />
                         </Stack>
                     </Stack>
                 </ProfileWidget>

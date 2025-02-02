@@ -41,6 +41,7 @@ import type { KeyedMutator } from "swr";
 import { EllipsisTypography } from "@design/components/Card";
 import dynamic from "next/dynamic";
 import Label from "@design/components/Label";
+import ContextMenuHandler, { CallbackEvent } from "@utils/contextmenu";
 
 const MenuItem = dynamic(() => import("@mui/material/MenuItem"));
 const Dialog = dynamic(() => import("@design/components/Dialog"));
@@ -93,7 +94,7 @@ function getLabel(status: string) {
 
 export default function SupportPage({ data: { support: supportServer } }: IPages<ISupportPage>) {
     const router = useRouter();
-    const { ready, user } = useSelector(s => ({ user: s.user, ready: s.appToken !== undefined }))
+    const { ready, user } = useSelector(s => ({ user: s.user, ready: s.ready }))
     const slug = router.query?.slug;
     const mdDown = useResponsive('down', 'md');
     const anchorRef = React.useRef(null);
@@ -518,10 +519,21 @@ function MessageComp({ data: d, prev }: MessageCompProps) {
     const dayjs = getDayJs(d.timestamp);
     const setNotif = useNotification();
 
-    const handleOpenOptions = React.useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const handleOpenOptionsFunction = React.useCallback((e: CallbackEvent<HTMLDivElement>) => {
         e.preventDefault();
         setOpen(true);
     }, []);
+
+    const handleOpenOptions = React.useMemo(() => {
+        const handler = new ContextMenuHandler(handleOpenOptionsFunction);
+        return {
+            onTouchStart: handler.onTouchStart,
+            onContextMenu: handler.onContextMenu,
+            onTouchCancel: handler.onTouchCancel,
+            onTouchMove: handler.onTouchMove,
+            onTouchEnd: handler.onTouchEnd,
+        }
+    }, [handleOpenOptionsFunction])
 
     const handleCloseOptions = React.useCallback((value?: 'copy') => () => {
         if (value === 'copy') {
@@ -603,7 +615,7 @@ function MessageComp({ data: d, prev }: MessageCompProps) {
                             })
                         }}
                             ref={anchorRef}
-                            onContextMenu={handleOpenOptions}
+                            {...handleOpenOptions}
                         >
                             {d?.image && (
                                 <Image fancybox dataFancybox="chat" src={`${d.image}&size=200`} dataSrc={`${d.image}&watermark=no`} webp sx={{ maxWidth: 200, maxHeight: 200, mb: 1 }} alt={d.message || undefined} />

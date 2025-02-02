@@ -34,8 +34,8 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts
-server.js
+#next-env.d.ts
+#server.js
 
 public/sw.js
 public/workbox*.js
@@ -44,3 +44,7 @@ public/fallback-*
 
 src/mui-comp.json
 src/build-id.ts
+src/version.ts
+
+.idea/*
+!.idea/copyright

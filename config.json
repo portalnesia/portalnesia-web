@@ -17,6 +17,7 @@
         "datas": "https://datas.portalnesia.com"
     },
     "recaptcha": "6LdeqPYUAAAAAL-nPJZjgAE0gYD5DeyH7-i-_Hee",
+    "recaptcha_appcheck": "6Le7oPcpAAAAANnswC3KLahPZfD4g486-0XYdyr6",
     "firebase": {
         "apiKey": "AIzaSyAQ7u4UWLyPZ9dgL9cwtBbXs4GX3th00Bg",
         "authDomain": "portalnesia.firebaseapp.com",

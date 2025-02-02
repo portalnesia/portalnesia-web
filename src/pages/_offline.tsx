@@ -25,6 +25,12 @@ export default function Offline() {
                 }, {
                     name: 'viewport',
                     content: 'width=device-width, initial-scale=1, shrink-to-fit=yes'
+                }, {
+                    name: "og:image:secure_url",
+                    content: imageMeta
+                }, {
+                    name: "og:image:type",
+                    content: "image/png"
                 }]}
                 openGraph={{
                     url: portalUrl(router.asPath),

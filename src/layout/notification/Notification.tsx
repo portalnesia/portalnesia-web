@@ -31,43 +31,43 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { isIOS } from 'react-device-detect';
 
 export interface NotificationProps {
-    
+
 }
 
-let alreadyMutate=false;
-export default function Notification({}: NotificationProps) {
-    const user = useSelector(s=>s.user);
-    const smDown = useResponsive('down','sm')
-    const appToken = useSelector(s=>s.appToken)
+let alreadyMutate = false;
+export default function Notification({ }: NotificationProps) {
+    const user = useSelector(s => s.user);
+    const smDown = useResponsive('down', 'sm')
+    const readyRedux = useSelector(s => s.ready)
     const anchorRef = useRef(null);
     const [open, setOpen] = useState(false);
-    const {mutate,data,...swr} = useNotificationSWR();
+    const { mutate, data, ...swr } = useNotificationSWR();
 
     const handleOpen = useCallback(() => {
         setOpen(true);
-    },[]);
+    }, []);
     const handleClose = useCallback(() => {
         setOpen(false);
-    },[]);
+    }, []);
 
-    useEffect(()=>{
-        if(user && appToken) {
-            if(!alreadyMutate) {
-                alreadyMutate=true;
+    useEffect(() => {
+        if (user && readyRedux) {
+            if (!alreadyMutate) {
+                alreadyMutate = true;
                 mutate();
             }
         }
-    }),[user,appToken]
+    }), [user, readyRedux]
 
-    useEffect(()=>{
-        if(smDown && open) {
+    useEffect(() => {
+        if (smDown && open) {
             document.body.classList.add("scroll-disabled")
         } else {
             document.body.classList.remove("scroll-disabled")
         }
-    },[smDown,open])
+    }, [smDown, open])
 
-    if(!user) return null;
+    if (!user) return null;
     return (
         <>
             <Tooltip title="Notification">
@@ -76,7 +76,7 @@ export default function Notification({}: NotificationProps) {
                     open={open}
                     onClick={handleOpen}
                 >
-                    <Badge badgeContent={(data?.total_unread||0)} color="error" >
+                    <Badge badgeContent={(data?.total_unread || 0)} color="error" >
                         <Iconify icon="clarity:notification-solid" height={20} width={28} />
                     </Badge>
                 </IconButtonActive>
@@ -87,26 +87,26 @@ export default function Notification({}: NotificationProps) {
                         open={open}
                         anchorEl={anchorRef.current}
                         onClose={handleClose}
-                        paperSx={{width:500,maxWidth:'90%'}}
+                        paperSx={{ width: 500, maxWidth: '90%' }}
                     >
-                        
+
                         <Box overflow={'hidden'}>
-                            <Box borderBottom={theme=>`2px solid ${theme.palette.divider}`} p={2}>
+                            <Box borderBottom={theme => `2px solid ${theme.palette.divider}`} p={2}>
                                 <Typography variant='h6' component='h1'>Notifications</Typography>
                             </Box>
-                            <Scrollbar sx={{maxHeight:'70vh'}}>
+                            <Scrollbar sx={{ maxHeight: '70vh' }}>
                                 <Box py={1} maxHeight={"70vh"}>
                                     <NotificationSections data={data} mutate={mutate} {...swr} />
                                 </Box>
                             </Scrollbar>
                         </Box>
-                    
+
                     </MenuPopover>
                 ) : (
                     <SwipeableDrawer
                         open={open}
                         onClose={handleClose}
-                        onOpen={()=>{}}
+                        onOpen={() => { }}
                         disableSwipeToOpen
                         PaperProps={{
                             sx: { width: '100%' }
@@ -116,13 +116,13 @@ export default function Notification({}: NotificationProps) {
                         disableDiscovery
                     >
                         <Box zIndex={1110} bgcolor='background.paper' position='fixed' top={0} left={0} width="100%" overflow="auto" height="100%">
-                            <Stack position='fixed' top={0} left={0} width='100%' bgcolor='background.paper' direction="row" spacing={2} borderBottom={theme=>`2px solid ${theme.palette.divider}`} p={2} height={63} zIndex={1}>
+                            <Stack position='fixed' top={0} left={0} width='100%' bgcolor='background.paper' direction="row" spacing={2} borderBottom={theme => `2px solid ${theme.palette.divider}`} p={2} height={63} zIndex={1}>
                                 <IconButton onClick={handleClose}>
                                     <ArrowBack />
                                 </IconButton>
                                 <Typography variant='h6' component='h1'>Notifications</Typography>
                             </Stack>
-                            <Scrollbar sx={{maxHeight:'100vh'}}>
+                            <Scrollbar sx={{ maxHeight: '100vh' }}>
                                 <Box pt={'85px'} pb={2}>
                                     <NotificationSections data={data} mutate={mutate} {...swr} />
                                 </Box>
@@ -140,29 +140,29 @@ type SectionsProps = Data & ({
 
 })
 
-function NotificationSections({data,error,isLoadingMore,isLoading,size,setSize}: SectionsProps) {
-    const getLink = useCallback((d: INotifications)=>{
-        if(d.type === 'support') {
+function NotificationSections({ data, error, isLoadingMore, isLoading, size, setSize }: SectionsProps) {
+    const getLink = useCallback((d: INotifications) => {
+        if (d.type === 'support') {
             return href(`/support/${d.id}?utm_source=portalnesia+web&utm_medium=notification+bar`)
-        } else if(d.type === 'comment') {
+        } else if (d.type === 'comment') {
             const url = new URL(d.content.link);
-            url.searchParams.set('utm_source','portalnesia web');
-            url.searchParams.set('utm_medium','notification bar')
-            url.searchParams.set('ref','comment')
-            url.searchParams.set('refid',`${d.id}`)
+            url.searchParams.set('utm_source', 'portalnesia web');
+            url.searchParams.set('utm_medium', 'notification bar')
+            url.searchParams.set('ref', 'comment')
+            url.searchParams.set('refid', `${d.id}`)
             return href(url.toString())
-        } else if(d.type === "follow") {
+        } else if (d.type === "follow") {
             return href(`/user/${d.user.username}?utm_source=portalnesia+web&utm_medium=notification&ref=notification+bar&refid=${d.id}`)
         } else {
             return href(`/notification/portalnesia?utm_source=portalnesia+web&utm_medium=notification+bar`);
         }
-    },[]);
+    }, []);
 
     return (
         <SWRPages loading={!data && !error}>
             {data && data?.data?.length > 0 ? (
                 <List>
-                    {data?.data?.map(d=>(
+                    {data?.data?.map(d => (
                         <Link key={`${d.message}-${d.id}`} href={getLink(d)} passHref legacyBehavior>
                             <ListItemButton component='a' className='no-underline' selected={!Boolean(d?.read)}>
                                 <ListItemAvatar>
@@ -172,7 +172,7 @@ function NotificationSections({data,error,isLoadingMore,isLoading,size,setSize}:
                                 </ListItemAvatar>
                                 <ListItemText>
                                     <Typography>{d.message}</Typography>
-                                    <Typography variant='caption' sx={{color:'text.disabled'}}>{getDayJs(d.timestamp).time_ago().format}</Typography>
+                                    <Typography variant='caption' sx={{ color: 'text.disabled' }}>{getDayJs(d.timestamp).time_ago().format}</Typography>
                                 </ListItemText>
                             </ListItemButton>
                         </Link>
@@ -182,7 +182,7 @@ function NotificationSections({data,error,isLoadingMore,isLoading,size,setSize}:
                             {isLoadingMore ? (
                                 <BoxPagination loading minHeight={50} />
                             ) : (
-                                <Button sx={{width:'100%'}} outlined color='inherit'>Load more</Button>
+                                <Button sx={{ width: '100%' }} outlined color='inherit'>Load more</Button>
                             )}
                         </Box>
                     )}
